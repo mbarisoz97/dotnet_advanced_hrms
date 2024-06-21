@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34607.119
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ehrms.EmployeeInfo.API", "src\Services\Ehrms.EmployeeInfo.API\Ehrms.EmployeeInfo.API.csproj", "{228A62D8-D5DF-46AD-A24E-78F0E37983B1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{6BCCF7F9-9E97-40AE-82D8-94AA9C7D3794}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "services", "services", "{7428A7F7-5F6A-41B2-9E82-44BB101CAA41}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{228A62D8-D5DF-46AD-A24E-78F0E37983B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{228A62D8-D5DF-46AD-A24E-78F0E37983B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{228A62D8-D5DF-46AD-A24E-78F0E37983B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{228A62D8-D5DF-46AD-A24E-78F0E37983B1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{228A62D8-D5DF-46AD-A24E-78F0E37983B1} = {7428A7F7-5F6A-41B2-9E82-44BB101CAA41}
+		{7428A7F7-5F6A-41B2-9E82-44BB101CAA41} = {6BCCF7F9-9E97-40AE-82D8-94AA9C7D3794}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {39A0E1C3-1F8D-4840-AD0D-087F270984A4}
+	EndGlobalSection
+EndGlobal
