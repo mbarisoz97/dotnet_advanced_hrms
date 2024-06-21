@@ -18,4 +18,8 @@
     <Folder Include="Controllers\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Ehrms.Shared\Ehrms.Shared.csproj" />
+  </ItemGroup>
+
 </Project>
