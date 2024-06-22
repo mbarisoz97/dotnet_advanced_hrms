@@ -52,10 +52,10 @@ public class EmployeeControllerTests
     [Fact]
     public async Task Delete_ExistingEmployeeId_RemovesEmployee()
     {
-        EmployeeInfoWebApplicationFactory appliction = new();
+        EmployeeInfoWebApplicationFactory application = new();
         CreateEmployeeDto createEmployeeDto = new CreateEmployeeDtoFaker().Generate();
 
-        var client = appliction.CreateClient();
+        var client = application.CreateClient();
         var response = await client.PutAsJsonAsync(Endpoints.EmployeeApi, createEmployeeDto);
         response.EnsureSuccessStatusCode();
 
@@ -66,12 +66,22 @@ public class EmployeeControllerTests
     }
 
     [Fact]
+    public async Task Delete_NonExistingEmployeeId_ReturnsNotFound()
+    {
+        EmployeeInfoWebApplicationFactory application = new();
+        var client = application.CreateClient();
+        var response = await client.DeleteAsync($"Endpoints.EmployeeApi/{Guid.NewGuid}");
+
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    [Fact]
     public async Task Post_ExistingEmployeeId_ReturnsOkWithUpdatedReadEmployeeDto()
     {
-        EmployeeInfoWebApplicationFactory appliction = new();
+        EmployeeInfoWebApplicationFactory application = new();
         CreateEmployeeDto createEmployeeDto = new CreateEmployeeDtoFaker().Generate();
 
-        var client = appliction.CreateClient();
+        var client = application.CreateClient();
         var response = await client.PutAsJsonAsync(Endpoints.EmployeeApi, createEmployeeDto);
         response.EnsureSuccessStatusCode();
         var createEmployeeResponse = await response.Content.ReadFromJsonAsync<ReadEmployeeDto>();

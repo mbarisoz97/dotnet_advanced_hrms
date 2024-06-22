@@ -4,6 +4,9 @@ global using Microsoft.EntityFrameworkCore;
 global using AutoMapper;
 global using MediatR;
 
+global using Ehrms.Shared.Exceptions;
+global using Ehrms.EmployeeInfo.API.Exceptions;
+
 global using Ehrms.Shared.Common;
 global using Ehrms.EmployeeInfo.API;
 global using Ehrms.EmployeeInfo.API.Models;

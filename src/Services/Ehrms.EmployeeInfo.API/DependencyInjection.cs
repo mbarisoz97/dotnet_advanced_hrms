@@ -1,5 +1,5 @@
-﻿using System.Reflection;
-using Microsoft.EntityFrameworkCore;
+﻿using Ehrms.EmployeeInfo.API.Middleware;
+using System.Reflection;
 
 namespace Ehrms.EmployeeInfo.API;
 
@@ -15,6 +15,8 @@ public static class DependencyInjection
     private static IServiceCollection AddAssemblyTypes(this IServiceCollection services)
     {
         services.AddScoped<DbContext, EmployeeInfoDbContext>();
+        services.AddTransient<GlobalExceptionHandlingMiddleware>();
+
         return services;
     }
 

@@ -1,4 +1,4 @@
-﻿namespace Ehrms.EmployeeInfo.API.IntegrationTests.Controllers;
+﻿namespace Ehrms.EmployeeInfo.API.IntegrationTests;
 
 internal static class Endpoints
 {

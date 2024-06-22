@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace Ehrms.EmployeeInfo.API.Handlers.Employee.Command;
+﻿namespace Ehrms.EmployeeInfo.API.Handlers.Employee.Command;
 
 public sealed class DeleteEmployeeCommand : IRequest
 {
@@ -20,12 +18,10 @@ internal sealed class DeleteEmployeeCommandHandler : IRequestHandler<DeleteEmplo
     {
         var employee = await _dbContext.Employees
              .AsNoTracking()
-             .FirstOrDefaultAsync(x => x.Id == request.Id);
+             .FirstOrDefaultAsync(x => x.Id == request.Id)
+             ?? throw new EmployeeNotFoundException($"Could not find employee with id '{request.Id}'");
 
-        if (employee != null)
-        {
-            _dbContext.Employees.Remove(employee);
-            await _dbContext.SaveChangesAsync();
-        }
+        _dbContext.Employees.Remove(employee);
+        await _dbContext.SaveChangesAsync();
     }
 }
