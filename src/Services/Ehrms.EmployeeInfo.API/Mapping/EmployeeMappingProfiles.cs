@@ -13,8 +13,11 @@ public class EmployeeMappingProfiles : Profile
 
     private void AddCommandToEntityMappings()
     {
-        CreateMap<UpdateEmployeeCommand, Employee>();
-        CreateMap<CreateEmployeeCommand, Employee>();
+        CreateMap<UpdateEmployeeCommand, Employee>()
+            .ForMember(dest => dest.Skills, opt => opt.Ignore());
+
+        CreateMap<CreateEmployeeCommand, Employee>()
+            .ForMember(dest => dest.Skills, opt => opt.Ignore());
     }
 
     private void AddEntityToDtoMappings()

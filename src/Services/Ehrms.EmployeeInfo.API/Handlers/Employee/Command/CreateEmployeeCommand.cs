@@ -23,9 +23,14 @@ internal sealed class CreateEmployeeCommandHandler : IRequestHandler<CreateEmplo
     {
         Models.Employee employee = _mapper.Map<Models.Employee>(request);
 
+        await _dbContext.Skills
+            .Where(x => request.Skills.Contains(x.Id))
+            .ForEachAsync(s =>
+            {
+                employee.Skills.Add(s);
+            });
+
         await _dbContext.Employees.AddAsync(employee, cancellationToken);
-
-
         await _dbContext.SaveChangesAsync(cancellationToken);
 
         return employee;
