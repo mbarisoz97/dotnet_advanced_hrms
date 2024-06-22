@@ -18,7 +18,7 @@ internal sealed class DeleteSkillCommandHandler : IRequestHandler<DeleteSkillCom
     {
         var skill = await _dbContext.Skills
             .FirstOrDefaultAsync(x => x.Id == request.Id) 
-            ?? throw new ArgumentException($"Could not find employee skill with id : {request.Id}");
+            ?? throw new SkillNotFoundException($"Could not find employee skill with id '{request.Id}'");
 
         _dbContext.Remove(skill);
         await _dbContext.SaveChangesAsync();

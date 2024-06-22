@@ -59,6 +59,6 @@ public class SkillController : ControllerBase
         var command = new DeleteSkillCommand() { Id = id };
         await _mediator.Send(command);
 
-        return Ok();
+        return NoContent();
     }
 }

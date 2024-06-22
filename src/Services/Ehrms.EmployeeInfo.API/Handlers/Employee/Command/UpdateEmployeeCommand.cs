@@ -26,7 +26,7 @@ internal sealed class UpdateEmployeeCommandHandler : IRequestHandler<UpdateEmplo
         Models.Employee employee = await _dbContext.Employees
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken)
-                ?? throw new ArgumentException($"Could not find employee with id {request.Id}");
+                ?? throw new EmployeeNotFoundException($"Could not find employee with id {request.Id}");
 
         _mapper.Map(request, employee);
         employee = SetEmployeeSkills(employee, request.Skills);

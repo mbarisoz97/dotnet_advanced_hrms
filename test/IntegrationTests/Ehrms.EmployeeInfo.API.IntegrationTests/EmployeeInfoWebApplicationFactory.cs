@@ -28,9 +28,6 @@ internal class EmployeeInfoWebApplicationFactory : WebApplicationFactory<Program
                     "TestScheme", options => { });
 
             var dbContext = CreateDbContext(services);
-            dbContext.Database.EnsureDeleted();
-
-            Seed.InitializeTestDb(dbContext);
         });
     }
 

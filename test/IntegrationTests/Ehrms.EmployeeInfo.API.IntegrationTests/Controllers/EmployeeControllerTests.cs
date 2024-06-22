@@ -1,11 +1,4 @@
-﻿using System.Net;
-using FluentAssertions;
-using System.Net.Http.Json;
-using Microsoft.AspNetCore.Http;
-using Ehrms.EmployeeInfo.API.Dtos.Employee;
-using Ehrms.EmployeeInfo.API.IntegrationTests.Faker.Dto;
-
-namespace Ehrms.EmployeeInfo.API.IntegrationTests.Controllers;
+﻿namespace Ehrms.EmployeeInfo.API.IntegrationTests.Controllers;
 
 public class EmployeeControllerTests
 {
@@ -70,7 +63,7 @@ public class EmployeeControllerTests
     {
         EmployeeInfoWebApplicationFactory application = new();
         var client = application.CreateClient();
-        var response = await client.DeleteAsync($"Endpoints.EmployeeApi/{Guid.NewGuid}");
+        var response = await client.DeleteAsync($"{Endpoints.EmployeeApi}/{Guid.NewGuid()}");
 
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -86,14 +79,11 @@ public class EmployeeControllerTests
         response.EnsureSuccessStatusCode();
         var createEmployeeResponse = await response.Content.ReadFromJsonAsync<ReadEmployeeDto>();
 
-        UpdateEmployeeDto updateEmployeeDto = new()
-        {
-            Id = createEmployeeResponse!.Id,
-            FirstName = "IntegrationTestUpdatedFirstName",
-            LastName = "IntegrationTestUpdatedLastName",
-            DateOfBirth = DateOnly.FromDateTime(DateTime.Now.Subtract(TimeSpan.FromDays(395)))
-        };
+        UpdateEmployeeDto updateEmployeeDto = new UpdateEmployeeDtoFaker().Generate();
+        updateEmployeeDto.Id = createEmployeeResponse!.Id;
+
         response = await client.PostAsJsonAsync(Endpoints.EmployeeApi, updateEmployeeDto);
+        response.EnsureSuccessStatusCode();
         var updateEmployeeResponse = await response.Content.ReadFromJsonAsync<ReadEmployeeDto>();
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);

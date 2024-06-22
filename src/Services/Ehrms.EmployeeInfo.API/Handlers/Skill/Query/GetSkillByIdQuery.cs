@@ -18,6 +18,7 @@ internal sealed class GetSkillByIdQueryHandler : IRequestHandler<GetSkillByIdQue
     public async Task<Models.Skill> Handle(GetSkillByIdQuery request, CancellationToken cancellationToken)
     {
         return await _dbContext.Skills
-            .FirstOrDefaultAsync(x => x.Id == request.Id) ?? throw new ArgumentException($"Could not find an employee skill with id '{request.Id}'");
+            .FirstOrDefaultAsync(x => x.Id == request.Id) 
+            ?? throw new SkillNotFoundException($"Could not find an employee skill with id '{request.Id}'");
     }
 }
