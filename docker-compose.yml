@@ -1,0 +1,16 @@
+services:
+  ehrms.employeeinfo.api:
+    image: ${DOCKER_REGISTRY-}ehrmsemployeeinfoapi
+    build:
+      context: .
+      dockerfile: src/Services/Ehrms.EmployeeInfo.API/Dockerfile
+
+  ehrms.employeeinfo.db:
+     image: "mcr.microsoft.com/mssql/server"
+     volumes:             
+        - ./.containers/database:/var/opt/mssql/data
+     ports:
+        - 1433:1433
+     environment:
+        ACCEPT_EULA: "Y"   
+        SA_PASSWORD: "YourStrongPassword123!"
