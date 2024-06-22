@@ -1,7 +1,6 @@
-﻿
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
-namespace Ehrms.EmployeeInfo.API.Handlers;
+namespace Ehrms.EmployeeInfo.API.Handlers.Employee.Command;
 
 public sealed class DeleteEmployeeCommand : IRequest
 {

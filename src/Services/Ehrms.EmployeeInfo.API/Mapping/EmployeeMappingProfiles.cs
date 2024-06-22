@@ -1,4 +1,4 @@
-﻿using Ehrms.EmployeeInfo.API.Handlers;
+﻿using Ehrms.EmployeeInfo.API.Handlers.Employee.Command;
 
 namespace Ehrms.EmployeeInfo.API.Mapping;
 

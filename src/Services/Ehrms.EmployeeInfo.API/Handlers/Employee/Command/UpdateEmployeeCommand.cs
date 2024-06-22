@@ -1,6 +1,6 @@
-﻿namespace Ehrms.EmployeeInfo.API.Handlers;
+﻿namespace Ehrms.EmployeeInfo.API.Handlers.Employee.Command;
 
-public sealed class UpdateEmployeeCommand : IRequest<Employee>
+public sealed class UpdateEmployeeCommand : IRequest<Models.Employee>
 {
     public Guid Id { get; set; }
     public string FirstName { get; set; } = string.Empty;
@@ -9,7 +9,7 @@ public sealed class UpdateEmployeeCommand : IRequest<Employee>
     public ICollection<Guid> Skills { get; set; } = [];
 }
 
-internal sealed class UpdateEmployeeCommandHandler : IRequestHandler<UpdateEmployeeCommand, Employee>
+internal sealed class UpdateEmployeeCommandHandler : IRequestHandler<UpdateEmployeeCommand, Models.Employee>
 {
     private readonly IMapper _mapper;
     private readonly EmployeeInfoDbContext _dbContext;
@@ -20,9 +20,9 @@ internal sealed class UpdateEmployeeCommandHandler : IRequestHandler<UpdateEmplo
         _dbContext = dbContext;
     }
 
-    public async Task<Employee> Handle(UpdateEmployeeCommand request, CancellationToken cancellationToken)
+    public async Task<Models.Employee> Handle(UpdateEmployeeCommand request, CancellationToken cancellationToken)
     {
-        Employee employee = await _dbContext.Employees
+        Models.Employee employee = await _dbContext.Employees
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken)
                 ?? throw new ArgumentException($"Could not find employee with id {request.Id}");
@@ -35,7 +35,7 @@ internal sealed class UpdateEmployeeCommandHandler : IRequestHandler<UpdateEmplo
         return employee;
     }
 
-    private static Employee SetEmployeeSkills(Employee employee, ICollection<Guid> employeeSkills)
+    private static Models.Employee SetEmployeeSkills(Models.Employee employee, ICollection<Guid> employeeSkills)
     {
         var skillToRemove = employee.Skills
             .Where(x => !employeeSkills.Contains(x.Id));

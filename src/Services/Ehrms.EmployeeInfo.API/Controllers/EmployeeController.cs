@@ -1,6 +1,4 @@
-﻿using Ehrms.EmployeeInfo.API.Handlers;
-
-namespace Ehrms.EmployeeInfo.API.Controllers;
+﻿namespace Ehrms.EmployeeInfo.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
