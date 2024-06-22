@@ -7,7 +7,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddEmployeeInfoApi();
+builder.Services.AddDbContext<EmployeeInfoDbContext>(options =>
+{
+    options.UseInMemoryDatabase("EmployeeInfoDb");
+});
+
 var app = builder.Build();
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

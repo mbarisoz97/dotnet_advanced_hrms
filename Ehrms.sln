@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "shared", "shared", "{60A8E7
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ehrms.Shared", "src\Shared\Ehrms.Shared\Ehrms.Shared.csproj", "{9A0CF40E-18F3-41DD-96CD-4F8C0FD71C6A}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{FBD38B97-7711-40F5-8AFD-770D1F1D60AE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{9A0CF40E-18F3-41DD-96CD-4F8C0FD71C6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9A0CF40E-18F3-41DD-96CD-4F8C0FD71C6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9A0CF40E-18F3-41DD-96CD-4F8C0FD71C6A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FBD38B97-7711-40F5-8AFD-770D1F1D60AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FBD38B97-7711-40F5-8AFD-770D1F1D60AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FBD38B97-7711-40F5-8AFD-770D1F1D60AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FBD38B97-7711-40F5-8AFD-770D1F1D60AE}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
