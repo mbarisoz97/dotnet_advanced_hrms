@@ -28,8 +28,13 @@ public class EmployeeController : ControllerBase
     {
         var query = new GetEmployeeByIdQuery() { Id = id };
         var employee = await _mediator.Send(query);
-        var readEmployeeDto = _mapper.Map<ReadEmployeeDto>(employee);
 
+        if (employee == null)
+        {
+            return NotFound();
+        }
+        
+        var readEmployeeDto = _mapper.Map<ReadEmployeeDto>(employee);
         return Ok(readEmployeeDto);
     }
 
