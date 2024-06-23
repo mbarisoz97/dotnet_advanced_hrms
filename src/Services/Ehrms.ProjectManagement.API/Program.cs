@@ -7,6 +7,12 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddProjectManagementApi();
+builder.Services.AddDbContext<ProjectDbContext>(options =>
+{
+    options.UseInMemoryDatabase("ProjectManagementDb");
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
