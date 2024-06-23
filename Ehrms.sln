@@ -21,13 +21,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ehrms.EmployeeInfo.API.Inte
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "IntegrationTests", "IntegrationTests", "{065FDA5F-5706-4E00-B7FD-36A234D47955}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ehrms.ProjectManagement.API", "src\Services\Ehrms.ProjectManagement.API\Ehrms.ProjectManagement.API.csproj", "{1EDA3745-9A50-41DC-8485-F64F8177865D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ehrms.ProjectManagement.API", "src\Services\Ehrms.ProjectManagement.API\Ehrms.ProjectManagement.API.csproj", "{1EDA3745-9A50-41DC-8485-F64F8177865D}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "UnitTests", "UnitTests", "{4ABBF0FA-C5D1-4585-98BE-8BAD7C124D25}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ehrms.ProjectManagement.API.UnitTests", "test\UnitTests\Ehrms.ProjectManagement.API.UnitTests\Ehrms.ProjectManagement.API.UnitTests.csproj", "{F739B877-FE80-47AA-B900-70E6F00DCA0C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ehrms.ProjectManagement.API.IntegrationTests", "test\IntegrationTests\Ehrms.ProjectManagement.API.IntegrationTests\Ehrms.ProjectManagement.API.IntegrationTests.csproj", "{0B001F62-EA5F-46DB-AFF2-656083412965}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ehrms.ProjectManagement.API.IntegrationTests", "test\IntegrationTests\Ehrms.ProjectManagement.API.IntegrationTests\Ehrms.ProjectManagement.API.IntegrationTests.csproj", "{0B001F62-EA5F-46DB-AFF2-656083412965}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ehrms.Contracts", "src\Shared\Ehrms.Contracts\Ehrms.Contracts.csproj", "{776BD18C-C8BE-4DFC-B9E4-217EEFCA9F5A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -63,6 +65,10 @@ Global
 		{0B001F62-EA5F-46DB-AFF2-656083412965}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0B001F62-EA5F-46DB-AFF2-656083412965}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0B001F62-EA5F-46DB-AFF2-656083412965}.Release|Any CPU.Build.0 = Release|Any CPU
+		{776BD18C-C8BE-4DFC-B9E4-217EEFCA9F5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{776BD18C-C8BE-4DFC-B9E4-217EEFCA9F5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{776BD18C-C8BE-4DFC-B9E4-217EEFCA9F5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{776BD18C-C8BE-4DFC-B9E4-217EEFCA9F5A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -78,6 +84,7 @@ Global
 		{4ABBF0FA-C5D1-4585-98BE-8BAD7C124D25} = {F73A0A42-DD87-487A-9788-7F0B2DB2E4E1}
 		{F739B877-FE80-47AA-B900-70E6F00DCA0C} = {4ABBF0FA-C5D1-4585-98BE-8BAD7C124D25}
 		{0B001F62-EA5F-46DB-AFF2-656083412965} = {065FDA5F-5706-4E00-B7FD-36A234D47955}
+		{776BD18C-C8BE-4DFC-B9E4-217EEFCA9F5A} = {60A8E732-662B-473D-B82F-2315F877384A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {39A0E1C3-1F8D-4840-AD0D-087F270984A4}

@@ -7,21 +7,25 @@ public sealed class DeleteEmployeeCommand : IRequest
 
 internal sealed class DeleteEmployeeCommandHandler : IRequestHandler<DeleteEmployeeCommand>
 {
+    private readonly IPublishEndpoint _publishEndpoint;
     private readonly EmployeeInfoDbContext _dbContext;
 
-    public DeleteEmployeeCommandHandler(EmployeeInfoDbContext dbContext)
+    public DeleteEmployeeCommandHandler(IPublishEndpoint publishEndpoint, EmployeeInfoDbContext dbContext)
     {
         _dbContext = dbContext;
+        _publishEndpoint = publishEndpoint;
     }
 
     public async Task Handle(DeleteEmployeeCommand request, CancellationToken cancellationToken)
     {
-        var employee = await _dbContext.Employees
-             .AsNoTracking()
-             .FirstOrDefaultAsync(x => x.Id == request.Id)
+        var employee = _dbContext.Employees
+            .AsNoTracking()
+            .FirstOrDefault(x=>x.Id == request.Id)
              ?? throw new EmployeeNotFoundException($"Could not find employee with id '{request.Id}'");
 
-        _dbContext.Employees.Remove(employee);
+        _dbContext.Remove(employee);
         await _dbContext.SaveChangesAsync();
+
+        await _publishEndpoint.Publish(new EmployeeDeletedEvent { Id = employee.Id }, cancellationToken);
     }
 }
