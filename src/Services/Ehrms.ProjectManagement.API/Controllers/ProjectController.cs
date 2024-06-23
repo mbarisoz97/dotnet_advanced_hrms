@@ -22,4 +22,13 @@ public class ProjectController : ControllerBase
 
         return Ok(readProjectDto);
     }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        DeleteProjectCommand command = new() { Id = id };
+        await _mediator.Send(command);
+
+        return NoContent();
+    }
 }

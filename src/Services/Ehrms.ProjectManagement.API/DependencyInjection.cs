@@ -14,6 +14,7 @@ internal static class DependencyInjection
 
     private static IServiceCollection AddAssemblyTypes(IServiceCollection services)
     {
+        services.AddTransient<GlobalExceptionHandlingMiddleware>();
         return services;
     }
 

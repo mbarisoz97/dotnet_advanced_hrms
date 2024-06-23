@@ -2,11 +2,6 @@
 
 namespace Ehrms.ProjectManagement.API.IntegrationTests.Controllers;
 
-internal static class Endpoints
-{
-    internal const string ProjectApi = "/api/Project";
-}
-
 public class ProjectControllerTests
 {
     [Fact]
@@ -25,5 +20,34 @@ public class ProjectControllerTests
         readProjectDto?.Id.Should().NotBe(Guid.Empty);
         readProjectDto?.Name.Should().Be(createProjectDto.Name);
         readProjectDto?.Description.Should().Be(createProjectDto.Description);
+    }
+
+    [Fact]
+    public async Task Delete_ExistingProject_ReturnsNoContent()
+    {
+        var application = new ProjectManagementWebApplicationFactory();
+        CreateProjectDto createProjectDto = new CreateProjectDtoFaker().Generate();
+
+        var client = application.CreateClient();
+        var putProjectResponse = await client.PutAsJsonAsync(Endpoints.ProjectApi, createProjectDto);
+        putProjectResponse.EnsureSuccessStatusCode();
+        var readProjectDto = await putProjectResponse.Content.ReadFromJsonAsync<ReadProjectDto>();
+
+        var deleteProjectResponse = await client.DeleteAsync($"{Endpoints.ProjectApi}/{readProjectDto!.Id}");
+
+        deleteProjectResponse.StatusCode.Should()
+            .Be(HttpStatusCode.NoContent);
+    }
+
+    [Fact]
+    public async Task Delete_NonExistingProject_ReturnsNotFound()
+    {
+        var application = new ProjectManagementWebApplicationFactory();
+
+        var client = application.CreateClient();
+        var deleteProjectResponse = await client.DeleteAsync($"{Endpoints.ProjectApi}/{Guid.NewGuid()}");
+
+        deleteProjectResponse.StatusCode.Should()
+             .Be(HttpStatusCode.NotFound);
     }
 }
