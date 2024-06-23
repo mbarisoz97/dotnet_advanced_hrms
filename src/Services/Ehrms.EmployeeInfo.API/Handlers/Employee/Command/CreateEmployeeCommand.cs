@@ -12,10 +12,12 @@ public sealed class CreateEmployeeCommand : IRequest<Models.Employee>
 internal sealed class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeCommand, Models.Employee>
 {
     private readonly IMapper _mapper;
+    private readonly IPublishEndpoint _publishEndpoint;
     private readonly EmployeeInfoDbContext _dbContext;
 
-    public CreateEmployeeCommandHandler(IMapper mapper, EmployeeInfoDbContext dbContext)
+    public CreateEmployeeCommandHandler(IPublishEndpoint publishEndpoint, IMapper mapper, EmployeeInfoDbContext dbContext)
     {
+        _publishEndpoint = publishEndpoint;
         _mapper = mapper;
         _dbContext = dbContext;
     }
@@ -26,13 +28,13 @@ internal sealed class CreateEmployeeCommandHandler : IRequestHandler<CreateEmplo
 
         await _dbContext.Skills
             .Where(x => request.Skills.Contains(x.Id))
-            .ForEachAsync(s =>
-            {
-                employee.Skills.Add(s);
-            });
+            .ForEachAsync(employee.Skills.Add);
 
         await _dbContext.Employees.AddAsync(employee, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
+
+        var employeeCreatedEvent = _mapper.Map<EmployeeCreatedEvent>(employee);
+        await _publishEndpoint.Publish(employeeCreatedEvent, cancellationToken);
 
         return employee;
     }

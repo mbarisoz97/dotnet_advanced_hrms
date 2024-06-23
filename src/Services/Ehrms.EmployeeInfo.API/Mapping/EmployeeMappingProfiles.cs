@@ -7,6 +7,7 @@ public class EmployeeMappingProfiles : Profile
         AddDtoToCommandMappings();
         AddEntityToDtoMappings();
         AddCommandToEntityMappings();
+        AddModelToMessageQueueEventMappings();
     }
 
     private void AddCommandToEntityMappings()
@@ -30,5 +31,10 @@ public class EmployeeMappingProfiles : Profile
     {
         CreateMap<CreateEmployeeDto, CreateEmployeeCommand>();
         CreateMap<UpdateEmployeeDto, UpdateEmployeeCommand>();
+    }
+
+    private void AddModelToMessageQueueEventMappings()
+    {
+        CreateMap<Employee, EmployeeCreatedEvent>();
     }
 }

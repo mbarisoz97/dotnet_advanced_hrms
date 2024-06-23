@@ -1,4 +1,5 @@
 ﻿using Ehrms.EmployeeInfo.API.Context;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -23,11 +24,11 @@ internal class EmployeeInfoWebApplicationFactory : WebApplicationFactory<Program
                 options.UseInMemoryDatabase("EmployeeInfoDb");
             });
 
+            services.AddMassTransitTestHarness();
+
             services.AddAuthentication("TestScheme")
                 .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(
                     "TestScheme", options => { });
-
-            var dbContext = CreateDbContext(services);
         });
     }
 

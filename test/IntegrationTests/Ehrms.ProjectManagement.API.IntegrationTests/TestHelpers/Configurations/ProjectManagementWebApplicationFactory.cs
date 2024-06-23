@@ -1,4 +1,6 @@
 ﻿using Ehrms.ProjectManagement.API.Context;
+using MassTransit;
+using MassTransit.Testing;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -10,6 +12,8 @@ namespace Ehrms.ProjectManagement.API.IntegrationTests.TestHelpers.Configuration
 
 internal class ProjectManagementWebApplicationFactory : WebApplicationFactory<Program>
 {
+    private readonly InMemoryTestHarness harness = new();
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureTestServices(services =>
