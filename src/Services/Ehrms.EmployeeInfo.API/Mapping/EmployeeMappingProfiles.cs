@@ -1,6 +1,4 @@
-﻿using Ehrms.EmployeeInfo.API.Handlers.Employee.Command;
-
-namespace Ehrms.EmployeeInfo.API.Mapping;
+﻿namespace Ehrms.EmployeeInfo.API.Mapping;
 
 public class EmployeeMappingProfiles : Profile
 {
