@@ -1,6 +1,6 @@
 ﻿using FluentAssertions;
 
-namespace Ehrms.ProjectManagement.API.UnitTests.Handlers.Project;
+namespace Ehrms.ProjectManagement.API.UnitTests.Handlers.Project.Commands;
 
 public class DeleteProjectCommandHandlerTests
 {

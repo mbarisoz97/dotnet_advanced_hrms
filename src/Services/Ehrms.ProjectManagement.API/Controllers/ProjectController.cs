@@ -1,4 +1,6 @@
-﻿namespace Ehrms.ProjectManagement.API.Controllers;
+﻿using Ehrms.ProjectManagement.API.Handlers.Project.Queries;
+
+namespace Ehrms.ProjectManagement.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -30,5 +32,15 @@ public class ProjectController : ControllerBase
         await _mediator.Send(command);
 
         return NoContent();
+    }
+
+    [HttpGet("{id}")]
+    public async Task<IActionResult> Get(Guid id)
+    {
+        GetProjectByIdQuery query = new() { Id = id };
+        var project = await _mediator.Send(query);
+        var readProjectDto = _mapper.Map<ReadProjectDto>(project);
+
+        return Ok(readProjectDto);
     }
 }

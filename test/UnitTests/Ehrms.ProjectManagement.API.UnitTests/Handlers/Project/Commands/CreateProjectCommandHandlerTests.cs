@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Ehrms.ProjectManagement.API.Profiles;
 
-namespace Ehrms.ProjectManagement.API.UnitTests.Handlers.Project;
+namespace Ehrms.ProjectManagement.API.UnitTests.Handlers.Project.Commands;
 
 public class CreateProjectCommandHandlerTests
 {
@@ -29,7 +29,7 @@ public class CreateProjectCommandHandlerTests
         CreateProjectCommand command = new CreateProjectCommandFaker().Generate();
         await _handler.Handle(command, default);
         var project = _projectDbContext.Projects.FirstOrDefault();
- 
+
         _projectDbContext.Projects.Count().Should().Be(1);
 
         project?.Id.Should().NotBe(Guid.Empty);
