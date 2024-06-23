@@ -4,13 +4,26 @@ services:
     build:
       context: .
       dockerfile: src/Services/Ehrms.EmployeeInfo.API/Dockerfile
+    depends_on: 
+        - ehrms.mq
 
-  ehrms.employeeinfo.db:
-     image: "mcr.microsoft.com/mssql/server"
-     volumes:             
-        - ./.containers/database:/var/opt/mssql/data
-     ports:
-        - 1433:1433
-     environment:
-        ACCEPT_EULA: "Y"   
-        SA_PASSWORD: "YourStrongPassword123!"
+  ehrms.projectmanagement.api:
+    image: ${DOCKER_REGISTRY-}ehrmsprojectmanagementapi
+    build:
+      context: .
+      dockerfile: src/Services/Ehrms.ProjectManagement.API/Dockerfile
+    depends_on: 
+        - ehrms.mq
+
+  ehrms.mq:
+    image: rabbitmq:management-alpine
+    container_name: Ehrms.mq
+    hostname: ehrms-mq
+    ports:
+        - 5672:5672
+    volumes:
+        - ./.container/queue/data/:/var/lib/rabbitmq 
+        - ./.container/queue/log/:/var/log/rabbitmq
+    environment:
+        RABBITMQ_DEFAULT_USER: guest
+        RABBITMQ_DEFAULT_PASS: guest

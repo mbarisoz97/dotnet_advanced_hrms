@@ -4,7 +4,8 @@
       "commandName": "DockerCompose",
       "commandVersion": "1.0",
       "serviceActions": {
-        "ehrms.employeeinfo.api": "StartDebugging"
+        "ehrms.employeeinfo.api": "StartDebugging",
+        "ehrms.projectmanagement.api": "StartDebugging"
       }
     }
   }

@@ -1,5 +1,3 @@
-using MassTransit;
-
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -14,15 +12,16 @@ builder.Services.AddDbContext<ProjectDbContext>(options =>
 {
     options.UseInMemoryDatabase("ProjectManagementDb");
 });
-builder.Services.AddMassTransit(configurator =>
+builder.Services.AddMassTransit(busConfigurator =>
 {
-    configurator.SetKebabCaseEndpointNameFormatter();
-    configurator.UsingRabbitMq((context, configurator) =>
+    busConfigurator.SetKebabCaseEndpointNameFormatter();
+    busConfigurator.AddConsumer<EmployeeDeletedConsumer>();
+    busConfigurator.UsingRabbitMq((context, configurator) =>
     {
         configurator.Host(new Uri(builder.Configuration["MessageBroker:Host"]!), h =>
         {
             h.Username(builder.Configuration["MessageBroker:Username"]!);
-            h.Password(builder.Configuration["MessageBroker:Pasword"]!);
+            h.Password(builder.Configuration["MessageBroker:Password"]!);
         });
 
         configurator.ConfigureEndpoints(context);

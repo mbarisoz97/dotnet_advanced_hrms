@@ -1,8 +1,10 @@
-﻿global using Microsoft.AspNetCore.Mvc;
-
-global using Microsoft.EntityFrameworkCore;
+﻿global using MediatR;
 global using AutoMapper;
-global using MediatR;
+global using MassTransit;
+global using Microsoft.EntityFrameworkCore;
+
+global using Ehrms.Contracts.Employee;
+global using Microsoft.AspNetCore.Mvc;
 
 global using Ehrms.Shared.Exceptions;
 global using Ehrms.EmployeeInfo.API.Exceptions;
