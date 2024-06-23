@@ -1,8 +1,4 @@
-﻿using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
-using Ehrms.ProjectManagement.API.Profiles;
-
-namespace Ehrms.ProjectManagement.API.UnitTests.Handlers.Project.Commands;
+﻿namespace Ehrms.ProjectManagement.API.UnitTests.Handlers.Project.Commands;
 
 public class CreateProjectCommandHandlerTests
 {

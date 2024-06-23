@@ -1,6 +1,6 @@
 ﻿namespace Ehrms.ProjectManagement.API.Dtos.Project;
 
-public class ReadProjectDto
+public class UpdateProjectDto
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;

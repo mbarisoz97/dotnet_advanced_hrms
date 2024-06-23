@@ -7,6 +7,7 @@ global using Ehrms.ProjectManagement.API.Middleware;
 
 global using Ehrms.Shared.Common;
 global using Ehrms.Shared.Exceptions;
+global using Ehrms.ProjectManagement.API.Exceptions;
 
 global using Ehrms.ProjectManagement.API;
 global using Ehrms.ProjectManagement.API.Models;

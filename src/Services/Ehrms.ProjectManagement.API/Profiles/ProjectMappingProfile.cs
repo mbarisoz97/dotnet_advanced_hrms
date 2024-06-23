@@ -16,11 +16,13 @@ internal class ProjectMappingProfile : Profile
 
     private void AddCommandToModelMappings()
     {
-        CreateMap<CreateProjectCommand, Models.Project>();
+        CreateMap<CreateProjectCommand, Project>();
+        CreateMap<UpdateProjectCommand, Project>();
     }
 
     private void AddDtoToCommandMappings()
     {
         CreateMap<CreateProjectDto, CreateProjectCommand>();
+        CreateMap<UpdateProjectDto, UpdateProjectCommand>();
     }
 }

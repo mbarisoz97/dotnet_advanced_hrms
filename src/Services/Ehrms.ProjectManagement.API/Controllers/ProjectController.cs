@@ -43,4 +43,14 @@ public class ProjectController : ControllerBase
 
         return Ok(readProjectDto);
     }
+
+    [HttpPost]
+    public async Task<IActionResult> Update([FromBody] UpdateProjectDto updateProjectDto)
+    {
+        var command = _mapper.Map<UpdateProjectCommand>(updateProjectDto);
+        var project = await _mediator.Send(command);
+        var readProjectDto = _mapper.Map<ReadProjectDto>(project);
+
+        return Ok(readProjectDto);
+    }
 }

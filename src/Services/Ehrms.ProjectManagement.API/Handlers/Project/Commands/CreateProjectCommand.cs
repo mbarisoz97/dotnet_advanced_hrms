@@ -5,6 +5,7 @@ internal sealed class CreateProjectCommand : IRequest<Models.Project>
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;
 }
+
 internal sealed class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand, Models.Project>
 {
     private readonly IMapper _mapper;
@@ -25,5 +26,4 @@ internal sealed class CreateProjectCommandHandler : IRequestHandler<CreateProjec
         
         return project;
     }
-
 }
