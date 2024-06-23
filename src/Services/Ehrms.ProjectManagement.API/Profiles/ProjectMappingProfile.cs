@@ -7,14 +7,15 @@ internal class ProjectMappingProfile : Profile
         AddModelToDtoMappings();
         AddDtoToCommandMappings();
         AddCommandToModelMappings();
+        AddMessageQueueEventToModelMappings();
     }
 
     private void AddModelToDtoMappings()
     {
         CreateMap<Project, ReadProjectDto>()
-            .ForMember(dest=> dest.EmployeeIdCollection,
-                opt=> opt.MapFrom(
-                    src=> src.Employments.Select(x=>x.Employee!.Id)));
+            .ForMember(dest => dest.EmployeeIdCollection,
+                opt => opt.MapFrom(
+                    src => src.Employments.Select(x => x.Employee!.Id)));
     }
 
     private void AddCommandToModelMappings()
@@ -27,5 +28,10 @@ internal class ProjectMappingProfile : Profile
     {
         CreateMap<CreateProjectDto, CreateProjectCommand>();
         CreateMap<UpdateProjectDto, UpdateProjectCommand>();
+    }
+
+    private void AddMessageQueueEventToModelMappings()
+    {
+        CreateMap<EmployeeCreatedEvent, Employee>();
     }
 }
