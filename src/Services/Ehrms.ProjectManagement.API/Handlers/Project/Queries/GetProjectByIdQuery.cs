@@ -1,6 +1,4 @@
-﻿using Ehrms.ProjectManagement.API.Exceptions;
-
-namespace Ehrms.ProjectManagement.API.Handlers.Project.Queries;
+﻿namespace Ehrms.ProjectManagement.API.Handlers.Project.Queries;
 
 public sealed class GetProjectByIdQuery : IRequest<Models.Project>
 {

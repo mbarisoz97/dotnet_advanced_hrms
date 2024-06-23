@@ -34,6 +34,16 @@ public class ProjectController : ControllerBase
         return NoContent();
     }
 
+    [HttpGet]
+    public async Task<IActionResult> Get()
+    {
+        GetProjectsQuery query = new();
+        var project = await _mediator.Send(query);
+        var readProjectDtoCollection = _mapper.ProjectTo<ReadProjectDto>(project);
+
+        return Ok(readProjectDtoCollection);
+    }
+
     [HttpGet("{id}")]
     public async Task<IActionResult> Get(Guid id)
     {

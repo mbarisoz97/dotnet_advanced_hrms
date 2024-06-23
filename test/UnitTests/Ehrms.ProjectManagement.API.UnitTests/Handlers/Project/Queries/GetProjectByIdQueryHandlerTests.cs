@@ -1,11 +1,11 @@
 ﻿namespace Ehrms.ProjectManagement.API.UnitTests.Handlers.Project.Queries;
 
-public class GetProjectByIdQueryTests
+public class GetProjectByIdQueryHandlerTests
 {
     private readonly GetProjectByIdQueryHandler _handler;
     private readonly ProjectDbContext _projectDbContext;
 
-    public GetProjectByIdQueryTests()
+    public GetProjectByIdQueryHandlerTests()
     {
         _projectDbContext = new(new DbContextOptionsBuilder()
             .UseInMemoryDatabase(Guid.NewGuid().ToString())

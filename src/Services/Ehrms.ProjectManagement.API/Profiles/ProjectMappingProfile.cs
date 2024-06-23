@@ -11,7 +11,10 @@ internal class ProjectMappingProfile : Profile
 
     private void AddModelToDtoMappings()
     {
-        CreateMap<Project, ReadProjectDto>();
+        CreateMap<Project, ReadProjectDto>()
+            .ForMember(dest=> dest.EmployeeIdCollection,
+                opt=> opt.MapFrom(
+                    src=> src.Employments.Select(x=>x.Employee!.Id)));
     }
 
     private void AddCommandToModelMappings()
