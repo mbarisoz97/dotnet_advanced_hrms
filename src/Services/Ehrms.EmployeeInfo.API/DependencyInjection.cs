@@ -1,4 +1,5 @@
 ﻿using Ehrms.EmployeeInfo.API.Middleware;
+using MassTransit;
 using System.Reflection;
 
 namespace Ehrms.EmployeeInfo.API;
@@ -28,7 +29,6 @@ public static class DependencyInjection
         {
             config.RegisterServicesFromAssembly(assembly);
         });
-
         services.AddAutoMapper(assembly);
 
         return services;

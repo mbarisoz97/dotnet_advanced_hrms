@@ -1,4 +1,5 @@
 using Ehrms.EmployeeInfo.API.Middleware;
+using MassTransit;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,9 +11,25 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddEmployeeInfoApi();
+
 builder.Services.AddDbContext<EmployeeInfoDbContext>(options =>
 {
     options.UseInMemoryDatabase("EmployeeInfoDb");
+});
+
+builder.Services.AddMassTransit(configurator =>
+{
+    configurator.SetKebabCaseEndpointNameFormatter();
+    configurator.UsingRabbitMq((context, configurator) =>
+    {
+        configurator.Host(new Uri(builder.Configuration["MessageBroker:Host"]!), h =>
+        {
+            h.Username(builder.Configuration["MessageBroker:Username"]!);
+            h.Password(builder.Configuration["MessageBroker:Pasword"]!);
+        });
+
+        configurator.ConfigureEndpoints(context);
+    });
 });
 
 var app = builder.Build();
