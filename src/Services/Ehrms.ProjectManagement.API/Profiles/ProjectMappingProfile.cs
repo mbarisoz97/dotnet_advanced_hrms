@@ -33,5 +33,6 @@ internal class ProjectMappingProfile : Profile
     private void AddMessageQueueEventToModelMappings()
     {
         CreateMap<EmployeeCreatedEvent, Employee>();
+        CreateMap<EmployeeUpdatedEvent, Employee>();
     }
 }

@@ -1,6 +1,4 @@
-﻿using Bogus;
-
-namespace Ehrms.ProjectManagement.API.UnitTests.TestHelpers.Faker.Command;
+﻿namespace Ehrms.ProjectManagement.API.UnitTests.TestHelpers.Faker.Command;
 
 internal class UpdateProjectCommandFaker : Faker<UpdateProjectCommand>
 {

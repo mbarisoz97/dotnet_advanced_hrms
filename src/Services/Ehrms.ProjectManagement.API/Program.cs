@@ -15,10 +15,11 @@ builder.Services.AddDbContext<ProjectDbContext>(options =>
 builder.Services.AddMassTransit(busConfigurator =>
 {
     busConfigurator.SetKebabCaseEndpointNameFormatter();
-    busConfigurator.AddConsumer<EmployeeDeletedConsumer>();
-    busConfigurator.AddConsumer<EmployeeCreatedConsumer>();
-    busConfigurator.UsingRabbitMq((context, configurator) =>
-    {
+	busConfigurator.AddConsumer<EmployeeCreatedConsumer>();
+	busConfigurator.AddConsumer<EmployeeUpdatedConsumer>();
+	busConfigurator.AddConsumer<EmployeeDeletedConsumer>();
+	busConfigurator.UsingRabbitMq((context, configurator) =>
+	{
         configurator.Host(new Uri(builder.Configuration["MessageBroker:Host"]!), h =>
         {
             h.Username(builder.Configuration["MessageBroker:Username"]!);
