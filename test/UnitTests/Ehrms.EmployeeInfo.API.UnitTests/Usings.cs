@@ -6,9 +6,14 @@ global using FluentAssertions;
 
 global using Microsoft.EntityFrameworkCore;
 
+global using Ehrms.EmployeeInfo.API.Exceptions;
+
+global using Ehrms.EmployeeInfo.API.UnitTests.TestHelpers;
+
 global using Ehrms.Contracts.Employee;
 global using Ehrms.EmployeeInfo.API.Models;
 global using Ehrms.EmployeeInfo.API.Mapping;
 global using Ehrms.EmployeeInfo.API.Context;
-global using Ehrms.EmployeeInfo.API.UnitTests.TestHelpers.Faker;
 global using Ehrms.EmployeeInfo.API.Handlers.Employee.Command;
+global using Ehrms.EmployeeInfo.API.UnitTests.TestHelpers.Fakers.Models;
+global using Ehrms.EmployeeInfo.API.UnitTests.TestHelpers.Fakers.Command;
