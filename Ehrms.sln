@@ -31,7 +31,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ehrms.ProjectManagement.API
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ehrms.Contracts", "src\Shared\Ehrms.Contracts\Ehrms.Contracts.csproj", "{776BD18C-C8BE-4DFC-B9E4-217EEFCA9F5A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ehrms.EmployeeInfo.API.UnitTests", "test\UnitTests\Ehrms.EmployeeInfo.API.UnitTests\Ehrms.EmployeeInfo.API.UnitTests.csproj", "{0245CFEC-45CD-4F07-A36E-43759E4BCF13}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ehrms.EmployeeInfo.API.UnitTests", "test\UnitTests\Ehrms.EmployeeInfo.API.UnitTests\Ehrms.EmployeeInfo.API.UnitTests.csproj", "{0245CFEC-45CD-4F07-A36E-43759E4BCF13}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ehrms.TrainingManagement.API", "src\Services\Ehrms.TrainingManagement.API\Ehrms.TrainingManagement.API.csproj", "{EB49C664-2BFF-416A-BA34-E400AA39B430}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -75,6 +77,10 @@ Global
 		{0245CFEC-45CD-4F07-A36E-43759E4BCF13}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0245CFEC-45CD-4F07-A36E-43759E4BCF13}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0245CFEC-45CD-4F07-A36E-43759E4BCF13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB49C664-2BFF-416A-BA34-E400AA39B430}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB49C664-2BFF-416A-BA34-E400AA39B430}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB49C664-2BFF-416A-BA34-E400AA39B430}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB49C664-2BFF-416A-BA34-E400AA39B430}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -92,6 +98,7 @@ Global
 		{0B001F62-EA5F-46DB-AFF2-656083412965} = {065FDA5F-5706-4E00-B7FD-36A234D47955}
 		{776BD18C-C8BE-4DFC-B9E4-217EEFCA9F5A} = {60A8E732-662B-473D-B82F-2315F877384A}
 		{0245CFEC-45CD-4F07-A36E-43759E4BCF13} = {4ABBF0FA-C5D1-4585-98BE-8BAD7C124D25}
+		{EB49C664-2BFF-416A-BA34-E400AA39B430} = {7428A7F7-5F6A-41B2-9E82-44BB101CAA41}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {39A0E1C3-1F8D-4840-AD0D-087F270984A4}
