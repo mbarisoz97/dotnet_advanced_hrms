@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Json;
+﻿using System.Net;
+using System.Net.Http.Json;
 
 namespace Ehrms.TrainingManagement.API.IntegrationTests.Controller;
 
@@ -39,5 +40,20 @@ public class TrainingControllerTests
         readTrainingResponse?.Description.Should().Be(traininig.Description);
         readTrainingResponse?.PlannedAt.Should().Be(traininig.PlannedAt);
         readTrainingResponse?.Participants.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task Delete_ExistingTrainingId_ReturnsNoContent()
+    {
+        var dbContext = CustomDbContextFactory.Create(TrainingManagementWebApplicationFactory.DatabaseName);
+        var traininig = new TrainingFaker().Generate();
+        await dbContext.AddAsync(traininig);
+        await dbContext.SaveChangesAsync();
+
+        TrainingManagementWebApplicationFactory application = new();
+        var client = application.CreateClient();
+        var response = await client.DeleteAsync($"{Endpoints.TrainingApi}/{traininig.Id}");
+
+        response.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }
 }

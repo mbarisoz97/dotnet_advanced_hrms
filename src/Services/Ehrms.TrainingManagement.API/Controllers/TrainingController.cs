@@ -34,4 +34,13 @@ public class TrainingController : ControllerBase
 
 		return Ok(readTrainingDto);
 	}
+
+	[HttpDelete("{id}")]
+	public async Task<IActionResult> Delete(Guid id)
+	{
+		var command = new DeleteTrainingCommand { Id = id };
+		await _mediator.Send(command);
+		
+		return NoContent();
+	}
 }
