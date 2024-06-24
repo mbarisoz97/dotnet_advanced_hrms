@@ -9,13 +9,6 @@
 	</PropertyGroup>
 	
 	<ItemGroup>
-		<Compile Remove="Exceptions\**" />
-		<Content Remove="Exceptions\**" />
-		<EmbeddedResource Remove="Exceptions\**" />
-		<None Remove="Exceptions\**" />
-	</ItemGroup>
-	
-	<ItemGroup>
 		<PackageReference Include="AutoMapper" Version="13.0.1" />
 		<PackageReference Include="MediatR" Version="12.3.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.6">

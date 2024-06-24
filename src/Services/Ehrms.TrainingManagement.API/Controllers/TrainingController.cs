@@ -1,4 +1,6 @@
-﻿namespace Ehrms.TrainingManagement.API.Controllers;
+﻿using Ehrms.TrainingManagement.API.Handlers.Training.Queries;
+
+namespace Ehrms.TrainingManagement.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
@@ -21,5 +23,15 @@ public class TrainingController : ControllerBase
 		var readTraniningDto = _mapper.Map<ReadTrainingDto>(training);
 
 		return Ok(readTraniningDto);
+	}
+
+	[HttpGet("{id}")]
+	public async Task<IActionResult> Get(Guid id)
+	{
+		var query = new GetTrainingByIdQuery { Id = id };
+		var training = await _mediator.Send(query);
+		var readTrainingDto = _mapper.Map<ReadTrainingDto>(training);
+
+		return Ok(readTrainingDto);
 	}
 }

@@ -5,7 +5,7 @@ namespace Ehrms.TrainingManagement.API.IntegrationTests.Controller;
 public class TrainingControllerTests
 {
     [Fact]
-    public async Task Put_ValidTrainingDetails_CreatesNewTrainingRecord()
+    public async Task Put_ValidTrainingDetails_ReturnsOkWithReadTrainingDto()
     {
         TrainingManagementWebApplicationFactory application = new();
         CreateTrainingDto createTrainingDto = new CreateTrainingDtoFaker().Generate();
@@ -19,5 +19,25 @@ public class TrainingControllerTests
         createTrainingResponse?.Description.Should().Be(createTrainingDto.Description);
         createTrainingResponse?.PlannedAt.Should().Be(createTrainingDto.PlannedAt);
         createTrainingResponse?.Participants.Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task Get_ExistingTrainingId_ReturnsOkWithReadTrainingDto()
+    {
+        var dbContext = CustomDbContextFactory.Create(TrainingManagementWebApplicationFactory.DatabaseName);
+        var traininig = new TrainingFaker().Generate();
+        await dbContext.AddAsync(traininig);
+        await dbContext.SaveChangesAsync();
+
+        TrainingManagementWebApplicationFactory application = new();
+        var client = application.CreateClient();
+        var response = await client.GetAsync($"{Endpoints.TrainingApi}/{traininig.Id}");
+        var readTrainingResponse = await response.Content.ReadFromJsonAsync<ReadTrainingDto>();
+
+        readTrainingResponse?.Id.Should().Be(traininig.Id);
+        readTrainingResponse?.Name.Should().Be(traininig.Name);
+        readTrainingResponse?.Description.Should().Be(traininig.Description);
+        readTrainingResponse?.PlannedAt.Should().Be(traininig.PlannedAt);
+        readTrainingResponse?.Participants.Should().BeEmpty();
     }
 }

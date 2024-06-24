@@ -8,8 +8,22 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Ehrms.TrainingManagement.API.IntegrationTests.TestHelpers.Configurators;
 
+internal static class CustomDbContextFactory
+{
+    internal static TrainingDbContext Create(string databaseName)
+    {
+        TrainingDbContext projectDbContext = new(new DbContextOptionsBuilder<TrainingDbContext>()
+            .UseInMemoryDatabase(databaseName)
+            .Options);
+
+        return projectDbContext;
+    }
+}
+
 internal class TrainingManagementWebApplicationFactory : WebApplicationFactory<Program>
 {
+    public const string DatabaseName = "TrainingManamagementDb";
+    
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureTestServices(services =>
@@ -19,13 +33,13 @@ internal class TrainingManagementWebApplicationFactory : WebApplicationFactory<P
 
             services.AddDbContext<TrainingDbContext>(options =>
             {
-                options.UseInMemoryDatabase("TrainingManamagementDb");
+                options.UseInMemoryDatabase(DatabaseName);
             });
 
             var dbContext = CreateDbContext(services);
         });
     }
-
+    
     private TrainingDbContext CreateDbContext(IServiceCollection services)
     {
         var serviceProvider = services.BuildServiceProvider();
