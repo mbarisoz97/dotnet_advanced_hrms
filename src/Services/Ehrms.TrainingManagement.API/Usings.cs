@@ -6,6 +6,7 @@ global using Microsoft.EntityFrameworkCore;
 global using Ehrms.Shared.Common;
 global using Ehrms.Shared.Exceptions;
 
+global using Ehrms.TrainingManagement.API.Exceptions;
 global using Ehrms.TrainingManagement.API.Context;
 global using Ehrms.TrainingManagement.API;
 global using Ehrms.TrainingManagement.API.Models;

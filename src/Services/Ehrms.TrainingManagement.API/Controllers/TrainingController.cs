@@ -43,4 +43,14 @@ public class TrainingController : ControllerBase
 		
 		return NoContent();
 	}
+
+	[HttpPost]
+	public async Task<IActionResult> Update([FromBody] UpdateTrainingDto updateTrainingDto)
+	{
+		var command = _mapper.Map<UpdateTrainingCommand>(updateTrainingDto);
+		var training = await _mediator.Send(command);
+		var readTrainingDto = _mapper.Map<ReadTrainingDto>(training);
+
+		return Ok(readTrainingDto);
+	}
 }

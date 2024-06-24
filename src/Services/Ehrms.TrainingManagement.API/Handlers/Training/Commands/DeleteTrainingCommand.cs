@@ -1,6 +1,4 @@
-﻿using Ehrms.TrainingManagement.API.Exceptions;
-
-namespace Ehrms.TrainingManagement.API.Handlers.Training.Commands;
+﻿namespace Ehrms.TrainingManagement.API.Handlers.Training.Commands;
 
 internal sealed class DeleteTrainingCommand : IRequest
 {

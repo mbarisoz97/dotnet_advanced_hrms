@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using Ehrms.TrainingManagement.API.Models;
+using System.Net;
 using System.Net.Http.Json;
 
 namespace Ehrms.TrainingManagement.API.IntegrationTests.Controller;
@@ -25,10 +26,7 @@ public class TrainingControllerTests
     [Fact]
     public async Task Get_ExistingTrainingId_ReturnsOkWithReadTrainingDto()
     {
-        var dbContext = CustomDbContextFactory.Create(TrainingManagementWebApplicationFactory.DatabaseName);
-        var traininig = new TrainingFaker().Generate();
-        await dbContext.AddAsync(traininig);
-        await dbContext.SaveChangesAsync();
+        Training traininig = await InsertRandomTraningRecord();
 
         TrainingManagementWebApplicationFactory application = new();
         var client = application.CreateClient();
@@ -45,15 +43,38 @@ public class TrainingControllerTests
     [Fact]
     public async Task Delete_ExistingTrainingId_ReturnsNoContent()
     {
-        var dbContext = CustomDbContextFactory.Create(TrainingManagementWebApplicationFactory.DatabaseName);
-        var traininig = new TrainingFaker().Generate();
-        await dbContext.AddAsync(traininig);
-        await dbContext.SaveChangesAsync();
+        Training traininig = await InsertRandomTraningRecord();
 
         TrainingManagementWebApplicationFactory application = new();
         var client = application.CreateClient();
         var response = await client.DeleteAsync($"{Endpoints.TrainingApi}/{traininig.Id}");
 
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
+    }
+
+    [Fact]
+    public async Task Post_ExistingTrainingIdWithValidDetails_ReturnsOkWithReadTrainingDto()
+    {
+        Training traininig = await InsertRandomTraningRecord();
+
+        TrainingManagementWebApplicationFactory application = new();
+        var client = application.CreateClient();
+        var updateTrainingDto = new UpdateTrainingDtoFaker()
+            .WithId(traininig.Id)
+            .Generate();
+        var response = await client.PostAsJsonAsync($"{Endpoints.TrainingApi}", updateTrainingDto);
+        var readTrainingDto = await response.Content.ReadFromJsonAsync<ReadTrainingDto>();
+        
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        readTrainingDto.Should().BeEquivalentTo(updateTrainingDto);
+    }
+
+    private static async Task<Training> InsertRandomTraningRecord()
+    {
+        var dbContext = CustomDbContextFactory.Create(TrainingManagementWebApplicationFactory.DatabaseName);
+        var traininig = new TrainingFaker().Generate();
+        await dbContext.AddAsync(traininig);
+        await dbContext.SaveChangesAsync();
+        return traininig;
     }
 }
