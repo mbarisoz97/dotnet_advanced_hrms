@@ -14,13 +14,10 @@ public class TrainingControllerTests
 
         var client = application.CreateClient();
         var response = await client.PutAsJsonAsync(Endpoints.TrainingApi, createTrainingDto);
-        var createTrainingResponse = await response.Content.ReadFromJsonAsync<ReadTrainingDto>();
+        var readTrainingDto = await response.Content.ReadFromJsonAsync<ReadTrainingDto>();
 
-        createTrainingResponse?.Id.Should().NotBe(Guid.Empty);
-        createTrainingResponse?.Name.Should().Be(createTrainingDto.Name);
-        createTrainingResponse?.Description.Should().Be(createTrainingDto.Description);
-        createTrainingResponse?.PlannedAt.Should().Be(createTrainingDto.PlannedAt);
-        createTrainingResponse?.Participants.Should().BeEmpty();
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        readTrainingDto.Should().BeEquivalentTo(createTrainingDto);
     }
 
     [Fact]
@@ -33,6 +30,7 @@ public class TrainingControllerTests
         var response = await client.GetAsync($"{Endpoints.TrainingApi}/{traininig.Id}");
         var readTrainingResponse = await response.Content.ReadFromJsonAsync<ReadTrainingDto>();
 
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
         readTrainingResponse?.Id.Should().Be(traininig.Id);
         readTrainingResponse?.Name.Should().Be(traininig.Name);
         readTrainingResponse?.Description.Should().Be(traininig.Description);
