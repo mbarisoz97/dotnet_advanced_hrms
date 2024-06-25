@@ -25,6 +25,9 @@ public class TrainingMappingProfile : Profile
 
     private void AddModelToDtoMappings()
     {
-        CreateMap<Training, ReadTrainingDto>();
+        CreateMap<Training, ReadTrainingDto>()
+            .ForMember(dest => dest.Participants,
+            opt => opt.MapFrom(
+                src => src.Participants.Select(x => x.Id)));
     }
 }
