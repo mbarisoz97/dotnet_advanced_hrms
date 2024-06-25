@@ -1,4 +1,6 @@
-﻿namespace Ehrms.TrainingManagement.API.Profiles;
+﻿using Ehrms.Contracts.Employee;
+
+namespace Ehrms.TrainingManagement.API.Profiles;
 
 public class TrainingMappingProfile : Profile
 {
@@ -6,6 +8,7 @@ public class TrainingMappingProfile : Profile
     {
         AddModelToDtoMappings();
         AddDtoToCommandMappings();
+        AddEventToModelMappings();
         AddCommandToModelMappings();
     }
 
@@ -29,5 +32,10 @@ public class TrainingMappingProfile : Profile
             .ForMember(dest => dest.Participants,
             opt => opt.MapFrom(
                 src => src.Participants.Select(x => x.Id)));
+    }
+
+    private void AddEventToModelMappings()
+    {
+        CreateMap<EmployeeCreatedEvent, Employee>();
     }
 }
