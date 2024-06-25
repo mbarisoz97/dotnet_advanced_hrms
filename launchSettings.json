@@ -5,7 +5,8 @@
       "commandVersion": "1.0",
       "serviceActions": {
         "ehrms.employeeinfo.api": "StartDebugging",
-        "ehrms.projectmanagement.api": "StartDebugging"
+        "ehrms.projectmanagement.api": "StartDebugging",
+        "ehrms.trainingmanagement.api": "StartDebugging"
       }
     }
   }
