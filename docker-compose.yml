@@ -1,4 +1,17 @@
 services:
+  ehrms.mq:
+    image: rabbitmq:management-alpine
+    container_name: Ehrms.mq
+    hostname: ehrms-mq
+    ports:
+        - 5672:5672
+    volumes:
+        - ./.container/queue/data/:/var/lib/rabbitmq 
+        - ./.container/queue/log/:/var/log/rabbitmq
+    environment:
+        RABBITMQ_DEFAULT_USER: guest
+        RABBITMQ_DEFAULT_PASS: guest
+
   ehrms.employeeinfo.api:
     image: ${DOCKER_REGISTRY-}ehrmsemployeeinfoapi
     build:
@@ -15,15 +28,10 @@ services:
     depends_on: 
         - ehrms.mq
 
-  ehrms.mq:
-    image: rabbitmq:management-alpine
-    container_name: Ehrms.mq
-    hostname: ehrms-mq
-    ports:
-        - 5672:5672
-    volumes:
-        - ./.container/queue/data/:/var/lib/rabbitmq 
-        - ./.container/queue/log/:/var/log/rabbitmq
-    environment:
-        RABBITMQ_DEFAULT_USER: guest
-        RABBITMQ_DEFAULT_PASS: guest
+  ehrms.trainingmanagement.api:
+    image: ${DOCKER_REGISTRY-}ehrmstrainingmanagementapi
+    build:
+      context: .
+      dockerfile: src/Services/Ehrms.TrainingManagement.API/Dockerfile
+    depends_on: 
+        - ehrms.mq
