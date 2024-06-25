@@ -7,7 +7,7 @@ public class GetTrainingByIdQueryHandlerTests
 
     public GetTrainingByIdQueryHandlerTests()
     {
-        var dbContext = CustomDbContextFactory.CreateWithInMemoryDatabase(DatabaseName);
+        var dbContext = TestDbContextFactory.CreateDbContext(DatabaseName);
         _handler = new(dbContext);
     }
 
@@ -23,7 +23,7 @@ public class GetTrainingByIdQueryHandlerTests
     [Fact]
     public async Task Handle_ExistingTraining_ReturnsExpectedTrainingRecord()
     {
-        var dbContext = CustomDbContextFactory.CreateWithInMemoryDatabase(DatabaseName);
+        var dbContext = TestDbContextFactory.CreateDbContext(DatabaseName);
         var training = new TrainingFaker().Generate();
         await dbContext.AddAsync(training);
         await dbContext.SaveChangesAsync();

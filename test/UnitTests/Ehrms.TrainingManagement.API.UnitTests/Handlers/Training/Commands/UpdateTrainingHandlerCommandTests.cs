@@ -7,7 +7,7 @@ public class UpdateTrainingHandlerCommandTests
 
     public UpdateTrainingHandlerCommandTests()
     {
-        var dbContext = CustomDbContextFactory.CreateWithInMemoryDatabase(DatabaseName);
+        var dbContext = TestDbContextFactory.CreateDbContext(DatabaseName);
         var mapper = MapperFactory.CreateWithExistingProfiles();
 
         _handler = new(mapper, dbContext);
@@ -25,7 +25,7 @@ public class UpdateTrainingHandlerCommandTests
     [Fact]
     public async Task Handle_ExistingTraining_UpdatesTrainingRecord()
     {
-        var dbContext = CustomDbContextFactory.CreateWithInMemoryDatabase(DatabaseName);
+        var dbContext = TestDbContextFactory.CreateDbContext(DatabaseName);
         var employeeFaker = new EmployeeFaker();
         var employeeList = new List<Employee>
         {

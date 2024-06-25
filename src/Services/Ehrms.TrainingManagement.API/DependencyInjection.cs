@@ -10,7 +10,7 @@ internal static class DependencyInjection
 		return services;
 	}
 
-	private static IServiceCollection AddThirdPartyLibraries(IServiceCollection services)
+	private static void AddThirdPartyLibraries(IServiceCollection services)
 	{
 		var assembly = Assembly.GetExecutingAssembly();
 
@@ -19,7 +19,5 @@ internal static class DependencyInjection
 		{
 			config.RegisterServicesFromAssembly(assembly);
 		});
-
-		return services;
 	}
 }

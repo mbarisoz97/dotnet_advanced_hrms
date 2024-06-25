@@ -10,7 +10,7 @@ namespace Ehrms.TrainingManagement.API.UnitTests.Consumers.EmployeeInfo;
 public class EmployeeCreatedEventConsumerTests
 {
 	private readonly EmployeeCreatedEventConsumer _consumer;
-	private TrainingDbContext DbContext => CustomDbContextFactory.CreateWithInMemoryDatabase("EmployeeCreatedEventConsumerDb");
+	private TrainingDbContext DbContext => TestDbContextFactory.CreateDbContext("EmployeeCreatedEventConsumerDb");
 
 	public EmployeeCreatedEventConsumerTests()
 	{
@@ -27,7 +27,7 @@ public class EmployeeCreatedEventConsumerTests
 			.Returns(employeeCreatedEvent);
 
 		await _consumer.Consume(contextMock.Object);
-		
+
 		var employee = DbContext.Employees.FirstOrDefault(x => x.Id == employeeCreatedEvent.Id);
 
 		employee.Should().BeEquivalentTo(employeeCreatedEvent);

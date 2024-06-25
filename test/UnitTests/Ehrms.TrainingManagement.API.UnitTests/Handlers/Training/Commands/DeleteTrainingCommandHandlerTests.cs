@@ -7,7 +7,7 @@ public class DeleteTrainingCommandHandlerTests
 
     public DeleteTrainingCommandHandlerTests()
     {
-        var dbContext = CustomDbContextFactory.CreateWithInMemoryDatabase(DatabaseName);
+        var dbContext = TestDbContextFactory.CreateDbContext(DatabaseName);
         _handler = new(dbContext);
     }
 
@@ -23,7 +23,7 @@ public class DeleteTrainingCommandHandlerTests
     [Fact]
     public async Task Handle_ExistingTrainig_RemovesTrainingRecord()
     {
-        var dbContext = CustomDbContextFactory.CreateWithInMemoryDatabase(DatabaseName);
+        var dbContext = TestDbContextFactory.CreateDbContext(DatabaseName);
         var training = new TrainingFaker().Generate();
         await dbContext.AddAsync(training);
         await dbContext.SaveChangesAsync();

@@ -8,7 +8,7 @@ public class CreateTrainingCommandHandlerTests
     public CreateTrainingCommandHandlerTests()
     {
         var mapper = MapperFactory.CreateWithExistingProfiles();
-        var dbContext = CustomDbContextFactory.CreateWithInMemoryDatabase(DatabaseName);
+        var dbContext = TestDbContextFactory.CreateDbContext(DatabaseName);
 
         _handler = new(mapper, dbContext);
     }
