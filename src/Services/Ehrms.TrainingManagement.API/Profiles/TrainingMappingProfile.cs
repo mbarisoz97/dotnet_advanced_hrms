@@ -37,5 +37,6 @@ public class TrainingMappingProfile : Profile
     private void AddEventToModelMappings()
     {
         CreateMap<EmployeeCreatedEvent, Employee>();
+        CreateMap<EmployeeUpdatedEvent, Employee>();
     }
 }

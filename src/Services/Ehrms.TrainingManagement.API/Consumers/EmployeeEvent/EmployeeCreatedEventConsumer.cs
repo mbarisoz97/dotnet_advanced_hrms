@@ -1,5 +1,5 @@
-﻿using Ehrms.Contracts.Employee;
-using MassTransit;
+﻿using MassTransit;
+using Ehrms.Contracts.Employee;
 
 namespace Ehrms.TrainingManagement.API.Consumers.EmployeeEvent;
 

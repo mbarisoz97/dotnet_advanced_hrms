@@ -1,36 +1,37 @@
 ﻿using Moq;
 using MassTransit;
-using Microsoft.Extensions.Logging;
 using Ehrms.Contracts.Employee;
+using Microsoft.Extensions.Logging;
 using Ehrms.TrainingManagement.API.Consumers.EmployeeEvent;
 using Ehrms.TrainingManagement.API.UnitTests.TestHelpers.Fakers.Events;
 
 namespace Ehrms.TrainingManagement.API.UnitTests.Consumers.EmployeeInfo;
 
-public class EmployeeDeletedEventConsumerTests
+public class EmployeeUpdatedEventConsumerTests
 {
-	private readonly Mock<ILogger<EmployeeDeletedEventConsumer>> _loggerMock = new();
+	private readonly Mock<ILogger<EmployeeUpdatedEventConsumer>> _loggerMock = new();
+	private readonly IMapper _mapper = MapperFactory.CreateWithExistingProfiles();
 
 	[Fact]
-	public async Task Consume_ExistingEmployee_RemovesFromDatabase()
+	public async Task Consume_ExistingEmployee_UpdatesEmployeeRecord()
 	{
 		var dbContext = TestDbContextFactory.CreateDbContext($"{Guid.NewGuid()}");
-		EmployeeDeletedEventConsumer consumer = new(_loggerMock.Object, dbContext);
+		EmployeeUpdatedEventConsumer consumer = new(_mapper, dbContext, _loggerMock.Object);
 
 		var employee = new EmployeeFaker().Generate();
 		await dbContext.Employees.AddAsync(employee);
 		await dbContext.SaveChangesAsync();
 
-		var employeeDeletedEvent = new EmployeeDeletedEventFaker()
+		var employeeUpdatedEvent = new EmployeeUpdatedEventFaker()
 			.WithId(employee.Id)
 			.Generate();
 
-		Mock<ConsumeContext<EmployeeDeletedEvent>> contextMock = new();
+		Mock<ConsumeContext<EmployeeUpdatedEvent>> contextMock = new();
 		contextMock.Setup(x => x.Message)
-			.Returns(employeeDeletedEvent);
+			.Returns(employeeUpdatedEvent);
 
 		await consumer.Consume(contextMock.Object);
 
-		dbContext.Employees.Should().HaveCount(0);
+		employee.Should().BeEquivalentTo(employeeUpdatedEvent);
 	}
 }
