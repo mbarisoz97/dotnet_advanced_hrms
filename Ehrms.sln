@@ -37,7 +37,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ehrms.TrainingManagement.AP
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ehrms.TrainingManagement.API.UnitTests", "test\UnitTests\Ehrms.TrainingManagement.API.UnitTests\Ehrms.TrainingManagement.API.UnitTests.csproj", "{DFDF410A-4719-4CEF-9569-4E209D8C8535}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ehrms.TrainingManagement.API.IntegrationTests", "test\IntegrationTests\Ehrms.TrainingManagement.API.IntegrationTests\Ehrms.TrainingManagement.API.IntegrationTests.csproj", "{D8F2CBF0-7059-48F3-97C9-907FFD39AA26}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ehrms.TrainingManagement.API.IntegrationTests", "test\IntegrationTests\Ehrms.TrainingManagement.API.IntegrationTests\Ehrms.TrainingManagement.API.IntegrationTests.csproj", "{D8F2CBF0-7059-48F3-97C9-907FFD39AA26}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ehrms.ApiGateway", "src\ApiGateway\Ehrms.ApiGateway\Ehrms.ApiGateway.csproj", "{D8E4A42D-D920-470C-8580-E375958661A1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "gateway", "gateway", "{C0C49845-1537-4705-97A1-ECC9DDAD505A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -93,6 +97,10 @@ Global
 		{D8F2CBF0-7059-48F3-97C9-907FFD39AA26}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D8F2CBF0-7059-48F3-97C9-907FFD39AA26}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D8F2CBF0-7059-48F3-97C9-907FFD39AA26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D8E4A42D-D920-470C-8580-E375958661A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D8E4A42D-D920-470C-8580-E375958661A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D8E4A42D-D920-470C-8580-E375958661A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D8E4A42D-D920-470C-8580-E375958661A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -113,6 +121,8 @@ Global
 		{EB49C664-2BFF-416A-BA34-E400AA39B430} = {7428A7F7-5F6A-41B2-9E82-44BB101CAA41}
 		{DFDF410A-4719-4CEF-9569-4E209D8C8535} = {4ABBF0FA-C5D1-4585-98BE-8BAD7C124D25}
 		{D8F2CBF0-7059-48F3-97C9-907FFD39AA26} = {065FDA5F-5706-4E00-B7FD-36A234D47955}
+		{D8E4A42D-D920-470C-8580-E375958661A1} = {C0C49845-1537-4705-97A1-ECC9DDAD505A}
+		{C0C49845-1537-4705-97A1-ECC9DDAD505A} = {6BCCF7F9-9E97-40AE-82D8-94AA9C7D3794}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {39A0E1C3-1F8D-4840-AD0D-087F270984A4}
