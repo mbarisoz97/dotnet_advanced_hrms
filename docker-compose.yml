@@ -28,6 +28,14 @@ services:
         RABBITMQ_DEFAULT_PASS: guest
     networks:
         - proxybackend
+ 
+  ehrms.authentication.api:
+    image: ${DOCKER_REGISTRY-}ehrmsauthenticationapi
+    build:
+      context: .
+      dockerfile: src/Services/Ehrms.Authentication.API/Dockerfile
+    networks:
+        - proxybackend
 
   ehrms.employeeinfo.api:
     image: ${DOCKER_REGISTRY-}ehrmsemployeeinfoapi

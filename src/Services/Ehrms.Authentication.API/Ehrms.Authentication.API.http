@@ -1,0 +1,6 @@
+@Ehrms.Authentication.API_HostAddress = http://localhost:5219
+
+GET {{Ehrms.Authentication.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

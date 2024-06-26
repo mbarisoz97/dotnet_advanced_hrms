@@ -1,9 +1,11 @@
 ﻿using Ehrms.ProjectManagement.API.Handlers.Project.Queries;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Ehrms.ProjectManagement.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class ProjectController : ControllerBase
 {
     private readonly IMapper _mapper;
