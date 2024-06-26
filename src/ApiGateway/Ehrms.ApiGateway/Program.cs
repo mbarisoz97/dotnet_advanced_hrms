@@ -1,6 +1,16 @@
+using System.Net;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddReverseProxy()
+    .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+    //.ConfigureHttpClient((context, handler) =>
+    //{
+    //    handler.AllowAutoRedirect = true;
+    //});
+
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
+app.MapReverseProxy();
 
 app.Run();

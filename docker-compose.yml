@@ -1,4 +1,19 @@
 services:
+  ehrms.apigateway:
+    image: ${DOCKER_REGISTRY-}ehrmsapigateway
+    build:
+      context: .
+      dockerfile: src/ApiGateway/Ehrms.ApiGateway/Dockerfile
+    ports:
+        - "5000:8080"
+        - "5001:8081"
+    networks:
+        - proxybackend
+    depends_on: 
+        - ehrms.employeeinfo.api
+        - ehrms.projectmanagement.api
+        - ehrms.trainingmanagement.api
+
   ehrms.mq:
     image: rabbitmq:management-alpine
     container_name: Ehrms.mq
@@ -11,6 +26,8 @@ services:
     environment:
         RABBITMQ_DEFAULT_USER: guest
         RABBITMQ_DEFAULT_PASS: guest
+    networks:
+        - proxybackend
 
   ehrms.employeeinfo.api:
     image: ${DOCKER_REGISTRY-}ehrmsemployeeinfoapi
@@ -19,7 +36,12 @@ services:
       dockerfile: src/Services/Ehrms.EmployeeInfo.API/Dockerfile
     depends_on: 
         - ehrms.mq
-
+    ports:
+        - "5100:8080"
+        - "5101:8081"
+    networks:
+        - proxybackend
+ 
   ehrms.projectmanagement.api:
     image: ${DOCKER_REGISTRY-}ehrmsprojectmanagementapi
     build:
@@ -27,6 +49,8 @@ services:
       dockerfile: src/Services/Ehrms.ProjectManagement.API/Dockerfile
     depends_on: 
         - ehrms.mq
+    networks:
+        - proxybackend
 
   ehrms.trainingmanagement.api:
     image: ${DOCKER_REGISTRY-}ehrmstrainingmanagementapi
@@ -35,3 +59,10 @@ services:
       dockerfile: src/Services/Ehrms.TrainingManagement.API/Dockerfile
     depends_on: 
         - ehrms.mq
+    networks:
+        - proxybackend
+
+networks:
+  proxybackend:
+    name: proxybackend
+    driver: bridge
