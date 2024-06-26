@@ -15,4 +15,8 @@
     <PackageReference Include="Yarp.ReverseProxy" Version="2.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\Shared\Ehrms.Shared\Ehrms.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

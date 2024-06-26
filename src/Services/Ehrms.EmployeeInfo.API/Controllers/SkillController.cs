@@ -1,7 +1,10 @@
-﻿namespace Ehrms.EmployeeInfo.API.Controllers;
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace Ehrms.EmployeeInfo.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class SkillController : ControllerBase
 {
     private readonly IMapper _mapper;

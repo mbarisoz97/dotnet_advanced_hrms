@@ -1,9 +1,11 @@
 ﻿using Ehrms.TrainingManagement.API.Handlers.Training.Queries;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Ehrms.TrainingManagement.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Authorize]
 public class TrainingController : ControllerBase
 {
     private readonly IMapper _mapper;

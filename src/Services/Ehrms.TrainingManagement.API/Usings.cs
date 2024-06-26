@@ -12,3 +12,7 @@ global using Ehrms.TrainingManagement.API;
 global using Ehrms.TrainingManagement.API.Models;
 global using Ehrms.TrainingManagement.API.Dtos.Training;
 global using Ehrms.TrainingManagement.API.Handlers.Training.Commands;
+
+global using MassTransit;
+global using Ehrms.Shared;
+global using Ehrms.TrainingManagement.API.Consumers.EmployeeEvent;
