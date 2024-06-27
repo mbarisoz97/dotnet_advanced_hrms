@@ -1,7 +1,7 @@
 ﻿using Bogus;
 using Ehrms.EmployeeInfo.API.Dtos.Skill;
 
-namespace Ehrms.EmployeeInfo.API.IntegrationTests.Faker.Dto;
+namespace Ehrms.EmployeeInfo.API.IntegrationTests.TestHelpers.Fakers.Dto;
 
 internal class CreateSkillDtoFaker : Faker<CreateSkillDto>
 {

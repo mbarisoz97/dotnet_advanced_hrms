@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 using System.Security.Claims;
 using System.Text.Encodings.Web;
 
-namespace Ehrms.EmployeeInfo.API.IntegrationTests;
+namespace Ehrms.ProjectManagement.API.IntegrationTests.TestHelpers.Configurations;
 
 public class TestAuthHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 {

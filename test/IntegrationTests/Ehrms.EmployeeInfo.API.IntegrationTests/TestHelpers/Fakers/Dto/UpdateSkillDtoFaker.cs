@@ -1,4 +1,4 @@
-﻿namespace Ehrms.EmployeeInfo.API.IntegrationTests.Faker.Dto;
+﻿namespace Ehrms.EmployeeInfo.API.IntegrationTests.TestHelpers.Fakers.Dto;
 
 internal class UpdateSkillDtoFaker : Faker<UpdateSkillDto>
 {

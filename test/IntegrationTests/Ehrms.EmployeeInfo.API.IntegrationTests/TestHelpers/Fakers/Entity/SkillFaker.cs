@@ -1,7 +1,7 @@
 ﻿using Bogus;
 using Ehrms.EmployeeInfo.API.Models;
 
-namespace Ehrms.EmployeeInfo.API.IntegrationTests;
+namespace Ehrms.EmployeeInfo.API.IntegrationTests.TestHelpers.Fakers.Entity;
 
 internal class SkillFaker : Faker<Skill>
 {

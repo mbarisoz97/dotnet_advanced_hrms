@@ -54,3 +54,7 @@ app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 app.MapControllers();
 
 app.Run();
+
+//Do not remove following partial definition.
+//It is required for unit tests.
+public partial class Program { }

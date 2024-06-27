@@ -1,17 +1,31 @@
-﻿using Ehrms.EmployeeInfo.API.Dtos.Skill;
+﻿using Ehrms.Shared;
+using System.Net.Http.Headers;
 
 namespace Ehrms.EmployeeInfo.API.IntegrationTests.Controllers;
 
-public class SkillControllerTests
+public class SkillControllerTests : IAsyncLifetime
 {
+    private readonly EmployeeInfoWebApplicationFactory application = new();
+    private readonly HttpClient _client;
+
+    public SkillControllerTests()
+    {
+        _client = application.CreateClient();
+        var request = new AuthenticationRequest
+        {
+            Username = "TestUser",
+            Password = "TestPassword"
+        };
+        var jwt = new JwtTokenHandler().Generate(request);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.Token);
+    }
+
     [Fact]
     public async Task Put_ValidSkillName_ReturnsOkWithReadSkillDto()
     {
-        EmployeeInfoWebApplicationFactory application = new();
         CreateSkillDto createSkillDto = new CreateSkillDtoFaker().Generate();
 
-        var client = application.CreateClient();
-        var response = await client.PutAsJsonAsync(Endpoints.EmployeeSkillsApi, createSkillDto);
+        var response = await _client.PutAsJsonAsync(Endpoints.EmployeeSkillsApi, createSkillDto);
         var createSkillResponse = await response.Content.ReadFromJsonAsync<ReadSkillDto>();
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -22,15 +36,13 @@ public class SkillControllerTests
     [Fact]
     public async Task Get_ExistingSkillId_ReturnsOkWithReadSkillDto()
     {
-        EmployeeInfoWebApplicationFactory application = new();
         CreateSkillDto createSkillDto = new CreateSkillDtoFaker().Generate();
 
-        var client = application.CreateClient();
-        var response = await client.PutAsJsonAsync(Endpoints.EmployeeSkillsApi, createSkillDto);
+        var response = await _client.PutAsJsonAsync(Endpoints.EmployeeSkillsApi, createSkillDto);
         response.EnsureSuccessStatusCode();
         var createSkillResponse = await response.Content.ReadFromJsonAsync<ReadSkillDto>();
 
-        response = await client.GetAsync($"{Endpoints.EmployeeSkillsApi}/{createSkillResponse?.Id}");
+        response = await _client.GetAsync($"{Endpoints.EmployeeSkillsApi}/{createSkillResponse?.Id}");
         var readSkillDto = await response.Content.ReadFromJsonAsync<ReadSkillDto>();
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -41,25 +53,19 @@ public class SkillControllerTests
     [Fact]
     public async Task Get_NonExistingSkillId_ReturnsNotFound()
     {
-        EmployeeInfoWebApplicationFactory application = new();
-        var client = application.CreateClient();
-        var response = await client.GetAsync($"{Endpoints.EmployeeSkillsApi}/{Guid.NewGuid()}");
-
+        var response = await _client.GetAsync($"{Endpoints.EmployeeSkillsApi}/{Guid.NewGuid()}");
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Fact]
     public async Task Delete_ExistingSkillId_ReturnsNoContent()
     {
-        EmployeeInfoWebApplicationFactory application = new();
         CreateSkillDto createSkillDto = new CreateSkillDtoFaker().Generate();
 
-        var client = application.CreateClient();
-        var response = await client.PutAsJsonAsync(Endpoints.EmployeeSkillsApi, createSkillDto);
+        var response = await _client.PutAsJsonAsync(Endpoints.EmployeeSkillsApi, createSkillDto);
         response.EnsureSuccessStatusCode();
         var createSkillResponse = await response.Content.ReadFromJsonAsync<ReadEmployeeDto>();
-
-        response = await client.DeleteAsync($"{Endpoints.EmployeeSkillsApi}/{createSkillResponse?.Id}");
+        response = await _client.DeleteAsync($"{Endpoints.EmployeeSkillsApi}/{createSkillResponse?.Id}");
 
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
     }
@@ -67,21 +73,25 @@ public class SkillControllerTests
     [Fact]
     public async Task Delete_NonExistingSkillId_ReturnsNotFound()
     {
-        EmployeeInfoWebApplicationFactory application = new();
-        var client = application.CreateClient();
-        var response = await client.DeleteAsync($"{Endpoints.EmployeeSkillsApi}/{Guid.NewGuid()}");
-
+        var response = await _client.DeleteAsync($"{Endpoints.EmployeeSkillsApi}/{Guid.NewGuid()}");
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 
     [Fact]
     public async Task Post_NonExistingSkillId_ReturnsNotFound()
     {
-        EmployeeInfoWebApplicationFactory application = new();
-        var client = application.CreateClient();
         var updateSkillDto = new UpdateSkillDtoFaker().Generate();
-
-        var response = await client.PostAsJsonAsync(Endpoints.EmployeeSkillsApi, updateSkillDto);
+        var response = await _client.PostAsJsonAsync(Endpoints.EmployeeSkillsApi, updateSkillDto);
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+    }
+
+    public async Task InitializeAsync()
+    {
+        await application.Start();
+    }
+
+    public async Task DisposeAsync()
+    {
+        await application.Stop();
     }
 }

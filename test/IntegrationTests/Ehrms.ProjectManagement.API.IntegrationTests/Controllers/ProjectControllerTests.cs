@@ -1,17 +1,33 @@
-﻿using System.Net;
+﻿using Ehrms.Shared;
+using System.Net;
+using System.Net.Http.Headers;
 
 namespace Ehrms.ProjectManagement.API.IntegrationTests.Controllers;
 
-public class ProjectControllerTests
+public class ProjectControllerTests : IAsyncLifetime
 {
+    private readonly ProjectManagementWebApplicationFactory _application;
+    private readonly HttpClient _client;
+
+    public ProjectControllerTests()
+    {
+        _application = new();
+        _client = _application.CreateClient();
+
+        var request = new AuthenticationRequest
+        {
+            Username = "TestUser",
+            Password = "TestPassword"
+        };
+        var jwt = new JwtTokenHandler().Generate(request);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.Token);
+    }
+
     [Fact]
     public async Task Put_ValidProjectDetails_ReturnsOkWithReadProjectDto()
     {
-        var application = new ProjectManagementWebApplicationFactory();
         CreateProjectDto createProjectDto = new CreateProjectDtoFaker().Generate();
-
-        var client = application.CreateClient();
-        var putProjectResponse = await client.PutAsJsonAsync(Endpoints.ProjectApi, createProjectDto);
+        var putProjectResponse = await _client.PutAsJsonAsync(Endpoints.ProjectApi, createProjectDto);
 
         putProjectResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -25,15 +41,13 @@ public class ProjectControllerTests
     [Fact]
     public async Task Delete_ExistingProject_ReturnsNoContent()
     {
-        var application = new ProjectManagementWebApplicationFactory();
         CreateProjectDto createProjectDto = new CreateProjectDtoFaker().Generate();
 
-        var client = application.CreateClient();
-        var putProjectResponse = await client.PutAsJsonAsync(Endpoints.ProjectApi, createProjectDto);
+        var putProjectResponse = await _client.PutAsJsonAsync(Endpoints.ProjectApi, createProjectDto);
         putProjectResponse.EnsureSuccessStatusCode();
         var readProjectDto = await putProjectResponse.Content.ReadFromJsonAsync<ReadProjectDto>();
 
-        var deleteProjectResponse = await client.DeleteAsync($"{Endpoints.ProjectApi}/{readProjectDto!.Id}");
+        var deleteProjectResponse = await _client.DeleteAsync($"{Endpoints.ProjectApi}/{readProjectDto!.Id}");
 
         deleteProjectResponse.StatusCode.Should()
             .Be(HttpStatusCode.NoContent);
@@ -42,9 +56,7 @@ public class ProjectControllerTests
     [Fact]
     public async Task Delete_NonExistingProject_ReturnsNotFound()
     {
-        var application = new ProjectManagementWebApplicationFactory();
-        var client = application.CreateClient();
-        var deleteProjectResponse = await client.DeleteAsync($"{Endpoints.ProjectApi}/{Guid.NewGuid()}");
+        var deleteProjectResponse = await _client.DeleteAsync($"{Endpoints.ProjectApi}/{Guid.NewGuid()}");
 
         deleteProjectResponse.StatusCode.Should()
              .Be(HttpStatusCode.NotFound);
@@ -53,9 +65,7 @@ public class ProjectControllerTests
     [Fact]
     public async Task Get_NonExistingProject_ReturnsNotFound()
     {
-        var application = new ProjectManagementWebApplicationFactory();
-        var client = application.CreateClient();
-        var getProjectResponse = await client.GetAsync($"{Endpoints.ProjectApi}/{Guid.NewGuid()}");
+        var getProjectResponse = await _client.GetAsync($"{Endpoints.ProjectApi}/{Guid.NewGuid()}");
 
         getProjectResponse.StatusCode.Should()
             .Be(HttpStatusCode.NotFound);
@@ -64,15 +74,13 @@ public class ProjectControllerTests
     [Fact]
     public async Task Get_ExistingProject_ReturnsOkWithReadProjectDto()
     {
-        var application = new ProjectManagementWebApplicationFactory();
         CreateProjectDto createProjectDto = new CreateProjectDtoFaker().Generate();
 
-        var client = application.CreateClient();
-        var putProjectResponse = await client.PutAsJsonAsync(Endpoints.ProjectApi, createProjectDto);
+        var putProjectResponse = await _client.PutAsJsonAsync(Endpoints.ProjectApi, createProjectDto);
         putProjectResponse.EnsureSuccessStatusCode();
         var readProjectDtoFromPut = await putProjectResponse.Content.ReadFromJsonAsync<ReadProjectDto>();
 
-        var getProjectResponse = await client.GetAsync($"{Endpoints.ProjectApi}/{readProjectDtoFromPut!.Id}");
+        var getProjectResponse = await _client.GetAsync($"{Endpoints.ProjectApi}/{readProjectDtoFromPut!.Id}");
 
         getProjectResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
@@ -86,12 +94,8 @@ public class ProjectControllerTests
     [Fact]
     public async Task Update_NonExistingProject_ReturnsNotFound()
     {
-        var application = new ProjectManagementWebApplicationFactory();
-        CreateProjectDto createProjectDto = new CreateProjectDtoFaker().Generate();
         UpdateProjectDto updateProjectDto = new();
-
-        var client = application.CreateClient();
-        var postResponse = await client.PostAsJsonAsync(Endpoints.ProjectApi, updateProjectDto);
+        var postResponse = await _client.PostAsJsonAsync(Endpoints.ProjectApi, updateProjectDto);
 
         postResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
@@ -99,23 +103,31 @@ public class ProjectControllerTests
     [Fact]
     public async Task Post_ValidUpdateDetails_ReturnsOkWithReadProjectDto()
     {
-        var application = new ProjectManagementWebApplicationFactory();
         CreateProjectDto createProjectDto = new CreateProjectDtoFaker().Generate();
 
-        var client = application.CreateClient();
-        var putProjectResponse = await client.PutAsJsonAsync(Endpoints.ProjectApi, createProjectDto);
+        var putProjectResponse = await _client.PutAsJsonAsync(Endpoints.ProjectApi, createProjectDto);
         putProjectResponse.EnsureSuccessStatusCode();
         var readProjectDtoFromPut = await putProjectResponse.Content.ReadFromJsonAsync<ReadProjectDto>();
 
         UpdateProjectDto updateProjectDto = new UpdateProjectDtoFaker().Generate();
         updateProjectDto.Id = readProjectDtoFromPut!.Id;
 
-        var getProjectResponse = await client.PostAsJsonAsync($"{Endpoints.ProjectApi}", updateProjectDto);
+        var getProjectResponse = await _client.PostAsJsonAsync($"{Endpoints.ProjectApi}", updateProjectDto);
         var readProjectDtoFromPost = await getProjectResponse.Content.ReadFromJsonAsync<ReadProjectDto>();
 
         getProjectResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
         readProjectDtoFromPost?.Name.Should().Be(updateProjectDto.Name);
         readProjectDtoFromPost?.Description.Should().Be(updateProjectDto.Description);
+    }
+
+    public async Task InitializeAsync()
+    {
+        await _application.Start();
+    }
+
+    public async Task DisposeAsync()
+    {
+        await _application.Stop();
     }
 }

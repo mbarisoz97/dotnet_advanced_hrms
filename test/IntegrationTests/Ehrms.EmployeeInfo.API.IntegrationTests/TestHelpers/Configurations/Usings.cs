@@ -7,4 +7,4 @@ global using FluentAssertions;
 
 global using Ehrms.EmployeeInfo.API.Dtos.Skill;
 global using Ehrms.EmployeeInfo.API.Dtos.Employee;
-global using Ehrms.EmployeeInfo.API.IntegrationTests.Faker.Dto;
+global using Ehrms.EmployeeInfo.API.IntegrationTests.TestHelpers.Fakers.Dto;
