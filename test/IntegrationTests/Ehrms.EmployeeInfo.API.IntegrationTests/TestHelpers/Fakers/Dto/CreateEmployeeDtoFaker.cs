@@ -1,11 +1,11 @@
 ﻿using Bogus;
-using Ehrms.EmployeeInfo.API.Models;
+using Ehrms.EmployeeInfo.API.Dtos.Employee;
 
-namespace Ehrms.EmployeeInfo.API.IntegrationTests;
+namespace Ehrms.EmployeeInfo.API.IntegrationTests.TestHelpers.Fakers.Dto;
 
-internal class EmployeeFaker : Faker<Employee>
+internal class CreateEmployeeDtoFaker : Faker<CreateEmployeeDto>
 {
-    public EmployeeFaker()
+    public CreateEmployeeDtoFaker()
     {
         RuleFor(e => e.FirstName, f => f.Name.FirstName());
         RuleFor(e => e.LastName, f => f.Name.LastName());
