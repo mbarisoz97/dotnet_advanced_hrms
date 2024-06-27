@@ -4,15 +4,15 @@ using System.Net.Http.Headers;
 
 namespace Ehrms.ProjectManagement.API.IntegrationTests.Controllers;
 
-public class ProjectControllerTests : IAsyncLifetime
+public class ProjectControllerTests : IClassFixture<ProjectManagementWebApplicationFactory>
 {
-    private readonly ProjectManagementWebApplicationFactory _application;
+    private readonly ProjectManagementWebApplicationFactory _factory;
     private readonly HttpClient _client;
 
-    public ProjectControllerTests()
+    public ProjectControllerTests(ProjectManagementWebApplicationFactory factory)
     {
-        _application = new();
-        _client = _application.CreateClient();
+        _factory = factory;
+        _client = _factory.CreateClient();
 
         var request = new AuthenticationRequest
         {
@@ -21,6 +21,7 @@ public class ProjectControllerTests : IAsyncLifetime
         };
         var jwt = new JwtTokenHandler().Generate(request);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.Token);
+        _factory = factory;
     }
 
     [Fact]
@@ -119,15 +120,5 @@ public class ProjectControllerTests : IAsyncLifetime
 
         readProjectDtoFromPost?.Name.Should().Be(updateProjectDto.Name);
         readProjectDtoFromPost?.Description.Should().Be(updateProjectDto.Description);
-    }
-
-    public async Task InitializeAsync()
-    {
-        await _application.Start();
-    }
-
-    public async Task DisposeAsync()
-    {
-        await _application.Stop();
     }
 }

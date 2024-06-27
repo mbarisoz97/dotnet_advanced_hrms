@@ -3,15 +3,15 @@ using System.Net.Http.Headers;
 
 namespace Ehrms.EmployeeInfo.API.IntegrationTests.Controllers;
 
-public class EmployeeControllerTests : IAsyncLifetime
+public class EmployeeControllerTests : IClassFixture<EmployeeInfoWebApplicationFactory>
 {
-    private readonly EmployeeInfoWebApplicationFactory _application;
+    private readonly EmployeeInfoWebApplicationFactory _factory;
     private readonly HttpClient _client;
 
-    public EmployeeControllerTests()
+    public EmployeeControllerTests(EmployeeInfoWebApplicationFactory factory)
     {
-        _application = new();
-        _client = _application.CreateClient();
+        _factory = factory;
+        _client = _factory.CreateClient();
 
         var request = new AuthenticationRequest
         {
@@ -20,6 +20,7 @@ public class EmployeeControllerTests : IAsyncLifetime
         };
         var jwt = new JwtTokenHandler().Generate(request);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.Token);
+        _factory = factory;
     }
 
     [Fact]
@@ -101,15 +102,5 @@ public class EmployeeControllerTests : IAsyncLifetime
         updateEmployeeResponse?.LastName.Should().Be(updateEmployeeDto.LastName);
         updateEmployeeResponse?.Qualification.Should().Be(updateEmployeeDto.Qualification);
         updateEmployeeResponse?.DateOfBirth.Should().Be(updateEmployeeDto.DateOfBirth);
-    }
-
-    public async Task InitializeAsync()
-    {
-        await _application.Start();
-    }
-
-    public async Task DisposeAsync()
-    {
-        await _application.Stop();
     }
 }

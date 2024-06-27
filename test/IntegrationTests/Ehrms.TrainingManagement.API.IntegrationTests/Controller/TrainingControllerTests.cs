@@ -6,15 +6,15 @@ using Ehrms.TrainingManagement.API.Models;
 
 namespace Ehrms.TrainingManagement.API.IntegrationTests.Controller;
 
-public class TrainingControllerTests : IAsyncLifetime
+public class TrainingControllerTests : IClassFixture<TrainingManagementWebApplicationFactory>
 {
-    private readonly TrainingManagementWebApplicationFactory _application = new();
+    private readonly TrainingManagementWebApplicationFactory _factory;
     private readonly HttpClient _client;
 
-    public TrainingControllerTests()
+    public TrainingControllerTests(TrainingManagementWebApplicationFactory factory)
     {
-        _application = new();
-        _client = _application.CreateClient();
+        _factory = factory;
+        _client = _factory.CreateClient();
 
         var request = new AuthenticationRequest
         {
@@ -28,13 +28,14 @@ public class TrainingControllerTests : IAsyncLifetime
     [Fact]
     public async Task Put_ValidTrainingDetails_ReturnsOkWithReadTrainingDto()
     {
-        TrainingManagementWebApplicationFactory application = new();
         CreateTrainingDto createTrainingDto = new CreateTrainingDtoFaker().Generate();
 
         var response = await _client.PutAsJsonAsync(Endpoints.TrainingApi, createTrainingDto);
-        var readTrainingDto = await response.Content.ReadFromJsonAsync<ReadTrainingDto>();
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var readTrainingDto = await response.Content.ReadFromJsonAsync<ReadTrainingDto>();
+
         readTrainingDto.Should().BeEquivalentTo(createTrainingDto);
     }
 
@@ -43,7 +44,6 @@ public class TrainingControllerTests : IAsyncLifetime
     {
         Training traininig = await InsertRandomTraningRecord();
 
-        TrainingManagementWebApplicationFactory application = new();
         var response = await _client.GetAsync($"{Endpoints.TrainingApi}/{traininig.Id}");
         var readTrainingResponse = await response.Content.ReadFromJsonAsync<ReadTrainingDto>();
 
@@ -60,7 +60,6 @@ public class TrainingControllerTests : IAsyncLifetime
     {
         await InsertRandomTraningRecord();
 
-        TrainingManagementWebApplicationFactory application = new();
         var response = await _client.GetAsync($"{Endpoints.TrainingApi}");
         var readTrainingResponse = await response.Content.ReadFromJsonAsync<List<ReadTrainingDto>>();
 
@@ -73,7 +72,6 @@ public class TrainingControllerTests : IAsyncLifetime
     {
         Training traininig = await InsertRandomTraningRecord();
 
-        TrainingManagementWebApplicationFactory application = new();
         var response = await _client.DeleteAsync($"{Endpoints.TrainingApi}/{traininig.Id}");
 
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
@@ -84,7 +82,6 @@ public class TrainingControllerTests : IAsyncLifetime
     {
         Training traininig = await InsertRandomTraningRecord();
 
-        TrainingManagementWebApplicationFactory application = new();
         var updateTrainingDto = new UpdateTrainingDtoFaker()
             .WithId(traininig.Id)
             .Generate();
@@ -97,20 +94,10 @@ public class TrainingControllerTests : IAsyncLifetime
 
     private async Task<Training> InsertRandomTraningRecord()
     {
-        var dbContext = _application.CreateDbContext();
+        var dbContext = _factory.CreateDbContext();
         var traininig = new TrainingFaker().Generate();
         await dbContext.AddAsync(traininig);
         await dbContext.SaveChangesAsync();
         return traininig;
-    }
-
-    public async Task InitializeAsync()
-    {
-        await _application.Start();
-    }
-
-    public async Task DisposeAsync()
-    {
-        await _application.Stop();
     }
 }

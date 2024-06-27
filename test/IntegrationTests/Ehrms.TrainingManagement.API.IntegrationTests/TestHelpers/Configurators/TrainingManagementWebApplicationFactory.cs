@@ -11,7 +11,7 @@ using MassTransit;
 
 namespace Ehrms.TrainingManagement.API.IntegrationTests.TestHelpers.Configurators;
 
-internal class TrainingManagementWebApplicationFactory : WebApplicationFactory<Program>
+public class TrainingManagementWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private int Port => Random.Shared.Next(1000, 60000);
     private readonly MsSqlContainer _msSqlContainer;
@@ -40,34 +40,36 @@ internal class TrainingManagementWebApplicationFactory : WebApplicationFactory<P
                 options.UseSqlServer(_msSqlContainer.GetConnectionString(),
                     opt => opt.EnableRetryOnFailure());
             });
-
             services.AddMassTransitTestHarness();
+
+            var dbContext = CreateDbContext(services);
+            dbContext.Database.EnsureCreated();
         });
+    }
+
+    private static TrainingDbContext CreateDbContext(IServiceCollection services)
+    {
+        var serviceProvider = services.BuildServiceProvider();
+        var scope = serviceProvider.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<TrainingDbContext>();
+
+        return dbContext ?? throw new NullReferenceException("DbContext is null");
     }
 
     public TrainingDbContext CreateDbContext()
     {
         var scope = Services.CreateScope();
-        var dbContext = scope.ServiceProvider.GetService<TrainingDbContext>();
+        var dbContext = scope.ServiceProvider.GetRequiredService<TrainingDbContext>();
 
         return dbContext ?? throw new NullReferenceException("DbContext is null");
     }
 
-    public async Task Start()
+    public async Task InitializeAsync()
     {
         await _msSqlContainer.StartAsync();
-        try
-        {
-            var context = CreateDbContext();
-            await context.Database.EnsureCreatedAsync();
-        }
-        catch
-        {
-            await Stop();
-        }
     }
 
-    public async Task Stop()
+    public async new Task DisposeAsync()
     {
         await _msSqlContainer.StopAsync();
     }
