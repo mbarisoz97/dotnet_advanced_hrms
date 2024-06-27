@@ -11,7 +11,7 @@ using Testcontainers.MsSql;
 
 namespace Ehrms.ProjectManagement.API.IntegrationTests.TestHelpers.Configurations;
 
-internal class ProjectManagementWebApplicationFactory : WebApplicationFactory<Program>
+public class ProjectManagementWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private int Port => Random.Shared.Next(1000, 60000);
     private readonly MsSqlContainer _msSqlContainer;
@@ -42,33 +42,28 @@ internal class ProjectManagementWebApplicationFactory : WebApplicationFactory<Pr
             });
 
             services.AddMassTransitTestHarness();
+
+            var dbContext = CreateDbContext(services);
+            dbContext.Database.EnsureCreated();
         });
     }
 
-    private void EnsureDatabaseCreated()
+    private ProjectDbContext CreateDbContext(IServiceCollection services)
     {
-        var scope = Services.CreateScope();
+        var scope = services.BuildServiceProvider().CreateScope();
         var dbContext = scope.ServiceProvider.GetService<ProjectDbContext>();
-        dbContext!.Database.EnsureCreated();
+
+        return dbContext;
     }
 
-    public async Task Start()
+    public async Task InitializeAsync()
     {
         await _msSqlContainer.StartAsync();
-        
-        try
-        {
-            EnsureDatabaseCreated();
-        }
-        catch
-        {
-            await Stop();
-        }
     }
 
-    public async Task Stop()
+    public async new Task DisposeAsync()
     {
         await _msSqlContainer.StopAsync();
-        await _msSqlContainer.DisposeAsync().AsTask();
+        await _msSqlContainer.DisposeAsync();
     }
 }

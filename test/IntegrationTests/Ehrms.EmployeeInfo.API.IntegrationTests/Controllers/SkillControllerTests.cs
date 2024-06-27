@@ -3,14 +3,15 @@ using System.Net.Http.Headers;
 
 namespace Ehrms.EmployeeInfo.API.IntegrationTests.Controllers;
 
-public class SkillControllerTests : IAsyncLifetime
+public class SkillControllerTests : IClassFixture<EmployeeInfoWebApplicationFactory>
 {
-    private readonly EmployeeInfoWebApplicationFactory application = new();
+    private readonly EmployeeInfoWebApplicationFactory _factory;
     private readonly HttpClient _client;
 
-    public SkillControllerTests()
+    public SkillControllerTests(EmployeeInfoWebApplicationFactory factory)
     {
-        _client = application.CreateClient();
+        _factory = factory;
+        _client = _factory.CreateClient();
         var request = new AuthenticationRequest
         {
             Username = "TestUser",
@@ -18,6 +19,7 @@ public class SkillControllerTests : IAsyncLifetime
         };
         var jwt = new JwtTokenHandler().Generate(request);
         _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.Token);
+        _factory = factory;
     }
 
     [Fact]
@@ -83,15 +85,5 @@ public class SkillControllerTests : IAsyncLifetime
         var updateSkillDto = new UpdateSkillDtoFaker().Generate();
         var response = await _client.PostAsJsonAsync(Endpoints.EmployeeSkillsApi, updateSkillDto);
         response.StatusCode.Should().Be(HttpStatusCode.NotFound);
-    }
-
-    public async Task InitializeAsync()
-    {
-        await application.Start();
-    }
-
-    public async Task DisposeAsync()
-    {
-        await application.Stop();
     }
 }

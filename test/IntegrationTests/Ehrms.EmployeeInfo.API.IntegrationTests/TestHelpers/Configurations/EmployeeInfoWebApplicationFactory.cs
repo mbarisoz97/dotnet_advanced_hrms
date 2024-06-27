@@ -11,10 +11,9 @@ using Testcontainers.MsSql;
 
 namespace Ehrms.EmployeeInfo.API.IntegrationTests;
 
-public class EmployeeInfoWebApplicationFactory : WebApplicationFactory<Program>
+public class EmployeeInfoWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private int Port = Random.Shared.Next(1000, 60000);
-
     private readonly MsSqlContainer _msSqlContainer;
 
     public EmployeeInfoWebApplicationFactory()
@@ -43,28 +42,28 @@ public class EmployeeInfoWebApplicationFactory : WebApplicationFactory<Program>
             });
 
             services.AddMassTransitTestHarness();
+
+            var dbContext = CreateDbContext(services);
+            dbContext.Database.EnsureCreated();
         });
     }
 
-    public async Task Start()
+    private static EmployeeInfoDbContext CreateDbContext(IServiceCollection services)
     {
-        await _msSqlContainer.StartAsync();
+        var serviceProvider = services.BuildServiceProvider();
+        var scope = serviceProvider.CreateScope();
+        var dbContext = scope.ServiceProvider.GetRequiredService<EmployeeInfoDbContext>();
 
-        try
-        {
-            var scope = this.Services.CreateScope();
-            var dbContext = scope.ServiceProvider.GetService<DbContext>();
-            await dbContext!.Database.EnsureCreatedAsync();
-        }
-        catch
-        {
-            await Console.Out.WriteLineAsync("Test");
-        }
+        return dbContext ?? throw new NullReferenceException("DbContext is null");
     }
 
-    public async Task Stop()
+    public async Task InitializeAsync()
+    {
+        await _msSqlContainer.StartAsync();
+    }
+
+    public async new Task DisposeAsync()
     {
         await _msSqlContainer.StopAsync();
-        await _msSqlContainer.DisposeAsync().AsTask();
     }
 }
