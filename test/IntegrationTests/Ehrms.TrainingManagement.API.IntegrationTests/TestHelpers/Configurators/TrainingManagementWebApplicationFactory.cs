@@ -5,25 +5,29 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Ehrms.TrainingManagement.API.Context;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Testcontainers.MsSql;
+using DotNet.Testcontainers.Builders;
+using MassTransit;
 
 namespace Ehrms.TrainingManagement.API.IntegrationTests.TestHelpers.Configurators;
 
-internal static class CustomDbContextFactory
-{
-    internal static TrainingDbContext Create(string databaseName)
-    {
-        TrainingDbContext projectDbContext = new(new DbContextOptionsBuilder<TrainingDbContext>()
-            .UseInMemoryDatabase(databaseName)
-            .Options);
-
-        return projectDbContext;
-    }
-}
-
 internal class TrainingManagementWebApplicationFactory : WebApplicationFactory<Program>
 {
-    public const string DatabaseName = "TrainingManamagementDb";
-    
+    private int Port => Random.Shared.Next(1000, 60000);
+    private readonly MsSqlContainer _msSqlContainer;
+
+    public TrainingManagementWebApplicationFactory()
+    {
+        _msSqlContainer = new MsSqlBuilder()
+            .WithImage("mcr.microsoft.com/mssql/server")
+            .WithEnvironment("MSSQL_SA_PASSWORD", "yourStrong(!)Password")
+            .WithEnvironment("ACCEPT_EULA", "Y")
+            .WithPortBinding(Port, 1433)
+            .WithWaitStrategy(Wait.ForUnixContainer()
+                .UntilPortIsAvailable(1433))
+            .Build();
+    }
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureTestServices(services =>
@@ -33,19 +37,38 @@ internal class TrainingManagementWebApplicationFactory : WebApplicationFactory<P
 
             services.AddDbContext<TrainingDbContext>(options =>
             {
-                options.UseInMemoryDatabase(DatabaseName);
+                options.UseSqlServer(_msSqlContainer.GetConnectionString(),
+                    opt => opt.EnableRetryOnFailure());
             });
 
-            var dbContext = CreateDbContext(services);
+            services.AddMassTransitTestHarness();
         });
     }
-    
-    private TrainingDbContext CreateDbContext(IServiceCollection services)
+
+    public TrainingDbContext CreateDbContext()
     {
-        var serviceProvider = services.BuildServiceProvider();
-        var scope = serviceProvider.CreateScope();
+        var scope = Services.CreateScope();
         var dbContext = scope.ServiceProvider.GetService<TrainingDbContext>();
 
         return dbContext ?? throw new NullReferenceException("DbContext is null");
+    }
+
+    public async Task Start()
+    {
+        await _msSqlContainer.StartAsync();
+        try
+        {
+            var context = CreateDbContext();
+            await context.Database.EnsureCreatedAsync();
+        }
+        catch
+        {
+            await Stop();
+        }
+    }
+
+    public async Task Stop()
+    {
+        await _msSqlContainer.StopAsync();
     }
 }
