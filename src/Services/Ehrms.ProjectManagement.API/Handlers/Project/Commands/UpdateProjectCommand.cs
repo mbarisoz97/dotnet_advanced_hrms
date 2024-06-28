@@ -1,6 +1,6 @@
 ﻿namespace Ehrms.ProjectManagement.API.Handlers.Project.Commands;
 
-internal sealed class UpdateProjectCommand : IRequest<Models.Project>
+public sealed class UpdateProjectCommand : IRequest<Models.Project>
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;
