@@ -17,10 +17,9 @@ public class SkillController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<IActionResult> Create([FromBody] CreateSkillDto createSkillDto)
+    public async Task<IActionResult> Create([FromBody] CreateSkillCommand createSkillcommand)
     {
-        var command = _mapper.Map<CreateSkillCommand>(createSkillDto);
-        var skill = await _mediator.Send(command);
+        var skill = await _mediator.Send(createSkillcommand);
         var readSkillDto = _mapper.Map<ReadSkillDto>(skill);
 
         return Ok(readSkillDto);
@@ -47,10 +46,9 @@ public class SkillController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Update([FromBody] UpdateSkillDto updateSkillDto)
+    public async Task<IActionResult> Update([FromBody] UpdateSkillCommand updateSkillCommand)
     {
-        var command = _mapper.Map<UpdateSkillCommand>(updateSkillDto);
-        var skill = await _mediator.Send(command);
+        var skill = await _mediator.Send(updateSkillCommand);
         var readSkillDto = _mapper.Map<ReadSkillDto>(skill);
 
         return Ok(readSkillDto);
