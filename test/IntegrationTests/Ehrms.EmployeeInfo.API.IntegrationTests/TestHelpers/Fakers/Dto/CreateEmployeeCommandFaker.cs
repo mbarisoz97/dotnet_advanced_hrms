@@ -1,8 +1,11 @@
-﻿namespace Ehrms.EmployeeInfo.API.IntegrationTests.TestHelpers.Fakers.Dto;
+﻿using Bogus;
+using Ehrms.EmployeeInfo.API.Handlers.Employee.Command;
 
-internal class UpdateEmployeeDtoFaker : Faker<UpdateEmployeeDto>
+namespace Ehrms.EmployeeInfo.API.IntegrationTests.TestHelpers.Fakers.Dto;
+
+internal class CreateEmployeeCommandFaker : Faker<CreateEmployeeCommand>
 {
-    public UpdateEmployeeDtoFaker()
+    public CreateEmployeeCommandFaker()
     {
         RuleFor(e => e.FirstName, f => f.Name.FirstName());
         RuleFor(e => e.LastName, f => f.Name.LastName());
