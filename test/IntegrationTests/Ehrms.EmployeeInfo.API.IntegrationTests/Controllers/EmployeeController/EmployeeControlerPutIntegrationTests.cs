@@ -11,7 +11,7 @@ public class EmployeeControlerPutIntegrationTests : BaseEmployeeInfoIntegrationT
 	{
 		var command = new CreateEmployeeCommandFaker().Generate();
 
-		var response = await _client.PutAsJsonAsync(Endpoints.EmployeeApi, command);
+		var response = await client.PutAsJsonAsync(Endpoints.EmployeeApi, command);
 		var createEmployeeResponse = await response.Content.ReadFromJsonAsync<ReadEmployeeDto>();
 
 		response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -25,7 +25,7 @@ public class EmployeeControlerPutIntegrationTests : BaseEmployeeInfoIntegrationT
 		var command = new CreateEmployeeCommandFaker().Generate();
 		command.FirstName = "s";
 
-		var response = await _client.PutAsJsonAsync(Endpoints.EmployeeApi, command);
+		var response = await client.PutAsJsonAsync(Endpoints.EmployeeApi, command);
 		response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 	}
 
@@ -35,7 +35,7 @@ public class EmployeeControlerPutIntegrationTests : BaseEmployeeInfoIntegrationT
 		var command = new CreateEmployeeCommandFaker().Generate();
 		command.LastName = "t";
 
-		var response = await _client.PutAsJsonAsync(Endpoints.EmployeeApi, command);
+		var response = await client.PutAsJsonAsync(Endpoints.EmployeeApi, command);
 		response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 	}
 }

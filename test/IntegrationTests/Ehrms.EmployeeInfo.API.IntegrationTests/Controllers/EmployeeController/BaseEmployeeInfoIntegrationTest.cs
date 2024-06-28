@@ -5,13 +5,13 @@ namespace Ehrms.EmployeeInfo.API.IntegrationTests.Controllers;
 
 public abstract class BaseEmployeeInfoIntegrationTest : IClassFixture<EmployeeInfoWebApplicationFactory>
 {
-	protected readonly EmployeeInfoWebApplicationFactory _factory;
-	protected readonly HttpClient _client;
+	protected readonly EmployeeInfoWebApplicationFactory factory;
+	protected readonly HttpClient client;
 
 	protected BaseEmployeeInfoIntegrationTest(EmployeeInfoWebApplicationFactory factory)
 	{
-		_factory = factory;
-		_client = _factory.CreateClient();
+		this.factory = factory;
+		client = this.factory.CreateClient();
 
 		var request = new AuthenticationRequest
 		{
@@ -19,7 +19,7 @@ public abstract class BaseEmployeeInfoIntegrationTest : IClassFixture<EmployeeIn
 			Password = "TestPassword"
 		};
 		var jwt = new JwtTokenHandler().Generate(request);
-		_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.Token);
-		_factory = factory;
+		client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.Token);
+		this.factory = factory;
 	}
 }
