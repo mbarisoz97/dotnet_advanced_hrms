@@ -7,6 +7,7 @@ internal class UpdateProjectCommandFaker : Faker<UpdateProjectCommand>
 {
 	public UpdateProjectCommandFaker()
 	{
+		RuleFor(x => x.Id, Guid.NewGuid());
 		RuleFor(x => x.Name, f => f.Name.Random.Words(2));
 		RuleFor(x => x.Description, f => f.Random.Words(2));
 	}

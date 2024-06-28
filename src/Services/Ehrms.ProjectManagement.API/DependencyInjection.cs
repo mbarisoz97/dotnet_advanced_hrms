@@ -1,4 +1,6 @@
-﻿using System.Reflection;
+﻿using Ehrms.ProjectManagement.API.PipelineBehaviors;
+using FluentValidation;
+using System.Reflection;
 
 namespace Ehrms.ProjectManagement.API;
 
@@ -12,22 +14,22 @@ internal static class DependencyInjection
         return services;
     }
 
-    private static IServiceCollection AddAssemblyTypes(IServiceCollection services)
+    private static void AddAssemblyTypes(IServiceCollection services)
     {
         services.AddTransient<GlobalExceptionHandlingMiddleware>();
-        return services;
     }
 
-    private static IServiceCollection AddThirdPartyLibraries(IServiceCollection services)
+    private static void AddThirdPartyLibraries(IServiceCollection services)
     {
         var assembly = Assembly.GetExecutingAssembly();
 
         services.AddAutoMapper(assembly);
-        services.AddMediatR(config =>
-        {
-            config.RegisterServicesFromAssembly(assembly);
-        });
+		services.AddValidatorsFromAssembly(assembly);
 
-        return services;
+		services.AddMediatR(config =>
+		{
+			config.RegisterServicesFromAssembly(assembly)
+				.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+		});
     }
 }

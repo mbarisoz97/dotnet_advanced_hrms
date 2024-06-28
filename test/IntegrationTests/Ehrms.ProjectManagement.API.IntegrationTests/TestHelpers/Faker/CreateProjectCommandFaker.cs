@@ -10,4 +10,5 @@ internal class CreateProjectCommandFaker : Faker<CreateProjectCommand>
         RuleFor(x => x.Name, f => f.Name.Random.Words(2));
         RuleFor(x => x.Description, f => f.Name.Random.Words(10));
     }
+
 }
