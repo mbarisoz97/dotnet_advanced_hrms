@@ -1,6 +1,6 @@
 ﻿namespace Ehrms.TrainingManagement.API.Handlers.Training.Commands;
 
-internal sealed class UpdateTrainingCommand : IRequest<Models.Training>
+public sealed class UpdateTrainingCommand : IRequest<Models.Training>
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;

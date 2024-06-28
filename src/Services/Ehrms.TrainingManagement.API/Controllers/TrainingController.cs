@@ -18,10 +18,9 @@ public class TrainingController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<IActionResult> Create([FromBody] CreateTrainingDto createTrainingDto)
+    public async Task<IActionResult> Create([FromBody] CreateTrainingCommand createTrainingCommand)
     {
-        var command = _mapper.Map<CreateTrainingCommand>(createTrainingDto);
-        var training = await _mediator.Send(command);
+        var training = await _mediator.Send(createTrainingCommand);
         var readTraniningDto = _mapper.Map<ReadTrainingDto>(training);
 
         return Ok(readTraniningDto);
@@ -56,10 +55,9 @@ public class TrainingController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Update([FromBody] UpdateTrainingDto updateTrainingDto)
+    public async Task<IActionResult> Update([FromBody] UpdateTrainingCommand updateTrainingCommand)
     {
-        var command = _mapper.Map<UpdateTrainingCommand>(updateTrainingDto);
-        var training = await _mediator.Send(command);
+        var training = await _mediator.Send(updateTrainingCommand);
         var readTrainingDto = _mapper.Map<ReadTrainingDto>(training);
 
         return Ok(readTrainingDto);

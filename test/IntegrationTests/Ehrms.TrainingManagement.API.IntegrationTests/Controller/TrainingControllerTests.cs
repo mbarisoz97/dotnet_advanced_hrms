@@ -28,15 +28,15 @@ public class TrainingControllerTests : IClassFixture<TrainingManagementWebApplic
     [Fact]
     public async Task Put_ValidTrainingDetails_ReturnsOkWithReadTrainingDto()
     {
-        CreateTrainingDto createTrainingDto = new CreateTrainingDtoFaker().Generate();
+        var createTrainingCommand = new CreateTrainingCommandFaker().Generate();
 
-        var response = await _client.PutAsJsonAsync(Endpoints.TrainingApi, createTrainingDto);
+        var response = await _client.PutAsJsonAsync(Endpoints.TrainingApi, createTrainingCommand);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var readTrainingDto = await response.Content.ReadFromJsonAsync<ReadTrainingDto>();
 
-        readTrainingDto.Should().BeEquivalentTo(createTrainingDto);
+        readTrainingDto.Should().BeEquivalentTo(createTrainingCommand);
     }
 
     [Fact]
@@ -48,11 +48,7 @@ public class TrainingControllerTests : IClassFixture<TrainingManagementWebApplic
         var readTrainingResponse = await response.Content.ReadFromJsonAsync<ReadTrainingDto>();
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        readTrainingResponse?.Id.Should().Be(traininig.Id);
-        readTrainingResponse?.Name.Should().Be(traininig.Name);
-        readTrainingResponse?.Description.Should().Be(traininig.Description);
-        readTrainingResponse?.PlannedAt.Should().Be(traininig.PlannedAt);
-        readTrainingResponse?.Participants.Should().BeEmpty();
+        readTrainingResponse?.Should().BeEquivalentTo(traininig);
     }
 
     [Fact]
@@ -82,14 +78,14 @@ public class TrainingControllerTests : IClassFixture<TrainingManagementWebApplic
     {
         Training traininig = await InsertRandomTraningRecord();
 
-        var updateTrainingDto = new UpdateTrainingDtoFaker()
+        var updateTrainingCommand = new UpdateTrainingCommandFaker()
             .WithId(traininig.Id)
             .Generate();
-        var response = await _client.PostAsJsonAsync($"{Endpoints.TrainingApi}", updateTrainingDto);
+        var response = await _client.PostAsJsonAsync($"{Endpoints.TrainingApi}", updateTrainingCommand);
         var readTrainingDto = await response.Content.ReadFromJsonAsync<ReadTrainingDto>();
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        readTrainingDto.Should().BeEquivalentTo(updateTrainingDto);
+        readTrainingDto.Should().BeEquivalentTo(updateTrainingCommand);
     }
 
     private async Task<Training> InsertRandomTraningRecord()

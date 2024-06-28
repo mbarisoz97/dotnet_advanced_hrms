@@ -1,4 +1,5 @@
 ﻿using Ehrms.ProjectManagement.API.Dtos.Project;
+using Ehrms.ProjectManagement.API.Handlers.Project.Commands;
 using Ehrms.Shared;
 using System.Net;
 using System.Net.Http.Headers;
@@ -91,7 +92,7 @@ public class ProjectControllerTests : IClassFixture<ProjectManagementWebApplicat
     [Fact]
     public async Task Update_NonExistingProject_ReturnsNotFound()
     {
-        UpdateProjectDto updateProjectDto = new();
+        UpdateProjectCommand updateProjectDto = new();
         var postResponse = await _client.PostAsJsonAsync(Endpoints.ProjectApi, updateProjectDto);
 
         postResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);

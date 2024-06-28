@@ -4,7 +4,6 @@ public class SkillMappingProfiles : Profile
 {
     public SkillMappingProfiles()
     {
-        AddDtoToCommandMappings();
         AddEntityToDtoMappings();
         AddCommandToEntityMappings();
     }
@@ -18,11 +17,5 @@ public class SkillMappingProfiles : Profile
     private void AddEntityToDtoMappings()
     {
         CreateMap<Skill, ReadSkillDto>();
-    }
-
-    private void AddDtoToCommandMappings()
-    {
-        CreateMap<CreateSkillDto, CreateSkillCommand>();
-        CreateMap<UpdateSkillDto, UpdateSkillCommand>();
     }
 }

@@ -5,7 +5,6 @@ internal class ProjectMappingProfile : Profile
     public ProjectMappingProfile()
     {
         AddModelToDtoMappings();
-        AddDtoToCommandMappings();
         AddCommandToModelMappings();
         AddMessageQueueEventToModelMappings();
     }
@@ -22,12 +21,6 @@ internal class ProjectMappingProfile : Profile
     {
         CreateMap<CreateProjectCommand, Project>();
         CreateMap<UpdateProjectCommand, Project>();
-    }
-
-    private void AddDtoToCommandMappings()
-    {
-        CreateMap<CreateProjectDto, CreateProjectCommand>();
-        CreateMap<UpdateProjectDto, UpdateProjectCommand>();
     }
 
     private void AddMessageQueueEventToModelMappings()
