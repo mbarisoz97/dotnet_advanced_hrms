@@ -14,9 +14,10 @@ internal class GlobalExceptionHandlingMiddleware : IMiddleware
         {
             context.Response.StatusCode = (int)HttpStatusCode.NotFound;
         }
-        catch
-        {
-            throw;
-        }
+		catch (FluentValidation.ValidationException validationException)
+		{
+			context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+			await context.Response.WriteAsync(validationException.Message);
+		}
     }
 }

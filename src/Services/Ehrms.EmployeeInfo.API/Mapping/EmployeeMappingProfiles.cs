@@ -4,7 +4,6 @@ public class EmployeeMappingProfiles : Profile
 {
     public EmployeeMappingProfiles()
     {
-        AddDtoToCommandMappings();
         AddEntityToDtoMappings();
         AddCommandToEntityMappings();
         AddModelToMessageQueueEventMappings();
@@ -25,12 +24,6 @@ public class EmployeeMappingProfiles : Profile
             .ForMember(dest => dest.Skills,
                 opt => opt.MapFrom(
                     src => src.Skills.Select(x=>x.Id)));
-    }
-
-    private void AddDtoToCommandMappings()
-    {
-        CreateMap<CreateEmployeeDto, CreateEmployeeCommand>();
-        CreateMap<UpdateEmployeeDto, UpdateEmployeeCommand>();
     }
 
     private void AddModelToMessageQueueEventMappings()

@@ -1,3 +1,5 @@
+using Ehrms.TrainingManagement.API.Middleware;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -45,6 +47,8 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 
 app.UseAuthorization();
+
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.MapControllers();
 

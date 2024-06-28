@@ -1,6 +1,6 @@
 ﻿namespace Ehrms.ProjectManagement.API.Handlers.Project.Commands;
 
-internal sealed class CreateProjectCommand : IRequest<Models.Project>
+public sealed class CreateProjectCommand : IRequest<Models.Project>
 {
     public string Name { get; set; } = string.Empty;
     public string Description { get; set; } = string.Empty;

@@ -37,20 +37,18 @@ public class EmployeeController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<IActionResult> Create([FromBody] CreateEmployeeDto createEmployeeDto)
+    public async Task<IActionResult> Create([FromBody] CreateEmployeeCommand createEmployeeCommand)
     {
-        var command = _mapper.Map<CreateEmployeeCommand>(createEmployeeDto);
-        var employee = await _mediator.Send(command);
+        var employee = await _mediator.Send(createEmployeeCommand);
         var readEmployeeDto = _mapper.Map<ReadEmployeeDto>(employee);
 
         return Ok(readEmployeeDto);
     }
 
     [HttpPost]
-    public async Task<IActionResult> Update([FromBody] UpdateEmployeeDto updateEmployeeDto)
+    public async Task<IActionResult> Update([FromBody] UpdateEmployeeCommand updateEmployeeCommand)
     {
-        var command = _mapper.Map<UpdateEmployeeCommand>(updateEmployeeDto);
-        var employee = await _mediator.Send(command);
+        var employee = await _mediator.Send(updateEmployeeCommand);
         var readEmployeeDto = _mapper.Map<ReadEmployeeDto>(employee);
 
         return Ok(readEmployeeDto);

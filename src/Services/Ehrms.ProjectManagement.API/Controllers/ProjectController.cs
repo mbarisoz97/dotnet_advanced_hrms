@@ -18,10 +18,9 @@ public class ProjectController : ControllerBase
     }
 
     [HttpPut]
-    public async Task<IActionResult> Create([FromBody] CreateProjectDto createProjectDto)
+    public async Task<IActionResult> Create([FromBody] CreateProjectCommand createProjectcommand)
     {
-        var command = _mapper.Map<CreateProjectCommand>(createProjectDto);
-        var project = await _mediator.Send(command);
+        var project = await _mediator.Send(createProjectcommand);
         var readProjectDto = _mapper.Map<ReadProjectDto>(project);
 
         return Ok(readProjectDto);
@@ -57,10 +56,9 @@ public class ProjectController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<IActionResult> Update([FromBody] UpdateProjectDto updateProjectDto)
+    public async Task<IActionResult> Update([FromBody] UpdateProjectCommand updateProjectcommand)
     {
-        var command = _mapper.Map<UpdateProjectCommand>(updateProjectDto);
-        var project = await _mediator.Send(command);
+        var project = await _mediator.Send(updateProjectcommand);
         var readProjectDto = _mapper.Map<ReadProjectDto>(project);
 
         return Ok(readProjectDto);

@@ -7,7 +7,6 @@ public class TrainingMappingProfile : Profile
     public TrainingMappingProfile()
     {
         AddModelToDtoMappings();
-        AddDtoToCommandMappings();
         AddEventToModelMappings();
         AddCommandToModelMappings();
     }
@@ -18,12 +17,6 @@ public class TrainingMappingProfile : Profile
             .ForMember(dest => dest.Participants, opt => opt.Ignore());
         CreateMap<UpdateTrainingCommand, Training>()
             .ForMember(dest => dest.Participants, opt => opt.Ignore());
-    }
-
-    private void AddDtoToCommandMappings()
-    {
-        CreateMap<CreateTrainingDto, CreateTrainingCommand>();
-        CreateMap<UpdateTrainingDto, UpdateTrainingCommand>();
     }
 
     private void AddModelToDtoMappings()
