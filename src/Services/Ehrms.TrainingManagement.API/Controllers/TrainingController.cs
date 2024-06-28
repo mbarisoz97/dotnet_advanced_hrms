@@ -20,8 +20,8 @@ public class TrainingController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Create([FromBody] CreateTrainingCommand createTrainingCommand)
     {
-        var training = await _mediator.Send(createTrainingCommand);
-        var readTraniningDto = _mapper.Map<ReadTrainingDto>(training);
+        var command = await _mediator.Send(createTrainingCommand);
+        var readTraniningDto = _mapper.Map<ReadTrainingDto>(command);
 
         return Ok(readTraniningDto);
     }
