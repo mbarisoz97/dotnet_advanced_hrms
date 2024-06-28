@@ -8,14 +8,8 @@ EXPOSE 5001
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
-
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-
-RUN apt-get update \
-	&& apt-get install -y curl
-
-CMD ["curl", "curl http://ehrms.employeeinfo.api:5100/api/Employee"]
 
 COPY ["src/ApiGateway/Ehrms.ApiGateway/Ehrms.ApiGateway.csproj", "src/ApiGateway/Ehrms.ApiGateway/"]
 RUN dotnet restore "./src/ApiGateway/Ehrms.ApiGateway/Ehrms.ApiGateway.csproj"
