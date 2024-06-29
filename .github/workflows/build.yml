@@ -1,0 +1,32 @@
+name: Build
+
+on: 
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+
+env:
+  DOTNET_VERSION: "8.x"
+  DOTNET_SOLUTION_FILE: "./Ehrms.sln"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{env.DOTNET_VERSION}}
+
+      - name: Restore
+        run: dotnet restore ${{env.DOTNET_SOLUTION_FILE}} --configuration
+
+      - name: Build
+        run: dotnet build ${{env.DOTNET_SOLUTION_FILE}} --configuration Release --no-restore
+
+      - name: Test
+        run: dotnet test ${{env.DOTNET_SOLUTION_FILE}} --configuration Release --no-restore --no-build          
