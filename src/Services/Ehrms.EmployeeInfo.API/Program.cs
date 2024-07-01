@@ -1,5 +1,6 @@
 using Ehrms.EmployeeInfo.API.Middleware;
 using Ehrms.Shared;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -33,6 +34,12 @@ builder.Services.AddMassTransit(busConfigurator =>
     });
 });
 
+builder.Host.UseSerilog((context, configuration) =>
+{
+	configuration.Enrich.FromLogContext()
+		.ReadFrom.Configuration(context.Configuration);
+});
+
 var app = builder.Build();
 
 
@@ -42,6 +49,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseSerilogRequestLogging();
 
 //app.UseHttpsRedirection();
 
