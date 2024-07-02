@@ -1,5 +1,6 @@
 using Ehrms.Administration.API;
 using Ehrms.Administration.API.Context;
+using Ehrms.Administration.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,11 +27,13 @@ if (app.Environment.IsDevelopment())
 	app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.Run();
 

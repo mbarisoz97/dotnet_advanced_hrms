@@ -6,3 +6,4 @@ public class PaymentCriteria : BaseEntity
 	public DateOnly? ExpiredAt { get; set; }
 	public Employee Employee { get; set; } 
 }
+

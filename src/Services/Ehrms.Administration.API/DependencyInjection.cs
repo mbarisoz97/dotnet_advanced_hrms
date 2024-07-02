@@ -1,23 +1,44 @@
-﻿using FluentValidation;
+﻿using MediatR;
+using FluentValidation;
 using System.Reflection;
+using Ehrms.Administration.API.PipelineBehaviors;
+using Ehrms.Administration.API.Middleware;
+using Ehrms.Administration.API.Context;
 
 namespace Ehrms.Administration.API;
 
-internal static class DependencyInjection
+public static class DependencyInjection
 {
-	internal static IServiceCollection AddAdministrationApi(this IServiceCollection services)
+	public static IServiceCollection AddAdministrationApi(this IServiceCollection services)
 	{
-        var assembly = Assembly.GetExecutingAssembly();
+		services.AddAssemblyTypes();
+		services.AddThirdPartyLibraryConfigurations();
 
-        services.AddValidatorsFromAssembly(assembly);
+		return services;
+	}
 
-        services.AddMediatR(config =>
-        {
-            config.RegisterServicesFromAssembly(assembly);
-        });
+	private static IServiceCollection AddAssemblyTypes(this IServiceCollection services)
+	{
+		services.AddScoped<DbContext, AdministrationDbContext>();
+		services.AddScoped<GlobalExceptionHandlingMiddleware>();
 
-        services.AddAutoMapper(assembly);
+		return services;
+	}
 
-        return services;
+	private static IServiceCollection AddThirdPartyLibraryConfigurations(this IServiceCollection services)
+	{
+		var assembly = Assembly.GetExecutingAssembly();
+
+		services.AddValidatorsFromAssemblyContaining(typeof(Program), includeInternalTypes: true);
+
+		services.AddMediatR(config =>
+		{
+			config.RegisterServicesFromAssembly(assembly);
+			config.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+		});
+
+		services.AddAutoMapper(assembly);
+
+		return services;
 	}
 }

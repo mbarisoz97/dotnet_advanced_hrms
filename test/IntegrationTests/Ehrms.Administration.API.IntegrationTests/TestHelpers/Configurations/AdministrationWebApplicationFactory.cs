@@ -12,7 +12,7 @@ namespace Ehrms.Administration.API.IntegrationTests.TestHelpers.Configurations;
 
 public class AdministrationWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private int Port = Random.Shared.Next(1000, 60000);
+    private readonly int Port = Random.Shared.Next(1000, 60000);
     private readonly MsSqlContainer _msSqlContainer;
 
     public AdministrationWebApplicationFactory()
