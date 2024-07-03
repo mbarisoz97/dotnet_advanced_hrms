@@ -12,17 +12,3 @@ internal class EmployeeFaker : Faker<Employee>
 		RuleFor(x => x.LastName, f => f.Name.LastName());
 	}
 }
-
-internal class PaymentCriteriaFaker : Faker<PaymentCriteria>
-{
-	public PaymentCriteriaFaker()
-	{
-		RuleFor(x => x.CreatedAt, f => f.Date.Past());
-	}
-
-	public PaymentCriteriaFaker WithEmployee(Employee employee)
-	{
-		RuleFor(x => x.Employee, employee);
-		return this;
-	}
-}
