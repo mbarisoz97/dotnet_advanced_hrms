@@ -34,4 +34,15 @@ public class PaymentController : Controller
 
 		return Ok(paymentDto);
 	}
+
+	[HttpDelete("{id}")]
+	public async Task<IActionResult> Delete(Guid id)
+	{
+		await _mediator.Send(new DeletePaymentCommand()
+		{
+			Id = id
+		});
+
+		return NoContent();
+	}
 }

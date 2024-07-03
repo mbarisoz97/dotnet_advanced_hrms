@@ -4,7 +4,6 @@ using Ehrms.Administration.API.Context;
 using Ehrms.Administration.API.Exceptions;
 
 namespace Ehrms.Administration.API.Handlers.Payment.Commands;
-
 public class UpdatePaymentCommand : IRequest<PaymentCriteria>
 {
 	public Guid Id { get; set; }
