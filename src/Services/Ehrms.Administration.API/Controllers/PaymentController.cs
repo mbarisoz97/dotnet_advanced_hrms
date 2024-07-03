@@ -3,6 +3,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Ehrms.Administration.API.Dto.Payment;
 using Ehrms.Administration.API.Handlers.Payment.Commands;
+using Ehrms.Administration.API.Handlers.Payment.Queries;
 
 namespace Ehrms.Administration.API.Controllers;
 
@@ -44,5 +45,26 @@ public class PaymentController : Controller
 		});
 
 		return NoContent();
+	}
+
+	[HttpGet("{id}")]
+	public async Task<IActionResult> Get(Guid id)
+	{
+		var payment = await _mediator.Send(new GetPaymentQuery
+		{
+			Id = id
+		});
+		var readPaymentDto = _mapper.Map<ReadPaymentDto>(payment);
+
+		return Ok(readPaymentDto);
+	}
+
+	[HttpGet]
+	public async Task<IActionResult> Get()
+	{
+		var payment = await _mediator.Send(new GetAllPaymentsQuery());
+		var readPaymentDto = _mapper.ProjectTo<ReadPaymentDto>(payment);
+
+		return Ok(readPaymentDto);
 	}
 }

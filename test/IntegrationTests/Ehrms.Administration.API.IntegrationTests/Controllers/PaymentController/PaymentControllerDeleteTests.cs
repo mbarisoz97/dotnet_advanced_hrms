@@ -1,5 +1,4 @@
 ﻿namespace Ehrms.Administration.API.IntegrationTests.Controllers.PaymentController;
-
 public class PaymentControllerDeleteTests : AdministrationApiBaseIntegrationTest
 {
 	public PaymentControllerDeleteTests(AdministrationWebApplicationFactory factory) : base(factory)

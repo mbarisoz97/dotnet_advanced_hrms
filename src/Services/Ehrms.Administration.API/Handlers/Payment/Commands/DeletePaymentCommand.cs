@@ -9,7 +9,6 @@ public sealed class DeletePaymentCommand : IRequest<Guid>
 	public Guid Id { get; set; }
 }
 
-
 internal sealed class DeletePaymentCommandHandler : IRequestHandler<DeletePaymentCommand, Guid>
 {
 	private readonly AdministrationDbContext _dbContext;
