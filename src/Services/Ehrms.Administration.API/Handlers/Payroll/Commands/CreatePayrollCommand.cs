@@ -21,7 +21,6 @@ internal class CreatePayrollCommandHandler : IRequestHandler<CreatePayrollComman
     public async Task<Guid> Handle(CreatePayrollCommand request, CancellationToken cancellationToken)
     {
         var paymentCriteria = _dbContext.PaymentCriteria
-            .Where(x => x.ExpiredAt == null)
             .FirstOrDefault(x => x.Employee.Id == request.EmployeeId) 
             ?? throw new PaymentCriteriaNotFoundException($"Could not find payment criteria for employee with id <{request.EmployeeId}>");
 

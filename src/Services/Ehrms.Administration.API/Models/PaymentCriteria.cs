@@ -2,8 +2,8 @@
 
 public class PaymentCriteria : BaseEntity
 {
-	public DateOnly StartedAt { get; set; }
-	public DateOnly? ExpiredAt { get; set; }
+	public decimal Amount { get; set; }
+	public DateTime CreatedAt { get; set; }	
 	public Employee Employee { get; set; } 
+	public PaymentCategory PaymentCategory { get; set; }	
 }
-

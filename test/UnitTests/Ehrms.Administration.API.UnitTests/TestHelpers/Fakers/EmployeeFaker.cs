@@ -19,12 +19,12 @@ internal class PaymentCriteriaFaker : Faker<PaymentCriteria>
     public PaymentCriteriaFaker()
     {
         RuleFor(x=>x.Id, Guid.NewGuid());
-        RuleFor(x=>x.StartedAt, f => f.Date.FutureDateOnly());
+        RuleFor(x => x.CreatedAt, f => f.Date.Past());
     }
 
     public PaymentCriteriaFaker WithExpirationDate()
     {
-        RuleFor(x => x.ExpiredAt, f => f.Date.FutureDateOnly());
+        RuleFor(x => x.CreatedAt, f => f.Date.Past());
         return this;
     }
 
