@@ -32,4 +32,13 @@ jobs:
         run: dotnet build ${{env.SOLUTION_FILE}} --configuration ${{env.BUILD_CONFIGURATION}} --no-restore
 
       - name: Test
-        run: dotnet test ${{env.SOLUTION_FILE}} --configuration ${{env.BUILD_CONFIGURATION}} --no-restore --no-build          
+        run: dotnet test ${{env.SOLUTION_FILE}} --configuration ${{env.BUILD_CONFIGURATION}} --no-restore --no-build  --logger "trx;LogFileName=test-results.trx" || true        
+
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: DotNET Tests
+          path: "**/test-results.rtx"
+          reporter: dotnet-rtx
+          fail-on-error: true
