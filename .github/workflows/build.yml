@@ -11,7 +11,11 @@ env:
   DOTNET_VERSION: "8.x"
   SOLUTION_FILE: "./Ehrms.sln"
   BUILD_CONFIGURATION: "Release"
-  
+
+permissions:
+  id-token: write
+  contents: read  
+  checks: write
 
 jobs:
   build:
@@ -32,4 +36,13 @@ jobs:
         run: dotnet build ${{env.SOLUTION_FILE}} --configuration ${{env.BUILD_CONFIGURATION}} --no-restore
 
       - name: Test
-        run: dotnet test ${{env.SOLUTION_FILE}} --configuration ${{env.BUILD_CONFIGURATION}} --no-restore --no-build          
+        run: dotnet test ${{env.SOLUTION_FILE}} --configuration ${{env.BUILD_CONFIGURATION}} --no-restore --no-build --logger "trx;LogFileName=test-results.trx" || true 
+          
+      - name: Process Test Results
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Test Results
+          path: "**/test-results.trx"
+          reporter: dotnet-trx
+          fail-on-error: true
