@@ -3,23 +3,10 @@ using System.Net.Http.Headers;
 
 namespace Ehrms.EmployeeInfo.API.IntegrationTests.Controllers;
 
-public class SkillControllerTests : IClassFixture<EmployeeInfoWebApplicationFactory>
+public class SkillControllerTests : BaseEmployeeInfoIntegrationTest
 {
-	private readonly EmployeeInfoWebApplicationFactory _factory;
-	private readonly HttpClient _client;
-
-	public SkillControllerTests(EmployeeInfoWebApplicationFactory factory)
+	public SkillControllerTests(EmployeeInfoWebApplicationFactory factory) : base(factory)
 	{
-		_factory = factory;
-		_client = _factory.CreateClient();
-		var request = new AuthenticationRequest
-		{
-			Username = "TestUser",
-			Password = "TestPassword"
-		};
-		var jwt = new JwtTokenHandler().Generate(request);
-		_client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.Token);
-		_factory = factory;
 	}
 
 	[Fact]
@@ -27,7 +14,7 @@ public class SkillControllerTests : IClassFixture<EmployeeInfoWebApplicationFact
 	{
 		var createSkillCommand = new CreateSkillCommandFaker().Generate();
 
-		var response = await _client.PutAsJsonAsync(Endpoints.EmployeeSkillsApi, createSkillCommand);
+		var response = await client.PutAsJsonAsync(Endpoints.EmployeeSkillsApi, createSkillCommand);
 		var createSkillResponse = await response.Content.ReadFromJsonAsync<ReadSkillDto>();
 
 		response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -40,11 +27,11 @@ public class SkillControllerTests : IClassFixture<EmployeeInfoWebApplicationFact
 	{
 		var createSkillCommand = new CreateSkillCommandFaker().Generate();
 
-		var response = await _client.PutAsJsonAsync(Endpoints.EmployeeSkillsApi, createSkillCommand);
+		var response = await client.PutAsJsonAsync(Endpoints.EmployeeSkillsApi, createSkillCommand);
 		response.EnsureSuccessStatusCode();
 		var createSkillResponse = await response.Content.ReadFromJsonAsync<ReadSkillDto>();
 
-		response = await _client.GetAsync($"{Endpoints.EmployeeSkillsApi}/{createSkillResponse?.Id}");
+		response = await client.GetAsync($"{Endpoints.EmployeeSkillsApi}/{createSkillResponse?.Id}");
 		var readSkillDto = await response.Content.ReadFromJsonAsync<ReadSkillDto>();
 
 		response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -55,7 +42,7 @@ public class SkillControllerTests : IClassFixture<EmployeeInfoWebApplicationFact
 	[Fact]
 	public async Task Get_NonExistingSkillId_ReturnsNotFound()
 	{
-		var response = await _client.GetAsync($"{Endpoints.EmployeeSkillsApi}/{Guid.NewGuid()}");
+		var response = await client.GetAsync($"{Endpoints.EmployeeSkillsApi}/{Guid.NewGuid()}");
 		response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 	}
 
@@ -64,10 +51,10 @@ public class SkillControllerTests : IClassFixture<EmployeeInfoWebApplicationFact
 	{
 		var createSkillCommand = new CreateSkillCommandFaker().Generate();
 
-		var response = await _client.PutAsJsonAsync(Endpoints.EmployeeSkillsApi, createSkillCommand);
+		var response = await client.PutAsJsonAsync(Endpoints.EmployeeSkillsApi, createSkillCommand);
 		response.EnsureSuccessStatusCode();
 		var createSkillResponse = await response.Content.ReadFromJsonAsync<ReadEmployeeDto>();
-		response = await _client.DeleteAsync($"{Endpoints.EmployeeSkillsApi}/{createSkillResponse?.Id}");
+		response = await client.DeleteAsync($"{Endpoints.EmployeeSkillsApi}/{createSkillResponse?.Id}");
 
 		response.StatusCode.Should().Be(HttpStatusCode.NoContent);
 	}
@@ -75,7 +62,7 @@ public class SkillControllerTests : IClassFixture<EmployeeInfoWebApplicationFact
 	[Fact]
 	public async Task Delete_NonExistingSkillId_ReturnsNotFound()
 	{
-		var response = await _client.DeleteAsync($"{Endpoints.EmployeeSkillsApi}/{Guid.NewGuid()}");
+		var response = await client.DeleteAsync($"{Endpoints.EmployeeSkillsApi}/{Guid.NewGuid()}");
 		response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 	}
 
@@ -83,7 +70,7 @@ public class SkillControllerTests : IClassFixture<EmployeeInfoWebApplicationFact
 	public async Task Post_NonExistingSkillId_ReturnsNotFound()
 	{
 		var updateSkillCommand = new UpdateSkillCommandFaker().Generate();
-		var response = await _client.PostAsJsonAsync(Endpoints.EmployeeSkillsApi, updateSkillCommand);
+		var response = await client.PostAsJsonAsync(Endpoints.EmployeeSkillsApi, updateSkillCommand);
 		response.StatusCode.Should().Be(HttpStatusCode.NotFound);
 	}
 }

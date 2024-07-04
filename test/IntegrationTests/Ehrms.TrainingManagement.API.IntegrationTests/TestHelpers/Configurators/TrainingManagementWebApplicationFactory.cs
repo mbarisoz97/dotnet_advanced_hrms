@@ -13,7 +13,7 @@ namespace Ehrms.TrainingManagement.API.IntegrationTests.TestHelpers.Configurator
 
 public class TrainingManagementWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private int Port => Random.Shared.Next(1000, 60000);
+    private int Port => Random.Shared.Next(1024 , 49151);
     private readonly MsSqlContainer _msSqlContainer;
 
     public TrainingManagementWebApplicationFactory()
@@ -23,8 +23,7 @@ public class TrainingManagementWebApplicationFactory : WebApplicationFactory<Pro
             .WithEnvironment("MSSQL_SA_PASSWORD", "yourStrong(!)Password")
             .WithEnvironment("ACCEPT_EULA", "Y")
             .WithPortBinding(Port, 1433)
-            .WithWaitStrategy(Wait.ForUnixContainer()
-                .UntilPortIsAvailable(1433))
+
             .Build();
     }
 

@@ -13,7 +13,7 @@ namespace Ehrms.ProjectManagement.API.IntegrationTests.TestHelpers.Configuration
 
 public class ProjectManagementWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private int Port => Random.Shared.Next(1000, 60000);
+    private int Port => Random.Shared.Next(1024, 49151);
     private readonly MsSqlContainer _msSqlContainer;
 
     public ProjectManagementWebApplicationFactory()
@@ -23,8 +23,7 @@ public class ProjectManagementWebApplicationFactory : WebApplicationFactory<Prog
             .WithEnvironment("MSSQL_SA_PASSWORD", "yourStrong(!)Password")
             .WithEnvironment("ACCEPT_EULA", "Y")
             .WithPortBinding(Port, 1433)
-            .WithWaitStrategy(Wait.ForUnixContainer()
-                .UntilPortIsAvailable(1433))
+
             .Build();
     }
 
