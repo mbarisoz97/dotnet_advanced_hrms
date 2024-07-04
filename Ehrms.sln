@@ -53,9 +53,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ehrms.Administration.API.In
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "frontend", "frontend", "{3FA44BBB-6123-4CFA-A3D5-22E724DC6B9D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ehrms.Web", "src\FrontEnd\Ehrms.Web\Ehrms.Web\Ehrms.Web.csproj", "{4400432C-E384-4BA0-AAE2-93278657DCFD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ehrms.Web", "src\FrontEnd\Ehrms.Web\Ehrms.Web\Ehrms.Web.csproj", "{4400432C-E384-4BA0-AAE2-93278657DCFD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ehrms.Web.Client", "src\FrontEnd\Ehrms.Web\Ehrms.Web.Client\Ehrms.Web.Client.csproj", "{4F11E4CF-4C4E-44C2-A85C-9DE6C58EC88D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ehrms.Web.Client", "src\FrontEnd\Ehrms.Web\Ehrms.Web.Client\Ehrms.Web.Client.csproj", "{4F11E4CF-4C4E-44C2-A85C-9DE6C58EC88D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

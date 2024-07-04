@@ -7,6 +7,14 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Components\Layout\Navbar.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Components\Layout\Navbar.razor.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Ehrms.Web.Client\Ehrms.Web.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.6" />
   </ItemGroup>
