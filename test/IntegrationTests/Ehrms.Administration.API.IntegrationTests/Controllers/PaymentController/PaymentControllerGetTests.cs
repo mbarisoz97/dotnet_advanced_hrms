@@ -22,7 +22,7 @@ public class PaymentControllerGetTests : AdministrationApiBaseIntegrationTest
 
 		var response = await client.GetAsync($"{Endpoints.Payment}/{payment.Id}");
 		response.StatusCode.Should().Be(HttpStatusCode.OK);
-		
+
 		var readPaymentDto = await response.Content.ReadFromJsonAsync<ReadPaymentDto>();
 		readPaymentDto?.Id.Should().Be(payment.Id);
 		readPaymentDto?.Amount.Should().Be(payment.Amount);
@@ -47,6 +47,8 @@ public class PaymentControllerGetTests : AdministrationApiBaseIntegrationTest
 	[Fact]
 	public async Task Get_ReturnsAllPaymentRecords()
 	{
+		ClearPaymentRecords();
+
 		var employee = new EmployeeFaker().Generate();
 		var paymentCategory = new PaymentCategoryFaker().Generate();
 		var paymentRecords = new PaymentCriteriaFaker()
@@ -60,5 +62,11 @@ public class PaymentControllerGetTests : AdministrationApiBaseIntegrationTest
 		response.StatusCode.Should().Be(HttpStatusCode.OK);
 		var readPaymentDto = await response.Content.ReadFromJsonAsync<IEnumerable<ReadPaymentDto>>();
 		readPaymentDto.Should().HaveCount(paymentRecords.Count);
+	}
+
+	private void ClearPaymentRecords()
+	{
+		dbContext.RemoveRange(dbContext.PaymentCriteria);
+		dbContext.SaveChanges();
 	}
 }
