@@ -63,6 +63,5 @@ public class ProjectManagementWebApplicationFactory : WebApplicationFactory<Prog
     public async new Task DisposeAsync()
     {
         await _msSqlContainer.StopAsync();
-        await _msSqlContainer.DisposeAsync();
     }
 }
