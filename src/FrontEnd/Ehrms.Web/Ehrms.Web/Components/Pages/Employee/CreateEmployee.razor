@@ -1,0 +1,25 @@
+﻿@page "/Employee/Create"
+
+@using Ehrms.Shared
+@using System.Net.Http.Headers
+
+@inject IHttpClientFactory HttpClientFactory
+@inject NavigationManager NavigationManager
+
+<EmployeeForm IsEditMode="false" OnValidSubmit="CreteEmployee" />
+
+@code {
+	protected async Task CreteEmployee(Employee employeeRegistration)
+	{
+		var client = HttpClientFactory.CreateClient("ApiGateway");
+		var authenticationResponse = await client.PostAsJsonAsync("/api/Account", new
+		{
+			Username = "Test",
+			Password = "Test"
+		});
+		var jwt = await authenticationResponse.Content.ReadFromJsonAsync<GenerateTokenResponse>();
+
+		client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.Token);
+		var response = await client.PutAsJsonAsync("/api/Employee", employeeRegistration);
+	}
+}

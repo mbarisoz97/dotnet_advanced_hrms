@@ -1,3 +1,4 @@
+using Ehrms.Web;
 using Ehrms.Web.Components;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -6,6 +7,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
 	.AddInteractiveServerComponents()
 	.AddInteractiveWebAssemblyComponents();
+
+builder.Services.AddHttpClient("ApiGateway", client =>
+{
+	client.BaseAddress = new Uri(builder.Configuration["ApiGatewayUri"]!);
+});
+
+builder.Services.AddWebUi();
 
 var app = builder.Build();
 

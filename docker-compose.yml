@@ -9,6 +9,7 @@ services:
         - "5001:8081"
     networks:
         - proxybackend
+        - frontend
     depends_on: 
         - ehrms.employeeinfo.api
         - ehrms.projectmanagement.api
@@ -80,7 +81,20 @@ services:
     networks:
         - proxybackend
 
+  ehrms.web:
+    image: ${DOCKER_REGISTRY-}ehrmsweb
+    build:
+      context: .
+      dockerfile: src/FrontEnd/Ehrms.Web/Ehrms.Web/Dockerfile
+    ports:
+        - 7878:8080
+        - 7879:8081
+    networks:
+        - frontend
 networks:
   proxybackend:
     name: proxybackend
     driver: bridge
+
+  frontend:
+    name: frontend
