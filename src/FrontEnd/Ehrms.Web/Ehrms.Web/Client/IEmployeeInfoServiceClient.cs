@@ -4,5 +4,6 @@ namespace Ehrms.Web.Client;
 
 public interface IEmployeeInfoServiceClient
 {
-	Task<IEnumerable<Employee>> GetEmployees();
+	Task CreateEmployee(Employee employee);
+	Task<IEnumerable<Employee>> GetEmployees(int page, int pageSize = 20);
 }

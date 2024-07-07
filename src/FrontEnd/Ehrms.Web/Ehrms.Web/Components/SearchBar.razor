@@ -1,0 +1,13 @@
+﻿@inherits LayoutComponentBase
+
+<div class="input-group">
+	<button class="btn btn-primary" type="submit">
+		<i class="bi bi-search"></i>
+	</button>
+	<input type="text" class="form-control" placeholder="@SearchBarPlaceHolder">
+</div>
+
+@code {
+	[Parameter]
+	public string SearchBarPlaceHolder { get; set; } = "Search";
+}

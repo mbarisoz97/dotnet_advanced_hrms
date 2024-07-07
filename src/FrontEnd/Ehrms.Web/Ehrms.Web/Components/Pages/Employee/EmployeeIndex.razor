@@ -1,14 +1,22 @@
 ﻿@page "/Employee"
 @attribute [StreamRendering]
+@rendermode InteractiveServer
 
 @inject IEmployeeInfoServiceClient EmployeeServiceServiceClient
 
-@if (Employees == null)
+@if (_employees == null)
 {
 	return;
 }
 
-<h1>Employees</h1>
+<div class="row">
+	<div class="d-flex flex-row justify-content-between">
+		<SearchBar SearchBarPlaceHolder="Search Employee" />
+		<a href="/Employee/Create" class="btn btn-success">
+			<i class="bi bi-person-plus"></i>
+		</a>
+	</div>
+</div>
 
 <div class="row">
 	<div class="table-responsive-lg">
@@ -23,7 +31,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				@foreach (var employee in Employees)
+				@foreach (var employee in _employees)
 				{
 					<tr>
 						<td></td>
@@ -39,10 +47,11 @@
 </div>
 
 @code {
-	public IEnumerable<Employee> Employees { get; set; } = [];
+	private IEnumerable<Employee> _employees { get; set; } = [];
+	private int CurrentPage { get; set; } = 1;
 
 	protected override async Task OnInitializedAsync()
 	{
-		Employees = await EmployeeServiceServiceClient.GetEmployees();
+		_employees = await EmployeeServiceServiceClient.GetEmployees(CurrentPage);
 	}
 }

@@ -9,12 +9,10 @@
 		<DockerfileContext>..\..\..\..</DockerfileContext>
 		<DockerComposeProjectPath>..\..\..\..\docker-compose.dcproj</DockerComposeProjectPath>
 	</PropertyGroup>
-
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\Shared\Ehrms.Shared\Ehrms.Shared.csproj" />
 		<ProjectReference Include="..\Ehrms.Web.Client\Ehrms.Web.Client.csproj" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.6" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.1" />
 	</ItemGroup>
-
 </Project>

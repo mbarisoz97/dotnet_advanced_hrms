@@ -49,7 +49,10 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		EmployeeRegistration ??= new();
+		await Task.FromResult(() =>
+		{
+			EmployeeRegistration ??= new();
+		});
 	}
 
 	protected async Task ValidSubmit()

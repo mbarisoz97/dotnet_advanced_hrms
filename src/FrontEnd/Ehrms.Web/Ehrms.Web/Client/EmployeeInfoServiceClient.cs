@@ -1,7 +1,5 @@
-﻿using Ehrms.Shared;
+﻿using System.Net;
 using Ehrms.Web.Models;
-using System.Net;
-using System.Net.Http.Headers;
 
 namespace Ehrms.Web.Client;
 
@@ -15,24 +13,22 @@ internal sealed class EmployeeInfoServiceClient : IEmployeeInfoServiceClient
 		_httpClientFactory = httpClientFactory;
 	}
 
-	public async Task<IEnumerable<Employee>> GetEmployees()
+	public async Task CreateEmployee(Employee employee)
 	{
 		var client = _httpClientFactory.CreateClient("ApiGateway");
-		var authenticationResponse = await client.PostAsJsonAsync("/api/Account", new
-		{
-			Username = "Test",
-			Password = "Test"
-		});
-		var jwt = await authenticationResponse.Content.ReadFromJsonAsync<GenerateTokenResponse>();
+		await client.PutAsJsonAsync(EmployeeInfoServiceEndpoint, employee);
+	}
 
-		client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.Token);
+	public async Task<IEnumerable<Employee>> GetEmployees(int page, int pageSize = 20)
+	{
+		var client = _httpClientFactory.CreateClient("ApiGateway");
 		var response = await client.GetAsync(EmployeeInfoServiceEndpoint);
 
+		IEnumerable<Employee> employees = [];
 		if (response.StatusCode == HttpStatusCode.OK)
 		{
-			return await response.Content.ReadFromJsonAsync<IEnumerable<Employee>>() ?? [];
+			employees = await response.Content.ReadFromJsonAsync<IEnumerable<Employee>>() ?? [];
 		}
-		
-		return [];
+		return employees.Take(pageSize);
 	}
 }

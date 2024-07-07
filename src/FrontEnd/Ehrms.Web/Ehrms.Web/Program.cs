@@ -11,7 +11,7 @@ builder.Services.AddRazorComponents()
 builder.Services.AddHttpClient("ApiGateway", client =>
 {
 	client.BaseAddress = new Uri(builder.Configuration["ApiGatewayUri"]!);
-});
+}).AddHttpMessageHandler<BearerTokenHandler>();
 
 builder.Services.AddWebUi();
 
