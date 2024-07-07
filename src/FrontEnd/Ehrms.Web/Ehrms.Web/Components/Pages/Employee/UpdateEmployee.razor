@@ -1,0 +1,19 @@
+﻿@attribute [Route($"{EmployeeRouting.Update}/{{id:guid}}")]
+
+@inject IEmployeeServiceClient EmployeeService
+@inject NavigationManager NavigationManager
+
+<EmployeeForm IsEditMode="true" EmployeeId="@Id" OnValidSubmit="UpdateEmployeeInfo" />
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private async Task UpdateEmployeeInfo(Employee employee)
+    {
+        employee.Id = Id;
+        await EmployeeService.UpdateEmployeeAsync(employee);
+
+        NavigationManager.NavigateTo(EmployeeRouting.Index);
+    }
+}

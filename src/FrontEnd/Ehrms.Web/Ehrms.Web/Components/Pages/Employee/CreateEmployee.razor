@@ -1,10 +1,7 @@
-﻿@page "/Employee/Create"
+﻿@attribute [Route($"{EmployeeRouting.Create}")]
 @rendermode InteractiveServer
 
-@using Ehrms.Shared
-@using System.Net.Http.Headers
-
-@inject IEmployeeInfoServiceClient EmployeeInfoServiceClient;
+@inject IEmployeeServiceClient EmployeeServiceClient;
 @inject NavigationManager NavigationManager
 
 <EmployeeForm IsEditMode="false" OnValidSubmit="CreteEmployee" />
@@ -12,7 +9,7 @@
 @code {
 	protected async Task CreteEmployee(Employee employee)
 	{
-		await EmployeeInfoServiceClient.CreateEmployee(employee);
-		NavigationManager.NavigateTo("/Employee");
+		await EmployeeServiceClient.CreateEmployeeAsync(employee);
+		NavigationManager.NavigateTo(EmployeeRouting.Index);
 	}
 }

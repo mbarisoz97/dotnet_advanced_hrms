@@ -1,31 +1,32 @@
-﻿@attribute [StreamRendering]
+﻿@inject IEmployeeServiceClient EmployeeService
+@attribute [StreamRendering]
 
-@if (EmployeeRegistration == null)
+@if (Employee == null)
 {
 	return;
 }
 
-<EditForm Model="@EmployeeRegistration" OnValidSubmit="ValidSubmit" FormName="EmployeeForm">
+<EditForm Model="@Employee" OnValidSubmit="ValidSubmit" FormName="EmployeeForm">
 	<DataAnnotationsValidator></DataAnnotationsValidator>
 	<div class="mt-3">
 		<label class="form-label">First Name</label>
-		<InputText class="form-control" @bind-Value="@EmployeeRegistration.FirstName"></InputText>
-		<ValidationMessage class="text-danger" For="(()=> EmployeeRegistration.FirstName)"></ValidationMessage>
+		<InputText class="form-control" @bind-Value="@Employee.FirstName"></InputText>
+		<ValidationMessage class="text-danger" For="(()=> Employee.FirstName)"></ValidationMessage>
 	</div>
 	<div class="mt-3">
 		<label class="form-label">Last Name</label>
-		<InputText class="form-control" @bind-Value="@EmployeeRegistration.LastName"></InputText>
-		<ValidationMessage class="text-danger" For="(()=> EmployeeRegistration.LastName)"></ValidationMessage>
+		<InputText class="form-control" @bind-Value="@Employee.LastName"></InputText>
+		<ValidationMessage class="text-danger" For="(()=> Employee.LastName)"></ValidationMessage>
 	</div>
 	<div>
 		<label class="form-label">Date of Birth</label>
-		<InputDate class="form-control" @bind-Value="@EmployeeRegistration.DateOfBirth"></InputDate>
-		<ValidationMessage class="text-danger" For="(()=> EmployeeRegistration.DateOfBirth)"></ValidationMessage>
+		<InputDate class="form-control" @bind-Value="@Employee.DateOfBirth"></InputDate>
+		<ValidationMessage class="text-danger" For="(()=> Employee.DateOfBirth)"></ValidationMessage>
 	</div>
 	<div class="mt-3">
-		<label class="form-label">Position</label>
-		<InputText class="form-control" @bind-Value="@EmployeeRegistration.Qualification"></InputText>
-		<ValidationMessage class="text-danger" For="(()=> EmployeeRegistration.Qualification)"></ValidationMessage>
+		<label class="form-label">Qualification</label>
+		<InputText class="form-control" @bind-Value="@Employee.Qualification"></InputText>
+		<ValidationMessage class="text-danger" For="(()=> Employee.Qualification)"></ValidationMessage>
 	</div>
 	<div class="mt-3">
 		<button class="btn btn-primary" type="submit">
@@ -42,21 +43,25 @@
 	public Guid EmployeeId { get; set; }
 
 	[SupplyParameterFromForm]
-	public Employee? EmployeeRegistration { get; set; }
+	public Employee? Employee { get; set; }
 
 	[Parameter]
 	public EventCallback<Employee> OnValidSubmit { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{
-		await Task.FromResult(() =>
+		if(IsEditMode)
 		{
-			EmployeeRegistration ??= new();
-		});
+			Employee ??= await EmployeeService.GetEmployeeAsync(EmployeeId);
+		}
+		else
+		{
+			Employee ??= new();
+		}
 	}
 
 	protected async Task ValidSubmit()
 	{
-		await OnValidSubmit.InvokeAsync(EmployeeRegistration);
+		await OnValidSubmit.InvokeAsync(Employee);
 	}
 }

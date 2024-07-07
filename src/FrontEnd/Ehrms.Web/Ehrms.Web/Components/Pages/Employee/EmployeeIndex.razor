@@ -1,8 +1,7 @@
-﻿@page "/Employee"
+﻿@attribute [Route(EmployeeRouting.Index)]
 @attribute [StreamRendering]
-@rendermode InteractiveServer
 
-@inject IEmployeeInfoServiceClient EmployeeServiceServiceClient
+@inject IEmployeeServiceClient EmployeeServiceServiceClient
 
 @if (_employees == null)
 {
@@ -12,11 +11,22 @@
 <div class="row">
 	<div class="d-flex flex-row justify-content-between">
 		<SearchBar SearchBarPlaceHolder="Search Employee" />
-		<a href="/Employee/Create" class="btn btn-success">
-			<i class="bi bi-person-plus"></i>
-		</a>
+		<div>
+			<a href="/Employee/Create" class="btn btn-success">
+				<i class="bi bi-person-plus"></i>
+			</a>
+		</div>
 	</div>
 </div>
+
+@if (!_employees.Any())
+{
+	<div class="row align-self-center">
+		<h2>No records found</h2>
+	</div>
+
+	return;
+}
 
 <div class="row">
 	<div class="table-responsive-lg">
@@ -28,6 +38,7 @@
 					<th>Last Name</th>
 					<th>Date Of Birth</th>
 					<th>Qualification</th>
+					<th></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -39,6 +50,14 @@
 						<td>@employee.LastName</td>
 						<td>@employee.DateOfBirth</td>
 						<td>@employee.Qualification</td>
+						<td>
+							<NavLink href="@($"{EmployeeRouting.Update}/{employee.Id}")" class="text-success">
+								<i class="bi bi-pencil-square"></i>
+							</NavLink>
+							<NavLink href="@($"{EmployeeRouting.Delete}/{employee.Id}")" class="text-danger">
+								<i class="bi bi-trash"></i>
+							</NavLink>
+						</td>
 					</tr>
 				}
 			</tbody>
@@ -52,6 +71,6 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		_employees = await EmployeeServiceServiceClient.GetEmployees(CurrentPage);
+		_employees = await EmployeeServiceServiceClient.GetEmployeesAsync(CurrentPage);
 	}
 }

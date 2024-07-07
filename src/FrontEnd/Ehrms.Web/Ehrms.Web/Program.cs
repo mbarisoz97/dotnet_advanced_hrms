@@ -8,6 +8,11 @@ builder.Services.AddRazorComponents()
 	.AddInteractiveServerComponents()
 	.AddInteractiveWebAssemblyComponents();
 
+builder.Services.AddHttpClient<ITokenProvider>(client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["ApiGatewayUri"]!);
+});
+
 builder.Services.AddHttpClient("ApiGateway", client =>
 {
 	client.BaseAddress = new Uri(builder.Configuration["ApiGatewayUri"]!);

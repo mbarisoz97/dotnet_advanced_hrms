@@ -1,0 +1,63 @@
+﻿@attribute [Route($"{EmployeeRouting.Delete}/{{id:guid}}")]
+@rendermode InteractiveServer
+
+@inject IEmployeeServiceClient EmployeeInfoServiceClient
+@inject NavigationManager NavigationManager
+
+@if(employeeRecord == null)
+{
+    return;
+}
+
+<h2>Delete Employee</h2>
+<br />
+ 
+<div class="form-group">
+    <h4>Do you want to delete this employee?</h4>
+    <table class="table">
+        <tbody>
+            <tr>
+                <td>First Name</td>
+                <td>@employeeRecord.FirstName</td>
+            </tr>
+            <tr>
+                <td>Last Name</td>
+                <td>@employeeRecord.LastName</td>
+            </tr>
+            <tr>
+                <td>Date Of Birth</td>
+                <td>@employeeRecord.DateOfBirth</td>
+            </tr>
+            <tr>
+                <td>Position</td>
+                <td>@employeeRecord.Qualification</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<div class="form-group">
+    <button @onclick="Remove" class="btn btn-danger">Delete</button>
+    <button @onclick="Cancel" class="btn btn-warning">Cancel</button>
+</div>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+    public Employee? employeeRecord;
+
+    protected override async Task OnInitializedAsync()
+    {
+        employeeRecord ??= await EmployeeInfoServiceClient.GetEmployeeAsync(Id);
+    }
+
+    protected async Task Remove()
+    {
+        await EmployeeInfoServiceClient.DeleteEmployeeAsync(Id);
+        NavigationManager.NavigateTo(EmployeeRouting.Index);
+    }
+
+    protected void Cancel()
+    {
+        NavigationManager.NavigateTo(EmployeeRouting.Index);
+    }
+}

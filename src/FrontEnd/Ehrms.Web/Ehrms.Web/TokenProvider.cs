@@ -11,10 +11,7 @@ internal class TokenProvider : ITokenProvider
 
 	private string _currentAccessToken = "";
 
-	public TokenProvider(
-		ILogger<TokenProvider> logger,
-		IHttpClientFactory factory,
-		IEndpointProvider endpointProvider)
+	public TokenProvider(ILogger<TokenProvider> logger, IHttpClientFactory factory, IEndpointProvider endpointProvider)
 	{
 		_logger = logger;
 		_factory = factory;

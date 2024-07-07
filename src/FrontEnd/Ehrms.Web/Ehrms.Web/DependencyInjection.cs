@@ -10,7 +10,7 @@ internal static class DependencyInjection
 		services.AddSingleton<ITokenProvider, TokenProvider>();
 		services.AddSingleton<IEndpointProvider, EndpointProvider>();
 
-		services.AddScoped<IEmployeeInfoServiceClient, EmployeeInfoServiceClient>();
+		services.AddScoped<IEmployeeServiceClient, EmployeeInfoServiceClient>();
 		return services;	
 	}
 }
