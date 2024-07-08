@@ -8,7 +8,8 @@
         "ehrms.projectmanagement.api": "StartDebugging",
         "ehrms.trainingmanagement.api": "StartDebugging",
         "ehrms.apigateway": "StartDebugging",
-        "ehrms.authentication.api": "StartDebugging"
+        "ehrms.authentication.api": "StartDebugging",
+        "ehrms.web": "StartDebugging"
       }
     }
   }

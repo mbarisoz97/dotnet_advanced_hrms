@@ -1,0 +1,76 @@
+﻿@attribute [Route(EmployeeRouting.Index)]
+@attribute [StreamRendering]
+
+@inject IEmployeeServiceClient EmployeeServiceServiceClient
+
+@if (_employees == null)
+{
+	return;
+}
+
+<div class="row">
+	<div class="d-flex flex-row justify-content-between">
+		<SearchBar SearchBarPlaceHolder="Search Employee" />
+		<div>
+			<a href="/Employee/Create" class="btn btn-success">
+				<i class="bi bi-person-plus"></i>
+			</a>
+		</div>
+	</div>
+</div>
+
+@if (!_employees.Any())
+{
+	<div class="row align-self-center">
+		<h2>No records found</h2>
+	</div>
+
+	return;
+}
+
+<div class="row">
+	<div class="table-responsive-lg">
+		<table class="table table-hover table-borderless">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>First Name</th>
+					<th>Last Name</th>
+					<th>Date Of Birth</th>
+					<th>Qualification</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var employee in _employees)
+				{
+					<tr>
+						<td></td>
+						<td>@employee.FirstName</td>
+						<td>@employee.LastName</td>
+						<td>@employee.DateOfBirth</td>
+						<td>@employee.Qualification</td>
+						<td>
+							<NavLink href="@($"{EmployeeRouting.Update}/{employee.Id}")" class="text-success">
+								<i class="bi bi-pencil-square"></i>
+							</NavLink>
+							<NavLink href="@($"{EmployeeRouting.Delete}/{employee.Id}")" class="text-danger">
+								<i class="bi bi-trash"></i>
+							</NavLink>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+@code {
+	private IEnumerable<Employee> _employees { get; set; } = [];
+	private int CurrentPage { get; set; } = 1;
+
+	protected override async Task OnInitializedAsync()
+	{
+		_employees = await EmployeeServiceServiceClient.GetEmployeesAsync(CurrentPage);
+	}
+}
