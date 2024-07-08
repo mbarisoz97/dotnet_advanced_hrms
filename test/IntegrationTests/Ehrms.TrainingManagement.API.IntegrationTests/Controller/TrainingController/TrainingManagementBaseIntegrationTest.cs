@@ -20,7 +20,7 @@ public abstract class TrainingManagementBaseIntegrationTest : IClassFixture<Trai
 			Password = "TestPassword"
 		};
 		var jwt = new JwtTokenHandler().Generate(request);
-		client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.Token);
+		client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.AccessToken);
 	}
 
 	protected async Task<Training> InsertRandomTraningRecord()

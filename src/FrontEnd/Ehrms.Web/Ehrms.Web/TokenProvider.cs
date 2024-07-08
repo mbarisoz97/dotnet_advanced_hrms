@@ -43,7 +43,7 @@ internal class TokenProvider : ITokenProvider
 		if (authenticationResponse.IsSuccessStatusCode)
 		{
 			var jwt = await authenticationResponse.Content.ReadFromJsonAsync<GenerateTokenResponse>();
-			return jwt.Token;
+			return jwt.AccessToken;
 		}
 
 		return string.Empty;

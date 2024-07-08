@@ -1,8 +1,7 @@
-﻿namespace Ehrms.Shared;
+﻿namespace Ehrms.Authentication.API.Controllers;
 
-public sealed class GenerateTokenResponse
+public sealed class RefreshModel
 {
 	public string AccessToken { get; set; } = string.Empty;
 	public string RefreshToken { get; set; } = string.Empty;
-	public DateTime ExpiresIn { get; set; }
 }

@@ -19,7 +19,7 @@ public abstract class BaseEmployeeInfoIntegrationTest : IClassFixture<EmployeeIn
 			Password = "TestPassword"
 		};
 		var jwt = new JwtTokenHandler().Generate(request);
-		client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.Token);
+		client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.AccessToken);
 		this.factory = factory;
 	}
 }

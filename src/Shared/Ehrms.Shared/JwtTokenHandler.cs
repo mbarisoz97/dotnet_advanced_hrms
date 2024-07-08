@@ -2,73 +2,64 @@
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 namespace Ehrms.Shared;
 
 public interface ITokenHandler
 {
-    GenerateTokenResponse? Generate(AuthenticationRequest request);
+	GenerateTokenResponse? Generate(AuthenticationRequest request);
+	ClaimsPrincipal? GetPrincipalFromExpiredToken(string token);
 }
 
 public class JwtTokenHandler : ITokenHandler
 {
-    internal const string JWT_SECURITY_KEY = "d4iNJCVb1o14QaHlHKP5Isw/2VFa5OT3mLQeSb0WHLM=";
-    internal const uint JWT_TOKEN_VALIDITY_MINS = 20;
+	internal const string JWT_SECURITY_KEY = "d4iNJCVb1o14QaHlHKP5Isw/2VFa5OT3mLQeSb0WHLM=";
+	internal const uint JWT_TOKEN_VALIDITY_MINS = 20;
 
-    public GenerateTokenResponse? Generate(AuthenticationRequest request)
-    {
+	public GenerateTokenResponse? Generate(AuthenticationRequest request)
+	{
 
-        var tokenExpiryTimeStamp = DateTime.Now.AddMinutes(JWT_TOKEN_VALIDITY_MINS);
-        var tokenKey = Encoding.ASCII.GetBytes(JWT_SECURITY_KEY);
-        var claimsIdentity = new ClaimsIdentity(new List<Claim>()
-        {
-            new(JwtRegisteredClaimNames.Name, request.Username),
+		var tokenExpiryTimeStamp = DateTime.Now.AddMinutes(JWT_TOKEN_VALIDITY_MINS);
+		var tokenKey = Encoding.ASCII.GetBytes(JWT_SECURITY_KEY);
+		var claimsIdentity = new ClaimsIdentity(
+		[
+			new(ClaimTypes.Name, request.Username),
+			new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+		]);
 
-        });
+		SymmetricSecurityKey securityKey = new SymmetricSecurityKey(tokenKey);
+		SigningCredentials signingCredentials = new(securityKey, SecurityAlgorithms.HmacSha256Signature);
+		SecurityTokenDescriptor securityTokenDescriptor = new()
+		{
+			Issuer = "https://localhost:7203",
+			Audience = "https://localhost:7203",
+			Subject = claimsIdentity,
+			Expires = tokenExpiryTimeStamp,
+			SigningCredentials = signingCredentials
+		};
 
-        SymmetricSecurityKey securityKey = new SymmetricSecurityKey(tokenKey);
-        SigningCredentials signingCredentials = new(securityKey, SecurityAlgorithms.HmacSha256Signature);
-        SecurityTokenDescriptor securityTokenDescriptor = new()
-        {
-            Subject = claimsIdentity,
-            Expires = tokenExpiryTimeStamp,
-            SigningCredentials = signingCredentials
-        };
+		JwtSecurityTokenHandler jwtSecurityTokenHandler = new();
+		var securityToken = jwtSecurityTokenHandler.CreateToken(securityTokenDescriptor);
+		var token = jwtSecurityTokenHandler.WriteToken(securityToken);
 
-        JwtSecurityTokenHandler jwtSecurityTokenHandler = new();
-        var securityToken = jwtSecurityTokenHandler.CreateToken(securityTokenDescriptor);
-        var token = jwtSecurityTokenHandler.WriteToken(securityToken);
+		return new GenerateTokenResponse()
+		{
+			AccessToken = token,
+			ExpiresIn = tokenExpiryTimeStamp,
+		};
+	}
 
-        return new GenerateTokenResponse()
-        {
-            Token = token,
-            Username = request.Username,
-            ExpiresIn = tokenExpiryTimeStamp,
-        };
-    }
-}
+	public ClaimsPrincipal? GetPrincipalFromExpiredToken(string token)
+	{
+		var validation = new TokenValidationParameters
+		{
+			ValidIssuer = "https://localhost:7203",
+			ValidAudience = "https://localhost:7203",
+			IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JWT_SECURITY_KEY)),
+			ValidateLifetime = false
+		};
 
-public static class JwtAuthenticationExtenions
-{
-    public static void AddCustomJwtAuthentication(this IServiceCollection service)
-    {
-        service.AddAuthentication(o =>
-        {
-            o.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            o.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-        }).AddJwtBearer(o =>
-        {
-            o.RequireHttpsMetadata = true;
-            o.SaveToken = true;
-            o.TokenValidationParameters = new TokenValidationParameters()
-            {
-                ValidateIssuerSigningKey = true,
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(JwtTokenHandler.JWT_SECURITY_KEY))
-            };
-        });
-    }
+		return new JwtSecurityTokenHandler().ValidateToken(token, validation, out _);
+	}
+
 }
