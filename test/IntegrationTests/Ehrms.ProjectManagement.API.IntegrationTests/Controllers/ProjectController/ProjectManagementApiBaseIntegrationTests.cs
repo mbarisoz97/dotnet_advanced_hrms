@@ -19,7 +19,7 @@ public abstract class ProjectManagementApiBaseIntegrationTests : IClassFixture<P
             Password = "TestPassword"
         };
         var jwt = new JwtTokenHandler().Generate(request);
-        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.Token);
+        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.AccessToken);
         _factory = factory;
     }
 }
