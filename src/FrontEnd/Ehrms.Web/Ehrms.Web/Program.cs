@@ -1,3 +1,4 @@
+using Blazored.LocalStorage;
 using Ehrms.Web;
 using Ehrms.Web.Components;
 
@@ -8,18 +9,13 @@ builder.Services.AddRazorComponents()
 	.AddInteractiveServerComponents()
 	.AddInteractiveWebAssemblyComponents();
 
-builder.Services.AddHttpClient<ITokenProvider>(client =>
-{
-    client.BaseAddress = new Uri(builder.Configuration["ApiGatewayUri"]!);
-});
-
 builder.Services.AddHttpClient("ApiGateway", client =>
 {
 	client.BaseAddress = new Uri(builder.Configuration["ApiGatewayUri"]!);
-}).AddHttpMessageHandler<BearerTokenHandler>();
+});
 
 builder.Services.AddWebUi();
-
+builder.Services.AddBlazoredLocalStorage();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

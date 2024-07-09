@@ -1,0 +1,60 @@
+﻿@page "/login"
+@layout EmptyLayout
+@rendermode InteractiveServer
+
+@inject IHttpClientFactory HttpClientFactory
+@inject NavigationManager NavigatioManager
+@inject IEndpointProvider EndpointProvider
+@inject ILocalStorageService LocalStorageService
+
+<div class="container-flueid h-100">
+	<div class="row justify-content-center align-items-center">
+		<div class="col col-sm-6 col-md-6 cold-lg-4 col-xl-3">
+			<EditForm FormName="UserLoginForm" Model="@LoginRequest" OnValidSubmit="Login">
+				<DataAnnotationsValidator />
+				<div class="form-group">
+					<InputText class="form-control form-control-lg" @bind-Value="LoginRequest.Username"></InputText>
+				</div>
+				<div class="form-group">
+					<InputText  class="form-control form-control-lg" @bind-Value="LoginRequest.Password"></InputText>
+				</div>
+				<div class="form-group">
+					<button type="submit" class="btn btn-info btn-block">Login</button>
+				</div>
+			</EditForm>
+		</div>
+	</div>
+</div>
+
+@code {
+	[SupplyParameterFromForm]
+	public LoginRequestModel? LoginRequest { get; set; }
+
+	protected override void OnInitialized()
+	{
+		LoginRequest ??= new();
+	}
+
+	private async Task Login()
+	{
+		var client = HttpClientFactory.CreateClient("ApiGateway");
+		var response = await client.PostAsJsonAsync(EndpointProvider.AutheticationService, LoginRequest);
+
+		if (response.IsSuccessStatusCode)
+		{
+			var tokenConfiguration = await response.Content.ReadFromJsonAsync<LoginResponseModel>();
+			await SetTokens(tokenConfiguration!);
+
+			NavigatioManager.NavigateTo(EmployeeRouting.Index);
+		}
+	}
+
+	private async Task SetTokens(LoginResponseModel tokenConfiguration)
+	{
+		if (tokenConfiguration != null)
+		{
+			await LocalStorageService.SetItemAsStringAsync("AccessToken", tokenConfiguration.AccessToken);
+			await LocalStorageService.SetItemAsStringAsync("RefreshToken", tokenConfiguration.RefreshToken);
+		}
+	}
+}

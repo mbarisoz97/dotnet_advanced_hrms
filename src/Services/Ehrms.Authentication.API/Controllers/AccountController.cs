@@ -16,6 +16,11 @@ public class AccountController : ControllerBase
 	{
 		_tokenHandler = tokenHandler;
 		_userManager = userManager;
+
+		_userManager.CreateAsync(new Controllers.User
+		{
+			UserName = "testUser"
+		}, "Passw0rd!");
 	}
 
 	[HttpPost("Login")]
