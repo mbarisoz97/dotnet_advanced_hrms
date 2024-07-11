@@ -2,5 +2,6 @@
 
 internal sealed class EndpointProvider : IEndpointProvider
 {
-	public string AutheticationService => "/api/Account/Login";
+	public string RefreshEndpoint => "/api/Account/Refresh";
+	public string AutheticationEndpoint => "/api/Account/Login";
 }

@@ -2,5 +2,6 @@
 
 internal interface IEndpointProvider
 {
-	string AutheticationService { get; }
+	string AutheticationEndpoint { get; }
+	string RefreshEndpoint { get; }
 }

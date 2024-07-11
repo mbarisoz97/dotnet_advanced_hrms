@@ -1,4 +1,6 @@
-﻿@attribute [Route(EmployeeRouting.Index)]
+﻿@page "/Employee"
+
+@attribute [Authorize]
 @attribute [StreamRendering]
 
 @inject IEmployeeServiceClient EmployeeServiceServiceClient
@@ -69,7 +71,7 @@
 	private IEnumerable<Employee> _employees { get; set; } = [];
 	private int CurrentPage { get; set; } = 1;
 
-	protected override async Task OnInitializedAsync()
+	protected override async Task OnParametersSetAsync()
 	{
 		_employees = await EmployeeServiceServiceClient.GetEmployeesAsync(CurrentPage);
 	}

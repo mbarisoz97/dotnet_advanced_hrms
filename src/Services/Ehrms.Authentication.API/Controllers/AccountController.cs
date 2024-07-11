@@ -49,6 +49,7 @@ public class AccountController : ControllerBase
 		user.RefreshTokenExpiry = DateTime.UtcNow.AddMinutes(10);
 
 		await _userManager.UpdateAsync(user);
+		authenticationResponse.Username = request.Username;
 		authenticationResponse.RefreshToken = user.RefreshToken;
 
 		return Ok(authenticationResponse);

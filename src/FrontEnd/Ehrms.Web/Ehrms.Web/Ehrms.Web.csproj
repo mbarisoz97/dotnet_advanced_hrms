@@ -10,7 +10,11 @@
 		<DockerComposeProjectPath>..\..\..\..\docker-compose.dcproj</DockerComposeProjectPath>
 	</PropertyGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\..\..\Shared\Ehrms.Shared\Ehrms.Shared.csproj" />
 		<ProjectReference Include="..\Ehrms.Web.Client\Ehrms.Web.Client.csproj" />
+		<PackageReference Include="BitzArt.Blazor.Cookies.Server" Version="1.0.4" />
+		<PackageReference Include="Blazored.SessionStorage" Version="2.4.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.7" />
 		<PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.6" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.1" />
 		<PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
