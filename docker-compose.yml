@@ -9,7 +9,6 @@ services:
         - "5001:8081"
     networks:
         - proxybackend
-        - frontend
     depends_on: 
         - ehrms.employeeinfo.api
         - ehrms.projectmanagement.api
@@ -89,12 +88,12 @@ services:
     ports:
         - 7878:8080
         - 7879:8081
+    depends_on:
+        - ehrms.apigateway
     networks:
-        - frontend
+        - proxybackend
+
 networks:
   proxybackend:
     name: proxybackend
     driver: bridge
-
-  frontend:
-    name: frontend

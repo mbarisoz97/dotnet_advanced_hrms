@@ -1,24 +1,37 @@
 using Ehrms.Web;
 using Ehrms.Web.Components;
+using Blazored.LocalStorage;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using BitzArt.Blazor.Cookies;
+using Ehrms.Web.Client;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddAuthentication();
+builder.Services.AddWebUi();
+builder.Services.AddBlazoredLocalStorage();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+	.AddCookie(options =>
+	{
+		options.Cookie.Name = "auth_token";
+		options.LoginPath = "/login";
+		options.Cookie.MaxAge = TimeSpan.FromMinutes(30);
+	});
+builder.Services.AddAuthorization();
+builder.Services.AddCascadingAuthenticationState();
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
 	.AddInteractiveServerComponents()
 	.AddInteractiveWebAssemblyComponents();
 
-builder.Services.AddHttpClient<ITokenProvider>(client =>
-{
-    client.BaseAddress = new Uri(builder.Configuration["ApiGatewayUri"]!);
-});
-
+builder.AddBlazorCookies();
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient("ApiGateway", client =>
 {
 	client.BaseAddress = new Uri(builder.Configuration["ApiGatewayUri"]!);
-}).AddHttpMessageHandler<BearerTokenHandler>();
-
-builder.Services.AddWebUi();
+});
 
 var app = builder.Build();
 
@@ -38,6 +51,8 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapRazorComponents<App>()
 	.AddInteractiveServerRenderMode()

@@ -1,0 +1,132 @@
+﻿@page "/login"
+@using BitzArt.Blazor.Cookies
+@using Ehrms.Shared
+@using System.Net.Http.Headers
+@using Ehrms.Web.Routing
+@layout EmptyLayout
+
+@inject ICookieService CookieService
+@inject ITokenHandler TokenHandler
+@inject IHttpClientFactory HttpClientFactory
+@inject IEndpointProvider EndpointProvider
+@inject NavigationManager NavigationManager
+
+<div class="container-flueid h-100">
+	<div class="row justify-content-center align-items-center">
+		<div class="col col-sm-6 col-md-6 cold-lg-4 col-xl-3">
+			<EditForm Model="@LoginRequest" FormName="UserLoginForm" OnValidSubmit="ValidSubmit">
+				<DataAnnotationsValidator />
+				<div class="form-group">
+					<InputText class="form-control form-control-lg" @bind-Value="LoginRequest.Username"></InputText>
+				</div>
+				<div class="form-group">
+					<InputText class="form-control form-control-lg" @bind-Value="LoginRequest.Password"></InputText>
+				</div>
+				<div class="form-group">
+					<button type="submit" class="btn btn-success">
+						<i class="bi bi-box-arrow-in-right"></i>
+						Login
+					</button>
+				</div>
+			</EditForm>
+		</div>
+	</div>
+</div>
+
+@code {
+	[SupplyParameterFromForm]
+	public LoginRequestModel? LoginRequest { get; set; } = new()
+		{
+			Username = "testUser",
+			Password = "Passw0rd!"
+		};
+
+	[CascadingParameter]
+	public HttpContext? HttpContext { get; set; }
+
+	protected async override Task OnInitializedAsync()
+	{
+		if (HttpContext.User.Identity.IsAuthenticated)
+		{
+			return;
+		}
+
+		if (await CanLoginWithExistingTokens())
+		{
+			NavigationManager.NavigateTo("/");
+		}
+	}
+
+	private async Task ValidSubmit()
+	{
+		if (HttpContext == null)
+		{
+			return;
+		}
+
+		var client = HttpClientFactory.CreateClient("ApiGateway");
+		var response = await client.PostAsJsonAsync(EndpointProvider.AutheticationEndpoint, LoginRequest);
+		if (!response.IsSuccessStatusCode)
+		{
+			return;
+		}
+
+		var tokenDetails = await response.Content.ReadFromJsonAsync<LoginResponseModel>();
+		var claimsPrincipal = TokenHandler.GetPrincipalFromExpiredToken(tokenDetails.AccessToken);
+
+		var claims = new List<Claim>()
+		{
+			new Claim(ClaimTypes.Name, LoginRequest.Username)
+		};
+		claims.AddRange(claimsPrincipal!.Claims);
+
+		var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+		var principal = new ClaimsPrincipal(identity);
+
+		await HttpContext.SignInAsync(principal);
+
+		HttpContext.Response.Cookies.Append(CookieKeys.AccessToken, tokenDetails.AccessToken);
+		HttpContext.Response.Cookies.Append(CookieKeys.RefreshToken, tokenDetails.RefreshToken);
+
+		NavigationManager.NavigateTo("/");
+	}
+
+	private async Task<bool> CanLoginWithExistingTokens()
+	{
+		var accessToken = await CookieService.GetAsync(CookieKeys.AccessToken);
+		var refreshToken = await CookieService.GetAsync(CookieKeys.RefreshToken);
+
+		if (accessToken == null || refreshToken == null)
+		{
+			return false;
+		}
+
+		var client = HttpClientFactory.CreateClient("ApiGateway");
+		var response = await client.PostAsJsonAsync(EndpointProvider.RefreshEndpoint, new
+		{
+			AccessToken = accessToken.Value,
+			RefreshToken = refreshToken.Value,
+		});
+
+		if (!response.IsSuccessStatusCode)
+		{
+			return false;
+		}
+
+		var tokenDetails = await response.Content.ReadFromJsonAsync<LoginResponseModel>();
+		var claimsPrincipal = TokenHandler.GetPrincipalFromExpiredToken(tokenDetails.AccessToken);
+
+		var offset = new DateTimeOffset(DateTime.UtcNow)
+			.ToOffset(TimeSpan.FromMinutes(5));
+
+		HttpContext.Response.Cookies.Append(CookieKeys.AccessToken, tokenDetails.AccessToken);
+		HttpContext.Response.Cookies.Append(CookieKeys.RefreshToken, tokenDetails.RefreshToken);
+
+		var identity = new ClaimsIdentity(claimsPrincipal.Claims, CookieAuthenticationDefaults.AuthenticationScheme);
+		var principal = new ClaimsPrincipal(identity);
+
+		await HttpContext.SignInAsync(principal);
+
+		return true;
+	}
+}

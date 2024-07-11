@@ -1,0 +1,29 @@
+﻿@page "/logout"
+@using Ehrms.Web.Routing
+@attribute [Authorize]
+
+@inject NavigationManager NavigationManager
+
+<h1>Please wait...</h1>
+
+@code {
+	[CascadingParameter]
+	public HttpContext? HttpContext { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (HttpContext != null)
+		{
+			await SignOutUser();
+			NavigationManager.NavigateTo("/");
+		}
+	}
+
+	private async Task SignOutUser()
+	{
+		HttpContext!.Response.Cookies.Delete(CookieKeys.AccessToken);
+		HttpContext!.Response.Cookies.Delete(CookieKeys.RefreshToken);
+
+		await HttpContext!.SignOutAsync();
+	}
+}

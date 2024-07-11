@@ -16,6 +16,11 @@ public class AccountController : ControllerBase
 	{
 		_tokenHandler = tokenHandler;
 		_userManager = userManager;
+
+		_userManager.CreateAsync(new Controllers.User
+		{
+			UserName = "testUser"
+		}, "Passw0rd!");
 	}
 
 	[HttpPost("Login")]
@@ -44,6 +49,7 @@ public class AccountController : ControllerBase
 		user.RefreshTokenExpiry = DateTime.UtcNow.AddMinutes(10);
 
 		await _userManager.UpdateAsync(user);
+		authenticationResponse.Username = request.Username;
 		authenticationResponse.RefreshToken = user.RefreshToken;
 
 		return Ok(authenticationResponse);

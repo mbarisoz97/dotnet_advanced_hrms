@@ -1,4 +1,6 @@
 ﻿@attribute [Route($"{EmployeeRouting.Update}/{{id:guid}}")]
+@attribute [Authorize]
+@rendermode @(new InteractiveServerRenderMode(prerender: false))
 
 @inject IEmployeeServiceClient EmployeeService
 @inject NavigationManager NavigationManager
