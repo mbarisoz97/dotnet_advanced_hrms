@@ -1,13 +1,21 @@
-﻿@inherits LayoutComponentBase
-
-<div class="input-group d-flex justify-content-start">
+﻿<div class="input-group d-flex justify-content-start">
 	<input type="text" class="form-control" placeholder="@SearchBarPlaceHolder">
-	<button class="btn btn-primary" type="submit">
+	<button class="btn btn-primary" @onclick="OnSearchClicked">
 		<i class="bi bi-search"></i>
 	</button>
 </div>
 
 @code {
 	[Parameter]
-	public string SearchBarPlaceHolder { get; set; } = "Search";
+	public string SearchBarPlaceHolder { get; set; } = "Search...";
+
+	[Parameter]
+	public EventCallback<string> OnSearch { get; set; }
+
+	private string SearchItem { get; set; } = string.Empty;
+
+	private async Task OnSearchClicked()
+	{
+		await OnSearch.InvokeAsync();
+	}
 }
