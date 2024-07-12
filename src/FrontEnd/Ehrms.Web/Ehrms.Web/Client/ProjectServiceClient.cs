@@ -13,6 +13,29 @@ internal sealed class ProjectServiceClient : IProjectServiceClient
 		_endpointProvider = endpointProvider;
 	}
 
+	public async Task<Response<ProjectModel>> CreateProjectAsync(ProjectModel projectModel)
+	{
+		var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
+		var response = await client.PutAsJsonAsync(_endpointProvider.ProjectEndpoint, projectModel);
+
+		return new Response<ProjectModel>()
+		{
+			StatusCode = response.StatusCode,
+			Content = await response.GetContentAs<ProjectModel>()
+		};
+	}
+
+	public async Task<Response<ProjectModel>> GetProjectAsync(Guid id)
+	{
+		var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
+		var response = await client.GetAsync($"{_endpointProvider.ProjectEndpoint}/{id}");
+
+		return new Response<ProjectModel>()
+		{
+			StatusCode = response.StatusCode,
+			Content = await response.GetContentAs<ProjectModel>()
+		};
+	}
 
 	public async Task<Response<IEnumerable<ProjectModel>>> GetProjectsAsync()
 	{

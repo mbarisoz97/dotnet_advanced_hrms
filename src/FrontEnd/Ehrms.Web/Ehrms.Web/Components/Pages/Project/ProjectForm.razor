@@ -1,0 +1,63 @@
+﻿@attribute [StreamRendering]
+
+@inject IToastService ToastService
+@inject IProjectServiceClient ProjectServiceClient
+
+@if (Project == null)
+{
+	<Loading></Loading>
+	return;
+}
+
+<EditForm Model="@Project" OnValidSubmit="ValidSubmit" FormName="ProjectForm">
+	<DataAnnotationsValidator></DataAnnotationsValidator>
+	<div class="mt-3">
+		<label class="form-label">Name</label>
+		<InputText class="form-control" @bind-Value="@Project.Name"></InputText>
+		<ValidationMessage class="text-danger" For="(()=> Project.Name)"></ValidationMessage>
+	</div>
+	<div class="mt-3">
+		<label class="form-label">Description</label>
+		<InputText class="form-control" @bind-Value="@Project.Description"></InputText>
+		<ValidationMessage class="text-danger" For="(()=> Project.Description)"></ValidationMessage>
+	</div>
+	<div class="mt-3">
+		<button class="btn btn-primary" type="submit">
+			<i class="bi bi-floppy"></i> Save
+		</button>
+	</div>
+</EditForm>
+
+@code {
+	[Parameter]
+	public bool IsEditMode { get; set; }
+
+	[Parameter]
+	public Guid Id { get; set; }
+
+	[SupplyParameterFromForm]
+	public ProjectModel? Project { get; set; }
+
+	[Parameter]
+	public EventCallback<ProjectModel> OnValidSubmit { get; set; }
+
+	protected async Task ValidSubmit()
+	{
+		await OnValidSubmit.InvokeAsync(Project);
+	}
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (!IsEditMode)
+		{
+			Project ??= new();
+			return;
+		}
+
+		var response = await ProjectServiceClient.GetProjectAsync(Id);
+		if(response.StatusCode != HttpStatusCode.OK)
+		{
+			ToastService.ShowError($"Could not load project data. Service returned : {response.StatusCode}");
+		}
+	}
+}
