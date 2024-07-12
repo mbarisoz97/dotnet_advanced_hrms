@@ -28,7 +28,6 @@ else
 	</div>
 }
 
-<BlazoredToasts Position="ToastPosition.TopRight" ShowProgressBar="true" Timeout="5"></BlazoredToasts>
 
 @code {
 	[Parameter]
@@ -54,7 +53,6 @@ else
 		var response = await SkillServiceClient.DeleteEmployeeAsync(Id);
 		if (response.StatusCode == HttpStatusCode.NoContent)
 		{
-			ToastService.ShowSuccess("Skill deleted successfully");
 			await BlazoredModal.CloseAsync(ModalResult.Ok());
 		}
 		else

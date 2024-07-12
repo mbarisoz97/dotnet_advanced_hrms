@@ -1,0 +1,31 @@
+﻿@inject IToastService ToastService
+@inject ISkillServiceClient SkillService
+
+<SkillForm IsEditMode="true" Id="Id" OnValidSubmit="UpdateSkill" />
+
+@code {
+	[Parameter]
+	public Guid Id { get; set; }
+
+	[CascadingParameter]
+	BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+	private async Task UpdateSkill(SkillModel skill)
+	{
+		var response = await SkillService.UpdateSkillAsync(skill);
+
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			ToastService.ShowSuccess("Skill updated succesfully");
+			return;
+		}
+
+		if (response.StatusCode == HttpStatusCode.Conflict)
+		{
+			ToastService.ShowError("A record with this name has already been created");
+			return;
+		}
+
+		ToastService.ShowError($"Skill service returned : {response.StatusCode}");
+	}
+}

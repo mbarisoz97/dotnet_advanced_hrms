@@ -1,4 +1,5 @@
-﻿@inject ISkillServiceClient SkillService
+﻿@inject IToastService ToastService
+@inject ISkillServiceClient SkillService
 @attribute [StreamRendering]
 
 @if (Skill == null)
@@ -22,10 +23,10 @@
 
 @code {
 	[Parameter]
-	public bool IsEditMode { get; set; }
+	public Guid Id { get; set; }
 
 	[Parameter]
-	public Guid SkillId { get; set; }
+	public bool IsEditMode { get; set; }
 
 	[SupplyParameterFromForm]
 	public SkillModel? Skill { get; set; }
@@ -35,28 +36,41 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		if (IsEditMode)
+		if(IsEditMode)
 		{
-			var response = await SkillService.GetSkillAsync(SkillId);
-			if (response.StatusCode == HttpStatusCode.OK)
-			{
-				Skill = response.Content;
-			}
+			await SetFormData();
 		}
 		else
 		{
-			Skill ??= new();
+			ClearForm();
 		}
 	}
 
 	protected async Task ValidSubmit()
 	{
 		await OnValidSubmit.InvokeAsync(Skill);
-		ClearFormFields();
+
+		if (!IsEditMode)
+		{
+			ClearForm();
+		}
 	}
 
-	private void ClearFormFields()
+	private void ClearForm()
 	{
 		Skill = new();
+	}
+
+	private async Task SetFormData()
+	{
+		var response = await SkillService.GetSkillAsync(Id);
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			Skill = response.Content;
+		}
+		else
+		{
+			ToastService.ShowError($"Skill service returned : {response.StatusCode}");
+		}
 	}
 }

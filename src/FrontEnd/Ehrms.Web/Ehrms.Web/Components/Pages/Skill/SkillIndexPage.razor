@@ -2,6 +2,7 @@
 @attribute [StreamRendering]
 @attribute [Route($"{SkillRouting.Index}")]
 
+@inject IToastService ToastService
 @inject IModalService ModalService
 @inject ISkillServiceClient SkillServiceClient
 @inject NavigationManager NavigationManager
@@ -39,9 +40,9 @@
 						<td></td>
 						<td>@skill.Name</td>
 						<td>
-							<NavLink href="@($"{SkillRouting.Update}/{skill.Id}")" class="text-success">
+							<button class="text-danger" @onclick="@(()=>ShowUpdateSkillDialog(skill))">
 								<i class="bi bi-pencil-square"></i>
-							</NavLink>
+							</button>
 							<button class="text-danger" @onclick="@(()=>ShowDeleteConfirmationDialog(skill))">
 								<i class="bi bi-trash"></i>
 							</button>
@@ -71,6 +72,17 @@
 		}
 	}
 
+	private async Task ShowUpdateSkillDialog(SkillModel skill)
+	{
+		var parameters = new ModalParameters()
+			.Add(nameof(DeleteSkillPage.Id), skill.Id);
+
+		var modalReference = ModalService.Show<SkillUpdatePage>("Update skill information", parameters);
+		var result = await modalReference.Result;
+
+		await UpdateSkills();
+	}
+
 	private async Task ShowCreateSkillDialog()
 	{
 		var modalReference = ModalService.Show<SkillCreatePage>("Create a new skill");
@@ -90,6 +102,7 @@
 		if (result.Confirmed)
 		{
 			Skills?.Remove(skill);
+			ToastService.ShowSuccess("Skill deleted successfully");
 		}
 	}
 }

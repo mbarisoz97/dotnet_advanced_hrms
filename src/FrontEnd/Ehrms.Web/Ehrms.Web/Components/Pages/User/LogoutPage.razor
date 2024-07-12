@@ -1,5 +1,4 @@
 ﻿@page "/logout"
-@using Ehrms.Web.Routing
 @attribute [Authorize]
 
 @inject NavigationManager NavigationManager
@@ -10,20 +9,24 @@
 	[CascadingParameter]
 	public HttpContext? HttpContext { get; set; }
 
-	protected override async Task OnInitializedAsync()
+	protected override async Task OnParametersSetAsync()
 	{
-		if (HttpContext != null)
-		{
-			await SignOutUser();
-			NavigationManager.NavigateTo("/");
-		}
+		await SignOutUser();
 	}
 
 	private async Task SignOutUser()
 	{
-		HttpContext!.Response.Cookies.Delete(CookieKeys.AccessToken);
-		HttpContext!.Response.Cookies.Delete(CookieKeys.RefreshToken);
+		if (HttpContext != null)
+		{
+			HttpContext!.Response.Cookies.Delete(CookieKeys.AccessToken);
+			HttpContext!.Response.Cookies.Delete(CookieKeys.RefreshToken);
 
-		await HttpContext!.SignOutAsync();
+			await HttpContext!.SignOutAsync();
+			NavigationManager.NavigateTo("/", true);
+		}
+		else
+		{
+			NavigationManager.Refresh(true);
+		}
 	}
 }
