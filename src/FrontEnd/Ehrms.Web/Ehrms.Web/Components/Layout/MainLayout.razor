@@ -1,4 +1,5 @@
-﻿@inherits LayoutComponentBase
+﻿@using Blazored.Toast.Configuration
+@inherits LayoutComponentBase
 
 <div>
 	<div>
@@ -22,6 +23,8 @@
 		</main>
 	</div>
 </div>
+
+<BlazoredToasts Position="ToastPosition.TopRight" ShowProgressBar="true" Timeout="5"></BlazoredToasts>
 
 @code {
 	private ErrorBoundary ErrorBoundary { get; set; } = new();

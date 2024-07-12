@@ -9,8 +9,10 @@ internal static class DependencyInjection
 	{
 		services.AddSingleton<IEndpointProvider, EndpointProvider>();
 
-		services.AddTransient<IEmployeeServiceClient, EmployeeInfoServiceClient>();
+		services.AddScoped<IEmployeeServiceClient, EmployeeInfoServiceClient>();
+		services.AddScoped<ISkillServiceClient, SkillServiceClient>();
 		services.AddScoped<ITokenHandler, JwtTokenHandler>();
+		services.AddScoped<IHttpClientFactoryWrapper, HttpClientFactoryWrapper>();
 
 		return services;
 	}

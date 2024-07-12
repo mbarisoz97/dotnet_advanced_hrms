@@ -20,7 +20,7 @@ internal sealed class CreateSkillCommandHandler : IRequestHandler<CreateSkillCom
     {
         if (IsSkillNameInUse(request.Name))
         {
-            throw new ArgumentException($"'{request.Name}' already in use.");
+            throw new SkillNameIsInUseException($"'{request.Name}' already in use.");
         }
 
         var skill = _mapper.Map<Models.Skill>(request);

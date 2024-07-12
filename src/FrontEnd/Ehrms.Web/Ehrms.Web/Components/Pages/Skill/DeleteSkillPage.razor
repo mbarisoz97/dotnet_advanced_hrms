@@ -1,0 +1,69 @@
+﻿@using Blazored.Toast.Configuration
+@attribute [Authorize]
+@attribute [StreamRendering]
+
+@inject NavigationManager NavigationManager
+@inject IToastService ToastService
+@inject ISkillServiceClient SkillServiceClient
+
+@if (Skill == null)
+{
+	<h1>Loading..</h1>
+}
+else
+{
+	<div class="form-group">
+		<table class="table">
+			<tbody>
+				<tr>
+					<td>Skill Name</td>
+					<td>@Skill.Name</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="form-group">
+		<button @onclick="Remove" class="btn btn-danger">Delete</button>
+		<button @onclick="Cancel" class="btn btn-warning">Cancel</button>
+	</div>
+}
+
+
+@code {
+	[Parameter]
+	public Guid Id { get; set; }
+
+	[CascadingParameter]
+	BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+	private SkillModel? Skill { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		var response = await SkillServiceClient.GetSkillAsync(Id);
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			Skill = response.Content;
+		}
+		//Show error message
+	}
+
+	protected async Task Remove()
+	{
+		var response = await SkillServiceClient.DeleteEmployeeAsync(Id);
+		if (response.StatusCode == HttpStatusCode.NoContent)
+		{
+			await BlazoredModal.CloseAsync(ModalResult.Ok());
+		}
+		else
+		{
+			ToastService.ShowError($"Service returned : {response.StatusCode}");
+		}
+
+	}
+
+	protected async Task Cancel()
+	{
+		await BlazoredModal.CloseAsync(ModalResult.Cancel());
+	}
+}

@@ -23,6 +23,11 @@ internal sealed class UpdateSkillCommandHandler : IRequestHandler<UpdateSkillCom
             .FirstOrDefaultAsync(x => x.Id == request.Id) 
             ?? throw new SkillNotFoundException($"Could not find employee skill with id '{request.Id}'");
 
+        if(_dbContext.Skills.Any(x=>x.Name == request.Name))
+        {
+			throw new SkillNameIsInUseException($"'{request.Name}' already in use.");
+		}
+
         _mapper.Map(request, skill);
         _dbContext.Skills.Update(skill);
         await _dbContext.SaveChangesAsync();

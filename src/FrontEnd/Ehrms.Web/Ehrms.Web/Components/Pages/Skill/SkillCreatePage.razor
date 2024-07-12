@@ -1,0 +1,25 @@
+﻿@using Blazored.Toast.Configuration
+@attribute [Authorize]
+
+@inject IToastService ToastService
+@inject ISkillServiceClient SkillServiceClient
+@inject NavigationManager NavigationManager
+
+<SkillForm IsEditMode="false" OnValidSubmit="CreateSkill"/>
+<BlazoredToasts Position="ToastPosition.TopRight" ShowProgressBar="true" Timeout="5"></BlazoredToasts>
+
+@code {
+	private async Task CreateSkill(SkillModel skill)
+	{
+		var response = await SkillServiceClient.CreateSkillAsync(skill);
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			ToastService.ShowSuccess($"New skill created successfully");
+		}
+
+		if (response.StatusCode == HttpStatusCode.Conflict)
+		{
+			ToastService.ShowError($"A record with this name has already been created");
+		}
+	}
+}

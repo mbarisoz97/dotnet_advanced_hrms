@@ -1,8 +1,4 @@
 ﻿@page "/login"
-@using BitzArt.Blazor.Cookies
-@using Ehrms.Shared
-@using System.Net.Http.Headers
-@using Ehrms.Web.Routing
 @layout EmptyLayout
 
 @inject ICookieService CookieService
@@ -20,7 +16,7 @@
 					<InputText class="form-control form-control-lg" @bind-Value="LoginRequest.Username"></InputText>
 				</div>
 				<div class="form-group">
-					<InputText class="form-control form-control-lg" @bind-Value="LoginRequest.Password"></InputText>
+					<InputText type="password" class="form-control form-control-lg" @bind-Value="LoginRequest.Password"></InputText>
 				</div>
 				<div class="form-group">
 					<button type="submit" class="btn btn-success">
@@ -46,6 +42,13 @@
 
 	protected async override Task OnInitializedAsync()
 	{
+		if (HttpContext == null || 
+			HttpContext.User == null || 
+			HttpContext.User.Identity == null)
+		{
+			return;
+		}
+
 		if (HttpContext.User.Identity.IsAuthenticated)
 		{
 			return;

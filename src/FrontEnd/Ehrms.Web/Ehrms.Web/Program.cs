@@ -4,11 +4,14 @@ using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using BitzArt.Blazor.Cookies;
 using Ehrms.Web.Client;
+using Blazored.Toast;
+using Blazored.Modal;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddAuthentication();
 builder.Services.AddWebUi();
+builder.Services.AddBlazoredModal();
+builder.Services.AddBlazoredToast();
 builder.Services.AddBlazoredLocalStorage();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
