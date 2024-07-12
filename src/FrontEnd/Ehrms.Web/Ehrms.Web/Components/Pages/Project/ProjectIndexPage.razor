@@ -1,0 +1,85 @@
+﻿@attribute [Route(ProjectRouting.Index)]
+@attribute [StreamRendering]
+
+@inject IToastService ToastService
+@inject IProjectServiceClient ProjectServiceClient
+
+@if (Projects == null)
+{
+	<Loading></Loading>
+	return;
+}
+
+@if (!Projects.Any())
+{
+	<h1>No projects records found.</h1>
+	return;
+}
+
+<div class="row">
+	<div class="table-responsive-lg">
+		<table class="table table-hover table-borderless">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>Project</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var project in Projects)
+				{
+					<tr>
+						<td></td>
+						<td>@project.Name</td>
+						<td>
+							<button class="text-danger" @onclick="@(()=>ShowUpdateSkillDialog(project))">
+								<i class="bi bi-pencil-square"></i>
+							</button>
+							<button class="text-danger" @onclick="@(()=>ShowDeleteConfirmationDialog(project))">
+								<i class="bi bi-trash"></i>
+							</button>
+							<button class="text-danger" @onclick="@(()=>ShowDetails(project))">
+								<i class="bi bi-arrows-angle-expand"></i>
+							</button>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+
+@code {
+	private IEnumerable<ProjectModel>? Projects { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		var response = await ProjectServiceClient.GetProjectsAsync();
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			Projects = response.Content;
+			return;
+		}
+
+		ToastService.ShowError($"Service returned : {response.StatusCode}");
+	}
+
+
+	private async Task ShowUpdateSkillDialog(ProjectModel project)
+	{
+	}
+
+	private async Task ShowCreateSkillDialog()
+	{
+	}
+
+	private async Task ShowDetails(ProjectModel project)
+	{
+	}
+
+	private async Task ShowDeleteConfirmationDialog(ProjectModel project)
+	{
+	}
+}
