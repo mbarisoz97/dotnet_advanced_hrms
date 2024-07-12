@@ -21,3 +21,8 @@ internal static class UserRouting
 	internal const string Login = "/Login";
 	internal const string Logout = "/Logout";
 }
+
+internal static class ProjectRouting
+{
+	internal const string Index = "/Project";
+}
