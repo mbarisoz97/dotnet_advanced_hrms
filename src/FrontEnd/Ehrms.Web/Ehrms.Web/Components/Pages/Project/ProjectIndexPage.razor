@@ -85,6 +85,13 @@
 
 	private async Task ShowUpdateSkillDialog(ProjectModel project)
 	{
+		var modalParameters = new ModalParameters()
+			.Add(nameof(ProjectModel.Id), project.Id);
+
+		var modalReference = ModalService.Show<ProjectUpdatePage>("Create a new project", modalParameters);
+		var result = await modalReference.Result;
+
+		await UpdateProjects();
 	}
 
 	private async Task ShowCreateProjectDialog()

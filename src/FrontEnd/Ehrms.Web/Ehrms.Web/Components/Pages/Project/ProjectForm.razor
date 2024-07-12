@@ -55,9 +55,12 @@
 		}
 
 		var response = await ProjectServiceClient.GetProjectAsync(Id);
-		if(response.StatusCode != HttpStatusCode.OK)
+		if (response.StatusCode == HttpStatusCode.OK)
 		{
-			ToastService.ShowError($"Could not load project data. Service returned : {response.StatusCode}");
+			Project = response.Content;
+			return;
 		}
+
+		ToastService.ShowError($"Could not load project data. Service returned : {response.StatusCode}");
 	}
 }

@@ -1,0 +1,27 @@
+﻿@inject IToastService ToastService
+@inject IProjectServiceClient ProjectServiceClient
+@inject NavigationManager NavigationManager
+
+<ProjectForm IsEditMode="true" Id="Id" OnValidSubmit="UpdateProject" />
+
+@code {
+	[Parameter]
+	public Guid Id { get; set; }
+
+	private async Task UpdateProject(ProjectModel project)
+	{
+		var response = await ProjectServiceClient.UpdateProjectAsync(project);
+
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			ToastService.ShowSuccess($"Project updated successfully");
+			return;
+		}
+
+		if (response.StatusCode == HttpStatusCode.Conflict)
+		{
+			ToastService.ShowError($"A record with this name has already been created");
+			return;
+		}
+	}
+}
