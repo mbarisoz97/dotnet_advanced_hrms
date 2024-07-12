@@ -23,7 +23,10 @@ public sealed class Response<T>
 
 public interface ISkillServiceClient
 {
-	Task<Response<IEnumerable<SkillModel>>> GetSkillsAsync();
+    Task<Response<SkillModel>> GetSkillAsync(Guid id);
+    Task<Response<IEnumerable<SkillModel>>> GetSkillsAsync();
+    Task<Response<SkillModel>> CreateSkillAsync(SkillModel skillModel);
+	Task<Response<Guid>> DeleteEmployeeAsync(Guid id);
 }
 
 public interface IHttpClientFactoryWrapper
@@ -72,6 +75,42 @@ internal sealed class SkillServiceClient : ISkillServiceClient
 		{
 			StatusCode = response.StatusCode,
 			Content = await response.GetContentAs<IEnumerable<SkillModel>>()
+		};
+	}
+
+    public async Task<Response<SkillModel>> CreateSkillAsync(SkillModel skillModel)
+    {
+        var client = await _clientFactoryWrapper.CreateClient("ApiGateway");
+        var response = await client.PutAsJsonAsync(_endpointProvider.EmployeeInfoServiceEndpoint, skillModel);
+
+        return new Response<SkillModel>()
+        {
+            StatusCode = response.StatusCode,
+            Content = await response.GetContentAs<SkillModel>()
+        };
+    }
+
+    public async Task<Response<SkillModel>> GetSkillAsync(Guid id)
+	{
+		var client = await _clientFactoryWrapper.CreateClient("ApiGateway");
+		var response = await client.GetAsync($"{_endpointProvider.EmployeeInfoServiceEndpoint}/{id}");
+
+		return new Response<SkillModel>()
+		{
+			StatusCode = response.StatusCode,
+			Content = await response.GetContentAs<SkillModel>()
+		};
+	}
+
+	public async Task<Response<Guid>> DeleteEmployeeAsync(Guid id)
+	{
+		var client = await _clientFactoryWrapper.CreateClient("ApiGateway");
+		var response = await client.DeleteAsync($"{_endpointProvider.EmployeeInfoServiceEndpoint}/{id}");
+
+		return new Response<Guid>()
+		{
+			StatusCode = response.StatusCode,
+			Content = id
 		};
 	}
 }

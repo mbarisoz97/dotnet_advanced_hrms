@@ -3,10 +3,10 @@
 @rendermode InteractiveServer
 
 @inject IEmployeeServiceClient EmployeeServiceClient
-
 @inject NavigationManager NavigationManager
 
 <EmployeeForm IsEditMode="false" OnValidSubmit="CreteEmployee" />
+
 @code {
 	protected async Task CreteEmployee(Employee employee)
 	{

@@ -14,8 +14,27 @@
 </head>
 
 <body>
-	<Routes />
+	<Routes @rendermode="GetRenderModeForPage()" />
 	<script src="_framework/blazor.web.js"></script>
 </body>
 
 </html>
+
+@code {
+	[CascadingParameter]
+	private HttpContext HttpContext { get; set; } = default!;
+
+	private IComponentRenderMode? GetRenderModeForPage()
+	{
+		//User routing pages must to start with static StaticServer rendering.
+		//Otherwise they will not be able to HttpContext due to SignalR communication.
+		if (HttpContext.Request.Path.StartsWithSegments(UserRouting.Login) ||
+			HttpContext.Request.Path.StartsWithSegments(UserRouting.Logout))
+		{
+			return null;
+		}
+
+		//Anything else should be interactive server to be able to use packages like Blazored.Modal
+		return InteractiveServer;
+	}
+}

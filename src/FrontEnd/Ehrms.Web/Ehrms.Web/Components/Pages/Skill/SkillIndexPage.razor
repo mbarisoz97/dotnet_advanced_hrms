@@ -1,9 +1,10 @@
-﻿@using System.Net
-@attribute [Authorize]
+﻿@attribute [Authorize]
 @attribute [StreamRendering]
 @attribute [Route($"{SkillRouting.Index}")]
 
+@inject IModalService ModalService
 @inject ISkillServiceClient SkillServiceClient
+@inject NavigationManager NavigationManager
 
 @if (Skills == null)
 {
@@ -14,7 +15,7 @@
 	<div class="d-flex flex-row justify-content-between">
 		<SearchBar SearchBarPlaceHolder="Search Skills"></SearchBar>
 		<div>
-			<a href="@SkillRouting.Create" class="btn btn-success">
+			<a @onclick="@(()=>ShowCreateSkillDialog())" class="btn btn-success">
 				<i class="bi bi-person-plus"></i>
 			</a>
 		</div>
@@ -41,9 +42,9 @@
 							<NavLink href="@($"{SkillRouting.Update}/{skill.Id}")" class="text-success">
 								<i class="bi bi-pencil-square"></i>
 							</NavLink>
-							<NavLink href="@($"{SkillRouting.Delete}/{skill.Id}")" class="text-danger">
+							<button class="text-danger" @onclick="@(()=>ShowDeleteConfirmationDialog(skill))">
 								<i class="bi bi-trash"></i>
-							</NavLink>
+							</button>
 						</td>
 					</tr>
 				}
@@ -52,15 +53,43 @@
 	</div>
 </div>
 
+
 @code {
-	private IEnumerable<SkillModel>? Skills { get; set; } = [];
+	private ICollection<SkillModel>? Skills { get; set; } = [];
 
 	protected override async Task OnInitializedAsync()
+	{
+		await UpdateSkills();
+	}
+
+	private async Task UpdateSkills()
 	{
 		var response = await SkillServiceClient.GetSkillsAsync();
 		if (response.StatusCode == HttpStatusCode.OK)
 		{
-			Skills = response.Content;			
+			Skills = response.Content.ToList();
+		}
+	}
+
+	private async Task ShowCreateSkillDialog()
+	{
+		var modalReference = ModalService.Show<SkillCreatePage>("Create a new skill");
+		var result = await modalReference.Result;
+
+		await UpdateSkills();
+	}
+
+	private async Task ShowDeleteConfirmationDialog(SkillModel skill)
+	{
+		var parameters = new ModalParameters()
+			.Add(nameof(DeleteSkillPage.Id), skill.Id);
+
+		var modalReference = ModalService.Show<DeleteSkillPage>("Confirm", parameters);
+		var result = await modalReference.Result;
+
+		if (result.Confirmed)
+		{
+			Skills?.Remove(skill);
 		}
 	}
 }

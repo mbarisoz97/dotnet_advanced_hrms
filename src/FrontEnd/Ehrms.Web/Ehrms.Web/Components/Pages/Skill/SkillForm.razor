@@ -1,0 +1,62 @@
+﻿@inject ISkillServiceClient SkillService
+@attribute [StreamRendering]
+
+@if (Skill == null)
+{
+	return;
+}
+
+<EditForm Model="@Skill" OnValidSubmit="ValidSubmit" FormName="SkillForm">
+	<DataAnnotationsValidator></DataAnnotationsValidator>
+	<div class="mt-3">
+		<label class="form-label">Skill</label>
+		<InputText class="form-control" @bind-Value="@Skill.Name"></InputText>
+		<ValidationMessage class="text-danger" For="(()=> Skill.Name)"></ValidationMessage>
+	</div>
+	<div class="mt-3">
+		<button class="btn btn-primary" type="submit">
+			<i class="bi bi-floppy"></i> Save
+		</button>
+	</div>
+</EditForm>
+
+@code {
+	[Parameter]
+	public bool IsEditMode { get; set; }
+
+	[Parameter]
+	public Guid SkillId { get; set; }
+
+	[SupplyParameterFromForm]
+	public SkillModel? Skill { get; set; }
+
+	[Parameter]
+	public EventCallback<SkillModel> OnValidSubmit { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (IsEditMode)
+		{
+			var response = await SkillService.GetSkillAsync(SkillId);
+			if (response.StatusCode == HttpStatusCode.OK)
+			{
+				Skill = response.Content;
+			}
+		}
+		else
+		{
+			Skill ??= new();
+		}
+	}
+
+	protected async Task ValidSubmit()
+	{
+		await OnValidSubmit.InvokeAsync(Skill);
+		ClearFormFields();
+	}
+
+	private void ClearFormFields()
+	{
+		Skill = new();
+	}
+}

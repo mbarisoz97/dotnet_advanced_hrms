@@ -14,6 +14,10 @@ internal class GlobalExceptionHandlingMiddleware : IMiddleware
 		{
 			context.Response.StatusCode = (int)HttpStatusCode.NotFound;
 		}
+		catch(CustomAlreadyInUseException)
+		{
+			context.Response.StatusCode = (int)HttpStatusCode.Conflict;
+		}
 		catch (FluentValidation.ValidationException validationException)
 		{
 			context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
