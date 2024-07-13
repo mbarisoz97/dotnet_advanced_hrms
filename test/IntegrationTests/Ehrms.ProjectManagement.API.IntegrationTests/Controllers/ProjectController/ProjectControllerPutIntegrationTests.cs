@@ -12,7 +12,7 @@ public class ProjectControllerPutIntegrationTests : ProjectManagementApiBaseInte
 	public async Task Put_ValidProjectDetails_ReturnsOkWithReadProjectDto()
 	{
 		var createProjectCommand = new CreateProjectCommandFaker().Generate();
-		var putProjectResponse = await _client.PutAsJsonAsync(Endpoints.ProjectApi, createProjectCommand);
+		var putProjectResponse = await client.PutAsJsonAsync(Endpoints.ProjectApi, createProjectCommand);
 
 		putProjectResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 		var readProjectDto = await putProjectResponse.Content.ReadFromJsonAsync<ReadProjectDto>();
@@ -26,7 +26,7 @@ public class ProjectControllerPutIntegrationTests : ProjectManagementApiBaseInte
 	{
 		var command = new CreateProjectCommandFaker().Generate();
 		command.Name = "s";
-		var putProjectResponse = await _client.PutAsJsonAsync(Endpoints.ProjectApi, command);
+		var putProjectResponse = await client.PutAsJsonAsync(Endpoints.ProjectApi, command);
 
 		putProjectResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 	}
@@ -36,7 +36,7 @@ public class ProjectControllerPutIntegrationTests : ProjectManagementApiBaseInte
 	{
 		var command = new CreateProjectCommandFaker().Generate();
 		command.Description = "";
-		var putProjectResponse = await _client.PutAsJsonAsync(Endpoints.ProjectApi, command);
+		var putProjectResponse = await client.PutAsJsonAsync(Endpoints.ProjectApi, command);
 
 		putProjectResponse.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 	}

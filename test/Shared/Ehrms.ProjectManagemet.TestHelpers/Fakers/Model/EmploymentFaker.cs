@@ -1,8 +1,8 @@
 ﻿using Ehrms.ProjectManagement.API.Models;
 
-namespace Ehrms.ProjectManagement.API.UnitTests.TestHelpers.Faker;
+namespace Ehrms.ProjectManagement.API.TestHelpers.Faker;
 
-internal class EmploymentFaker : Faker<Employment>
+public class EmploymentFaker : Faker<Employment>
 {
     public EmploymentFaker()
     {

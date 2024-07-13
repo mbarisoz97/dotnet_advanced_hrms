@@ -1,5 +1,5 @@
-﻿using Ehrms.ProjectManagement.API.Handlers.Project.Queries;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
+using Ehrms.ProjectManagement.API.Handlers.Project.Queries;
 
 namespace Ehrms.ProjectManagement.API.Controllers;
 

@@ -1,11 +1,7 @@
 ﻿namespace Ehrms.ProjectManagement.API.Context;
 
-internal class ProjectDbContext : DbContext
+public class ProjectDbContext : DbContext
 {
-    internal ProjectDbContext()
-    {
-    }
-
     public ProjectDbContext(DbContextOptions options) : base(options)
     {
     }

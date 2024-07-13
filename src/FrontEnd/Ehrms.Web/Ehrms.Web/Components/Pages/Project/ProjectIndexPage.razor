@@ -24,7 +24,7 @@
 
 @if (!Projects.Any())
 {
-	<h1>No projects records found.</h1>
+	<h1>No project records found.</h1>
 	return;
 }
 
@@ -61,7 +61,6 @@
 		</table>
 	</div>
 </div>
-
 
 @code {
 	private IEnumerable<ProjectModel>? Projects { get; set; }
