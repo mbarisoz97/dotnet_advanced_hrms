@@ -67,7 +67,7 @@ public class ProjectControllerPostIntegrationTests : ProjectManagementApiBaseInt
 
 		getProjectResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 
-		readProjectDtoFromPost?.Employees.Should().HaveCount(updateProjectCommand.EmployeeIdCollection.Count);
+		readProjectDtoFromPost?.Employees.Should().HaveCount(updateProjectCommand.Employees.Count);
 		readProjectDtoFromPost?.Should().BeEquivalentTo(updateProjectCommand, 
 			options => options.ExcludingMissingMembers());
 	}

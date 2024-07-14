@@ -8,7 +8,7 @@
 <EmployeeForm IsEditMode="false" OnValidSubmit="CreteEmployee" />
 
 @code {
-	protected async Task CreteEmployee(Employee employee)
+	protected async Task CreteEmployee(EmployeeModel employee)
 	{
 		await EmployeeServiceClient.CreateEmployeeAsync(employee);
 		NavigationManager.NavigateTo(EmployeeRouting.Index);

@@ -28,7 +28,7 @@ internal class UpdateProjectCommandFaker : Faker<UpdateProjectCommand>
 	public UpdateProjectCommandFaker WithEmployees(ICollection<Employee> employees)
 	{
 		var employeeIdCollection = employees.Select(x => x.Id).ToList() ?? [];
-		RuleFor(x => x.EmployeeIdCollection, employeeIdCollection);
+		RuleFor(x => x.Employees, employeeIdCollection);
 		return this;
 	}
 }

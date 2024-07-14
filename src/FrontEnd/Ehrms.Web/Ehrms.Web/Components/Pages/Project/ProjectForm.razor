@@ -2,6 +2,7 @@
 
 @inject IToastService ToastService
 @inject IProjectServiceClient ProjectServiceClient
+@inject IEmployeeServiceClient EmployeeServiceClient
 
 @if (Project == null)
 {
@@ -22,13 +23,12 @@
 		<ValidationMessage class="text-danger" For="(()=> Project.Description)"></ValidationMessage>
 	</div>
 	<div class="mt-3">
-		<label class="form-label">Employees</label>
-		<select class="form-select multiSelectBox" multiple>
-			<option>A</option>
-			<option>B</option>
-			<option>C</option>
-			<option>D</option>
-		</select>
+		<MudSelect T="EmployeeModel" Label="Select Employees" MultiSelection="true" @bind-SelectedValues="SelectedEmployees" AdornmentIcon="@Icons.Material.Filled.Add" AnchorOrigin="Origin.BottomCenter">
+			@foreach (var employee in Employees)
+			{
+				<MudSelectItem T="EmployeeModel" Value="@employee">@($"{employee.FirstName} {employee.LastName}")</MudSelectItem>
+			}
+		</MudSelect>
 	</div>
 	<div class="mt-3">
 		<button class="btn btn-primary" type="submit">
@@ -37,38 +37,56 @@
 	</div>
 </EditForm>
 
-<script src="app.js"></script>
-
 @code {
-	[Parameter]
-	public bool IsEditMode { get; set; }
+	[Parameter] public bool IsEditMode { get; set; }
+	[Parameter] public Guid Id { get; set; }
+	[Parameter] public EventCallback<ProjectModel> OnValidSubmit { get; set; }
+	[SupplyParameterFromForm] public ProjectModel? Project { get; set; }
 
-	[Parameter]
-	public Guid Id { get; set; }
-
-	[SupplyParameterFromForm]
-	public ProjectModel? Project { get; set; }
-
-	[Parameter]
-	public EventCallback<ProjectModel> OnValidSubmit { get; set; }
+	private IEnumerable<EmployeeModel> Employees { get; set; } = Enumerable.Empty<EmployeeModel>();
+	private IEnumerable<EmployeeModel> SelectedEmployees { get; set; } = Enumerable.Empty<EmployeeModel>();
 
 	protected async Task ValidSubmit()
 	{
+		Project!.Employees = SelectedEmployees.Select(x => x.Id).ToList() ?? [];
 		await OnValidSubmit.InvokeAsync(Project);
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
-		if (!IsEditMode)
+		await FillEmployeeDataInForm();
+		if (IsEditMode)
+		{
+			await FillProjectDataInForm();
+		}
+		else
 		{
 			Project ??= new();
+		}
+	}
+
+	private async Task FillEmployeeDataInForm()
+	{
+		var response = await EmployeeServiceClient.GetEmployeesAsync();
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			Employees = response.Content ?? [];
 			return;
 		}
 
+		ToastService.ShowError($"Could not get employee list. Service returned {response.StatusCode}");
+	}
+
+	private async Task FillProjectDataInForm()
+	{
 		var response = await ProjectServiceClient.GetProjectAsync(Id);
 		if (response.StatusCode == HttpStatusCode.OK)
 		{
 			Project = response.Content;
+			if (IsEditMode)
+			{
+				SelectedEmployees = Employees.Where(x => Project.Employees.Contains(x.Id));
+			}
 			return;
 		}
 

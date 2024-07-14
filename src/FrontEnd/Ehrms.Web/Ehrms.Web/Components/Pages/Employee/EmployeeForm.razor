@@ -43,10 +43,10 @@
 	public Guid EmployeeId { get; set; }
 
 	[SupplyParameterFromForm]
-	public Employee? Employee { get; set; }
+	public EmployeeModel? Employee { get; set; }
 
 	[Parameter]
-	public EventCallback<Employee> OnValidSubmit { get; set; }
+	public EventCallback<EmployeeModel> OnValidSubmit { get; set; }
 
 	protected override async Task OnInitializedAsync()
 	{

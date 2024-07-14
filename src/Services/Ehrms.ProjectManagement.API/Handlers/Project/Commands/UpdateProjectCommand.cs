@@ -5,7 +5,7 @@ public sealed class UpdateProjectCommand : IRequest<Models.Project>
 	public Guid Id { get; set; }
 	public string Name { get; set; } = string.Empty;
 	public string Description { get; set; } = string.Empty;
-	public ICollection<Guid> EmployeeIdCollection { get; set; } = [];
+	public ICollection<Guid> Employees { get; set; } = [];
 }
 
 internal sealed class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand, Models.Project>
@@ -24,11 +24,11 @@ internal sealed class UpdateProjectCommandHandler : IRequestHandler<UpdateProjec
 		Models.Project project = await GetProject(request.Id);
 		_mapper.Map(request, project);
 
-		await SetEmploymentEndDateForRemovedEmployees(project, request.EmployeeIdCollection);
-		await CreateEmploymenRecordsForNewEmployees(project, request.EmployeeIdCollection);
+		await SetEmploymentEndDateForRemovedEmployees(project, request.Employees);
+		await CreateEmploymenRecordsForNewEmployees(project, request.Employees);
 
 		_dbContext.Update(project);
-		await _dbContext.SaveChangesAsync();
+		await _dbContext.SaveChangesAsync(cancellationToken);
 
 		return project;
 	}

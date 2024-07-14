@@ -2,7 +2,7 @@
 
 namespace Ehrms.Web.Models;
 
-public sealed class Employee
+public sealed class EmployeeModel
 {
 	public Guid Id { get; set; }
 
@@ -21,4 +21,9 @@ public sealed class Employee
 	[Required]
 	[Length(2, 50)]
 	public string? Qualification { get; set; }
+
+	public override string ToString()
+	{
+		return $"{FirstName} {LastName}";
+	}
 }

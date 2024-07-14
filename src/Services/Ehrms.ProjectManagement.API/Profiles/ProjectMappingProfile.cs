@@ -15,8 +15,8 @@ internal class ProjectMappingProfile : Profile
 			.ForMember(dest => dest.Employees,
 				opt => opt.MapFrom(
 					src => src.Employments
-					.Where(x=>x.EndedAt == null)
-					.Select(x=>x.Employee)));
+					.Where(x => x.EndedAt == null)
+					.Select(x => x.EmployeeId)));
 	}
 
 	private void AddCommandToModelMappings()
