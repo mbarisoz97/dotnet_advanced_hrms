@@ -25,4 +25,5 @@ internal static class UserRouting
 internal static class ProjectRouting
 {
 	internal const string Index = "/Project";
+	internal const string Delete = $"/{Index}/Delete";
 }

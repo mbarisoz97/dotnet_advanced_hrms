@@ -1,0 +1,62 @@
+﻿@attribute [Authorize]
+
+@inject IProjectServiceClient ProjectServiceClient
+@inject IToastService ToastService
+@inject NavigationManager NavigationManager
+
+@if (Project == null)
+{
+	<h1>Loading..</h1>
+	return;
+}
+
+<div class="form-group">
+	<table class="table">
+		<tbody>
+			<tr>
+				<td>Project</td>
+				<td>@Project.Name</td>
+			</tr>
+		</tbody>
+	</table>
+</div>
+<div class="form-group">
+	<button @onclick="Remove" class="btn btn-danger">Delete</button>
+	<button @onclick="Cancel" class="btn btn-warning">Cancel</button>
+</div>
+
+@code {
+	[Parameter]
+	public Guid Id { get; set; }
+	private ProjectModel? Project;
+
+	[CascadingParameter]
+	BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+	protected override async Task OnInitializedAsync()
+	{
+		var response = await ProjectServiceClient.GetProjectAsync(Id);
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			Project = response.Content;
+		}
+	}
+
+	protected async Task Remove()
+	{
+		var response = await ProjectServiceClient.DeleteProjectAsync(Id);
+		if (response.StatusCode == HttpStatusCode.NoContent)
+		{
+			await BlazoredModal.CloseAsync(ModalResult.Ok());
+		}
+		else
+		{
+			ToastService.ShowError($"Service returned : {response.StatusCode}");
+		}
+	}
+
+	protected async Task Cancel()
+	{
+		await BlazoredModal.CloseAsync(ModalResult.Cancel());
+	}
+}

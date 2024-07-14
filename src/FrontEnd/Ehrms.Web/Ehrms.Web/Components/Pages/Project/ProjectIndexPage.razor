@@ -13,7 +13,7 @@
 
 <div class="row">
 	<div class="d-flex flex-row justify-content-between">
-		<SearchBar SearchBarPlaceHolder="Search Skills"></SearchBar>
+		<SearchBar SearchBarPlaceHolder="Search Projects"></SearchBar>
 		<div>
 			<button @onclick="ShowCreateProjectDialog" class="btn btn-success">
 				<i class="bi bi-person-plus"></i>
@@ -51,9 +51,6 @@
 							<button class="text-danger" @onclick="@(()=>ShowDeleteConfirmationDialog(project))">
 								<i class="bi bi-trash"></i>
 							</button>
-							<button class="text-danger" @onclick="@(()=>ShowDetails(project))">
-								<i class="bi bi-arrows-angle-expand"></i>
-							</button>
 						</td>
 					</tr>
 				}
@@ -87,7 +84,7 @@
 		var modalParameters = new ModalParameters()
 			.Add(nameof(ProjectModel.Id), project.Id);
 
-		var modalReference = ModalService.Show<ProjectUpdatePage>("Create a new project", modalParameters);
+		var modalReference = ModalService.Show<ProjectUpdatePage>("Update project", modalParameters);
 		var result = await modalReference.Result;
 
 		await UpdateProjects();
@@ -101,11 +98,18 @@
 		await UpdateProjects();
 	}
 
-	private async Task ShowDetails(ProjectModel project)
-	{
-	}
-
 	private async Task ShowDeleteConfirmationDialog(ProjectModel project)
 	{
+		var modalParameters = new ModalParameters()
+			.Add(nameof(ProjectModel.Id), project.Id);
+
+		var modalReference = ModalService.Show<ProjectDeletePage>("Delete a project", modalParameters);
+		var result = await modalReference.Result;
+
+		if (result.Confirmed)
+		{
+			ToastService.ShowSuccess("Project deleted successfully.");
+			await UpdateProjects();
+		}
 	}
 }

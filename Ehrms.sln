@@ -61,7 +61,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "backend", "backend", "{BAC9
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{BECD6B86-2AD1-401F-B720-63E9B3FD6E3C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ehrms.ProjectManagemet.TestHelpers", "test\Shared\Ehrms.ProjectManagemet.TestHelpers\Ehrms.ProjectManagemet.TestHelpers.csproj", "{3398AF99-245C-418C-8C3B-F23BAC33986B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ehrms.ProjectManagemet.TestHelpers", "test\Shared\Ehrms.ProjectManagemet.TestHelpers\Ehrms.ProjectManagemet.TestHelpers.csproj", "{3398AF99-245C-418C-8C3B-F23BAC33986B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
