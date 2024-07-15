@@ -1,4 +1,3 @@
-using Ehrms.ProjectManagement.API.Database.Context;
 using Ehrms.Shared;
 using Serilog;
 
@@ -65,7 +64,13 @@ app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.MapControllers();
 
-app.Run();
+using (var scope = app.Services.CreateScope())
+{
+	var services = scope.ServiceProvider;
+	var dbInitializer = services.GetRequiredService<ProjectManagementDatabaseSeed>();
+	await dbInitializer.SeedAsync();
+}
 
+app.Run();
 
 public partial class Program { }
