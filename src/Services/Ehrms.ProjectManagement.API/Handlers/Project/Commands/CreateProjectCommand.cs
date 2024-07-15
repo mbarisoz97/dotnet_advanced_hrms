@@ -1,13 +1,16 @@
-﻿namespace Ehrms.ProjectManagement.API.Handlers.Project.Commands;
+﻿using Ehrms.ProjectManagement.API.Database.Context;
+using Ehrms.ProjectManagement.API.Database.Models;
 
-public sealed class CreateProjectCommand : IRequest<Models.Project>
+namespace Ehrms.ProjectManagement.API.Handlers.Project.Commands;
+
+public sealed class CreateProjectCommand : IRequest<Database.Models.Project>
 {
 	public string Name { get; set; } = string.Empty;
 	public string Description { get; set; } = string.Empty;
 	public ICollection<Guid> Employees { get; set; } = [];
 }
 
-internal sealed class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand, Models.Project>
+internal sealed class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand, Database.Models.Project>
 {
 	private readonly IMapper _mapper;
 	private readonly ProjectDbContext _dbContext;
@@ -18,9 +21,9 @@ internal sealed class CreateProjectCommandHandler : IRequestHandler<CreateProjec
 		_dbContext = dbContext;
 	}
 
-	public async Task<Models.Project> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
+	public async Task<Database.Models.Project> Handle(CreateProjectCommand request, CancellationToken cancellationToken)
 	{
-		var project = _mapper.Map<Models.Project>(request);
+		var project = _mapper.Map<Database.Models.Project>(request);
 		project.Employments = await GetEmployments(project, request.Employees);
 
 		await _dbContext.Projects.AddAsync(project, cancellationToken);
@@ -29,7 +32,7 @@ internal sealed class CreateProjectCommandHandler : IRequestHandler<CreateProjec
 		return project;
 	}
 
-	private async Task<ICollection<Models.Employment>> GetEmployments(Models.Project project, ICollection<Guid> employees)
+	private async Task<ICollection<Database.Models.Employment>> GetEmployments(Database.Models.Project project, ICollection<Guid> employees)
 	{
 		if (employees.Count == 0)
 		{
@@ -48,7 +51,7 @@ internal sealed class CreateProjectCommandHandler : IRequestHandler<CreateProjec
 		return await Task.FromResult(project.Employments);
 	}
 
-	private static Models.Employment CreateNewEmploymentRecord(Models.Project project, Employee employee) => new()
+	private static Database.Models.Employment CreateNewEmploymentRecord(Database.Models.Project project, Employee employee) => new()
 	{
 		StartedAt = DateOnly.FromDateTime(DateTime.UtcNow),
 		Employee = employee,

@@ -1,8 +1,10 @@
-﻿namespace Ehrms.ProjectManagement.API.Handlers.Project.Queries;
+﻿using Ehrms.ProjectManagement.API.Database.Context;
 
-internal sealed record GetProjectsQuery : IRequest<IQueryable<Models.Project>> { }
+namespace Ehrms.ProjectManagement.API.Handlers.Project.Queries;
 
-internal sealed class GetProjectsQueryHandler : IRequestHandler<GetProjectsQuery, IQueryable<Models.Project>>
+internal sealed record GetProjectsQuery : IRequest<IQueryable<Database.Models.Project>> { }
+
+internal sealed class GetProjectsQueryHandler : IRequestHandler<GetProjectsQuery, IQueryable<Database.Models.Project>>
 {
     private readonly ProjectDbContext _dbContext;
 
@@ -11,7 +13,7 @@ internal sealed class GetProjectsQueryHandler : IRequestHandler<GetProjectsQuery
         _dbContext = dbContext;
     }
 
-    public async Task<IQueryable<Models.Project>> Handle(GetProjectsQuery request, CancellationToken cancellationToken)
+    public async Task<IQueryable<Database.Models.Project>> Handle(GetProjectsQuery request, CancellationToken cancellationToken)
     {
         return await Task.FromResult(_dbContext.Projects);
     }

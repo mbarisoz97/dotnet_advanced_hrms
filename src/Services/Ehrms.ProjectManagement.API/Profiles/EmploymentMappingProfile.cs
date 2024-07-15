@@ -1,4 +1,6 @@
-﻿namespace Ehrms.ProjectManagement.API.Profiles;
+﻿using Ehrms.ProjectManagement.API.Database.Models;
+
+namespace Ehrms.ProjectManagement.API.Profiles;
 
 internal class EmploymentMappingProfile : Profile
 {

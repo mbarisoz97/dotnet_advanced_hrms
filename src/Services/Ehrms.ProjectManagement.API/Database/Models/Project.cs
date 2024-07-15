@@ -1,4 +1,4 @@
-﻿namespace Ehrms.ProjectManagement.API.Models;
+﻿namespace Ehrms.ProjectManagement.API.Database.Models;
 
 public class Project : BaseEntity
 {

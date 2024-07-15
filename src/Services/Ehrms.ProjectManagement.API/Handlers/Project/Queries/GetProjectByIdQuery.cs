@@ -1,11 +1,13 @@
-﻿namespace Ehrms.ProjectManagement.API.Handlers.Project.Queries;
+﻿using Ehrms.ProjectManagement.API.Database.Context;
 
-public sealed class GetProjectByIdQuery : IRequest<Models.Project>
+namespace Ehrms.ProjectManagement.API.Handlers.Project.Queries;
+
+public sealed class GetProjectByIdQuery : IRequest<Database.Models.Project>
 {
     public Guid Id { get; set; }
 }
 
-internal sealed class GetProjectByIdQueryHandler : IRequestHandler<GetProjectByIdQuery, Models.Project>
+internal sealed class GetProjectByIdQueryHandler : IRequestHandler<GetProjectByIdQuery, Database.Models.Project>
 {
     private readonly ProjectDbContext _dbContext;
 
@@ -14,12 +16,12 @@ internal sealed class GetProjectByIdQueryHandler : IRequestHandler<GetProjectByI
         _dbContext = dbContext;
     }
 
-    public Task<Models.Project> Handle(GetProjectByIdQuery request, CancellationToken cancellationToken)
+    public Task<Database.Models.Project> Handle(GetProjectByIdQuery request, CancellationToken cancellationToken)
     {
         return Task.FromResult(GetProjectWithId(request.Id));
     }
 
-    private Models.Project GetProjectWithId(Guid id)
+    private Database.Models.Project GetProjectWithId(Guid id)
     {
         return _dbContext.Projects
             .Include(x=>x.Employments)

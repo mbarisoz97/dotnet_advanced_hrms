@@ -1,4 +1,4 @@
-﻿using Ehrms.ProjectManagement.API.Models;
+﻿using Ehrms.ProjectManagement.API.Database.Models;
 
 namespace Ehrms.ProjectManagement.API.TestHelpers.Faker;
 

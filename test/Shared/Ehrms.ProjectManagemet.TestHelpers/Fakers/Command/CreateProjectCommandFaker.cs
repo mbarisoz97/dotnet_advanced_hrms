@@ -1,4 +1,6 @@
-﻿namespace Ehrms.ProjectManagement.API.TestHelpers.Faker.Faker.Command;
+﻿using Ehrms.ProjectManagement.API.Database.Models;
+
+namespace Ehrms.ProjectManagement.API.TestHelpers.Faker.Faker.Command;
 
 internal class CreateProjectCommandFaker : Faker<CreateProjectCommand>
 {

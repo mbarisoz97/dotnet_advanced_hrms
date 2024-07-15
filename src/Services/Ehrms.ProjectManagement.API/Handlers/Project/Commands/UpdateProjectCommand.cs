@@ -1,6 +1,8 @@
-﻿namespace Ehrms.ProjectManagement.API.Handlers.Project.Commands;
+﻿using Ehrms.ProjectManagement.API.Database.Context;
 
-public sealed class UpdateProjectCommand : IRequest<Models.Project>
+namespace Ehrms.ProjectManagement.API.Handlers.Project.Commands;
+
+public sealed class UpdateProjectCommand : IRequest<Database.Models.Project>
 {
 	public Guid Id { get; set; }
 	public string Name { get; set; } = string.Empty;
@@ -8,7 +10,7 @@ public sealed class UpdateProjectCommand : IRequest<Models.Project>
 	public ICollection<Guid> Employees { get; set; } = [];
 }
 
-internal sealed class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand, Models.Project>
+internal sealed class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand, Database.Models.Project>
 {
 	private readonly IMapper _mapper;
 	private readonly ProjectDbContext _dbContext;
@@ -19,9 +21,9 @@ internal sealed class UpdateProjectCommandHandler : IRequestHandler<UpdateProjec
 		_dbContext = dbContext;
 	}
 
-	public async Task<Models.Project> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
+	public async Task<Database.Models.Project> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
 	{
-		Models.Project project = await GetProject(request.Id);
+		Database.Models.Project project = await GetProject(request.Id);
 		_mapper.Map(request, project);
 
 		await SetEmploymentEndDateForRemovedEmployees(project, request.Employees);
@@ -33,7 +35,7 @@ internal sealed class UpdateProjectCommandHandler : IRequestHandler<UpdateProjec
 		return project;
 	}
 
-	private async Task<Models.Project> GetProject(Guid id)
+	private async Task<Database.Models.Project> GetProject(Guid id)
 	{
 		return await _dbContext.Projects
 			.Include(x => x.Employments)
@@ -41,7 +43,7 @@ internal sealed class UpdateProjectCommandHandler : IRequestHandler<UpdateProjec
 			?? throw new ProjectNotFoundException($"Could not find project with id '{id}'");
 	}
 
-	private async Task CreateEmploymenRecordsForNewEmployees(Models.Project project, ICollection<Guid> employeeIdCollection)
+	private async Task CreateEmploymenRecordsForNewEmployees(Database.Models.Project project, ICollection<Guid> employeeIdCollection)
 	{
 		var currentProjectEmployments = _dbContext.Employments
 			.Where(x => x.EndedAt == null && x.ProjectId == project.Id)
@@ -53,7 +55,7 @@ internal sealed class UpdateProjectCommandHandler : IRequestHandler<UpdateProjec
 		var employeesCreateToEmploymentRecord = _dbContext.Employees.Where(x => newEmploymentRecords.Contains(x.Id));
 		foreach (var employee in employeesCreateToEmploymentRecord)
 		{
-			_dbContext.Employments.Add(new Models.Employment
+			_dbContext.Employments.Add(new Database.Models.Employment
 			{
 				Employee = employee,
 				Project = project,
@@ -62,7 +64,7 @@ internal sealed class UpdateProjectCommandHandler : IRequestHandler<UpdateProjec
 		await _dbContext.SaveChangesAsync();
 	}
 
-	private async Task SetEmploymentEndDateForRemovedEmployees(Models.Project project, ICollection<Guid> employeeIdCollection)
+	private async Task SetEmploymentEndDateForRemovedEmployees(Database.Models.Project project, ICollection<Guid> employeeIdCollection)
 	{
 		var employmentRecordsToEnd = _dbContext.Employments
 			.Include(x => x.Project)
