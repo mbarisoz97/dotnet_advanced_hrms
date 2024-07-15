@@ -17,7 +17,8 @@ builder.Services.AddEmployeeInfoApi();
 
 builder.Services.AddDbContext<EmployeeInfoDbContext>(options =>
 {
-    options.UseInMemoryDatabase("EmployeeInfoDb");
+	var connectionString = builder.Configuration.GetConnectionString("EmployeeInfoDb");
+	options.UseSqlServer(connectionString, options => options.EnableRetryOnFailure());
 });
 
 builder.Services.AddMassTransit(busConfigurator =>
