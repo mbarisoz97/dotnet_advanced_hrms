@@ -1,8 +1,10 @@
-﻿namespace Ehrms.EmployeeInfo.API.Handlers.Skill.Query;
+﻿using Ehrms.EmployeeInfo.API.Database.Context;
 
-internal sealed record GetSkillsQuery : IRequest<IQueryable<Models.Skill>>{}
+namespace Ehrms.EmployeeInfo.API.Handlers.Skill.Query;
 
-internal sealed class GetSkillsQueryHandler : IRequestHandler<GetSkillsQuery, IQueryable<Models.Skill>>
+internal sealed record GetSkillsQuery : IRequest<IQueryable<Database.Models.Skill>>{}
+
+internal sealed class GetSkillsQueryHandler : IRequestHandler<GetSkillsQuery, IQueryable<Database.Models.Skill>>
 {
     private readonly EmployeeInfoDbContext _dbContext;
 
@@ -11,7 +13,7 @@ internal sealed class GetSkillsQueryHandler : IRequestHandler<GetSkillsQuery, IQ
         _dbContext = dbContext;
     }
 
-    public async Task<IQueryable<Models.Skill>> Handle(GetSkillsQuery request, CancellationToken cancellationToken)
+    public async Task<IQueryable<Database.Models.Skill>> Handle(GetSkillsQuery request, CancellationToken cancellationToken)
     {
         return await Task.FromResult(_dbContext.Skills.AsQueryable());
     }

@@ -1,4 +1,4 @@
-﻿namespace Ehrms.EmployeeInfo.API.Models;
+﻿namespace Ehrms.EmployeeInfo.API.Database.Models;
 
 public sealed class Employee : BaseEntity
 {

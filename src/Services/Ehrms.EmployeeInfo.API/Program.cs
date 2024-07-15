@@ -1,3 +1,4 @@
+using Ehrms.EmployeeInfo.API.Database.Context;
 using Ehrms.EmployeeInfo.API.Middleware;
 using Ehrms.Shared;
 using Serilog;

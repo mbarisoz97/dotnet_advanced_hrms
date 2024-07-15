@@ -1,4 +1,6 @@
-﻿namespace Ehrms.EmployeeInfo.API.UnitTests.Handlers.Employee;
+﻿using Ehrms.EmployeeInfo.API.Database.Context;
+
+namespace Ehrms.EmployeeInfo.API.UnitTests.Handlers.Employee;
 
 public class CreateEmployeeCommandHandlerTests
 {

@@ -1,4 +1,6 @@
-﻿namespace Ehrms.EmployeeInfo.API.Mapping;
+﻿using Ehrms.EmployeeInfo.API.Database.Models;
+
+namespace Ehrms.EmployeeInfo.API.Mapping;
 
 public class SkillMappingProfiles : Profile
 {

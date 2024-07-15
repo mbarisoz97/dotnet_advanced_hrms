@@ -1,4 +1,5 @@
 ﻿using Ehrms.EmployeeInfo.API.Behaviour;
+using Ehrms.EmployeeInfo.API.Database.Context;
 using Ehrms.EmployeeInfo.API.Middleware;
 using FluentValidation;
 using System.Reflection;

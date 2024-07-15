@@ -1,5 +1,5 @@
 ﻿using Bogus;
-using Ehrms.EmployeeInfo.API.Models;
+using Ehrms.EmployeeInfo.API.Database.Models;
 
 namespace Ehrms.EmployeeInfo.API.IntegrationTests.TestHelpers.Fakers.Entity;
 

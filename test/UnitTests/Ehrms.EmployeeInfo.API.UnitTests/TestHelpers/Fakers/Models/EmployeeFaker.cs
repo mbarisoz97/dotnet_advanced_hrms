@@ -1,4 +1,6 @@
-﻿namespace Ehrms.EmployeeInfo.API.UnitTests.TestHelpers.Fakers.Models;
+﻿using Ehrms.EmployeeInfo.API.Database.Models;
+
+namespace Ehrms.EmployeeInfo.API.UnitTests.TestHelpers.Fakers.Models;
 
 internal class EmployeeFaker : Faker<Employee>
 {

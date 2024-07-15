@@ -1,6 +1,8 @@
-﻿namespace Ehrms.EmployeeInfo.API.Handlers.Employee.Command;
+﻿using Ehrms.EmployeeInfo.API.Database.Context;
 
-public sealed class CreateEmployeeCommand : IRequest<Models.Employee>
+namespace Ehrms.EmployeeInfo.API.Handlers.Employee.Command;
+
+public sealed class CreateEmployeeCommand : IRequest<Database.Models.Employee>
 {
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
@@ -9,7 +11,7 @@ public sealed class CreateEmployeeCommand : IRequest<Models.Employee>
     public ICollection<Guid> Skills { get; set; } = [];
 }
 
-internal sealed class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeCommand, Models.Employee>
+internal sealed class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeCommand, Database.Models.Employee>
 {
     private readonly IMapper _mapper;
     private readonly IPublishEndpoint _publishEndpoint;
@@ -22,9 +24,9 @@ internal sealed class CreateEmployeeCommandHandler : IRequestHandler<CreateEmplo
         _dbContext = dbContext;
     }
 
-    public async Task<Models.Employee> Handle(CreateEmployeeCommand request, CancellationToken cancellationToken)
+    public async Task<Database.Models.Employee> Handle(CreateEmployeeCommand request, CancellationToken cancellationToken)
     {
-        Models.Employee employee = _mapper.Map<Models.Employee>(request);
+        Database.Models.Employee employee = _mapper.Map<Database.Models.Employee>(request);
 
         await _dbContext.Skills
             .Where(x => request.Skills.Contains(x.Id))

@@ -1,6 +1,8 @@
-﻿namespace Ehrms.EmployeeInfo.API.Handlers.Employee.Command;
+﻿using Ehrms.EmployeeInfo.API.Database.Context;
 
-public sealed class UpdateEmployeeCommand : IRequest<Models.Employee>
+namespace Ehrms.EmployeeInfo.API.Handlers.Employee.Command;
+
+public sealed class UpdateEmployeeCommand : IRequest<Database.Models.Employee>
 {
 	public Guid Id { get; set; }
 	public string FirstName { get; set; } = string.Empty;
@@ -10,7 +12,7 @@ public sealed class UpdateEmployeeCommand : IRequest<Models.Employee>
 	public ICollection<Guid> Skills { get; set; } = [];
 }
 
-internal sealed class UpdateEmployeeCommandHandler : IRequestHandler<UpdateEmployeeCommand, Models.Employee>
+internal sealed class UpdateEmployeeCommandHandler : IRequestHandler<UpdateEmployeeCommand, Database.Models.Employee>
 {
 	private readonly IMapper _mapper;
 	private readonly EmployeeInfoDbContext _dbContext;
@@ -23,9 +25,9 @@ internal sealed class UpdateEmployeeCommandHandler : IRequestHandler<UpdateEmplo
 		_publishEndpoint = publishEndpoint;
 	}
 
-	public async Task<Models.Employee> Handle(UpdateEmployeeCommand request, CancellationToken cancellationToken)
+	public async Task<Database.Models.Employee> Handle(UpdateEmployeeCommand request, CancellationToken cancellationToken)
 	{
-		Models.Employee employee = await _dbContext.Employees
+		Database.Models.Employee employee = await _dbContext.Employees
 			.AsNoTracking()
 			.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken)
 				?? throw new EmployeeNotFoundException($"Could not find employee with id '{request.Id}'");
@@ -42,7 +44,7 @@ internal sealed class UpdateEmployeeCommandHandler : IRequestHandler<UpdateEmplo
 		return employee;
 	}
 
-	private Models.Employee SetEmployeeSkills(Models.Employee employee, ICollection<Guid> employeeSkills)
+	private Database.Models.Employee SetEmployeeSkills(Database.Models.Employee employee, ICollection<Guid> employeeSkills)
 	{
 		var skillToRemove = employee.Skills
 			.Where(x => !employeeSkills.Contains(x.Id));

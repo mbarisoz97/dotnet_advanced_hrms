@@ -11,8 +11,6 @@ global using Ehrms.EmployeeInfo.API.Exceptions;
 
 global using Ehrms.Shared.Common;
 global using Ehrms.EmployeeInfo.API;
-global using Ehrms.EmployeeInfo.API.Models;
-global using Ehrms.EmployeeInfo.API.Context;
 global using Ehrms.EmployeeInfo.API.Dtos.Skill;
 global using Ehrms.EmployeeInfo.API.Dtos.Employee;
 
