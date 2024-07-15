@@ -1,12 +1,14 @@
 ﻿
+using Ehrms.EmployeeInfo.API.Database.Context;
+
 namespace Ehrms.EmployeeInfo.API.Handlers.Skill.Query;
 
-public sealed class GetSkillByIdQuery : IRequest<Models.Skill>
+public sealed class GetSkillByIdQuery : IRequest<Database.Models.Skill>
 {
     public Guid Id { get; set; }
 }
 
-internal sealed class GetSkillByIdQueryHandler : IRequestHandler<GetSkillByIdQuery, Models.Skill>
+internal sealed class GetSkillByIdQueryHandler : IRequestHandler<GetSkillByIdQuery, Database.Models.Skill>
 {
     private readonly EmployeeInfoDbContext _dbContext;
 
@@ -15,7 +17,7 @@ internal sealed class GetSkillByIdQueryHandler : IRequestHandler<GetSkillByIdQue
         _dbContext = dbContext;
     }
 
-    public async Task<Models.Skill> Handle(GetSkillByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Database.Models.Skill> Handle(GetSkillByIdQuery request, CancellationToken cancellationToken)
     {
         return await _dbContext.Skills
             .FirstOrDefaultAsync(x => x.Id == request.Id) 

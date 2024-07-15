@@ -1,5 +1,5 @@
 ﻿using DotNet.Testcontainers.Builders;
-using Ehrms.EmployeeInfo.API.Context;
+using Ehrms.EmployeeInfo.API.Database.Context;
 using MassTransit;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;

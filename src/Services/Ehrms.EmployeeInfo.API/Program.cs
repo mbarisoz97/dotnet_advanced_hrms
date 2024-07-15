@@ -1,3 +1,4 @@
+using Ehrms.EmployeeInfo.API.Database.Context;
 using Ehrms.EmployeeInfo.API.Middleware;
 using Ehrms.Shared;
 using Serilog;
@@ -16,7 +17,8 @@ builder.Services.AddEmployeeInfoApi();
 
 builder.Services.AddDbContext<EmployeeInfoDbContext>(options =>
 {
-    options.UseInMemoryDatabase("EmployeeInfoDb");
+	var connectionString = builder.Configuration.GetConnectionString("EmployeeInfoDb");
+	options.UseSqlServer(connectionString, options => options.EnableRetryOnFailure());
 });
 
 builder.Services.AddMassTransit(busConfigurator =>
@@ -61,6 +63,13 @@ app.UseAuthorization();
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.MapControllers();
+
+using (var scope = app.Services.CreateScope())
+{
+	var services = scope.ServiceProvider;
+	var dbInitializer = services.GetRequiredService<EmployeeInfoDatabaseSeed>();
+	await dbInitializer.SeedAsync();
+}
 
 app.Run();
 

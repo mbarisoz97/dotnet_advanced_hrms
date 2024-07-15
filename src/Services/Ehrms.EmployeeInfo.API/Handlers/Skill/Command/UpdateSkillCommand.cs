@@ -1,12 +1,14 @@
-﻿namespace Ehrms.EmployeeInfo.API.Handlers.Skill.Command;
+﻿using Ehrms.EmployeeInfo.API.Database.Context;
 
-public sealed class UpdateSkillCommand : IRequest<Models.Skill>
+namespace Ehrms.EmployeeInfo.API.Handlers.Skill.Command;
+
+public sealed class UpdateSkillCommand : IRequest<Database.Models.Skill>
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;
 }
 
-internal sealed class UpdateSkillCommandHandler : IRequestHandler<UpdateSkillCommand, Models.Skill>
+internal sealed class UpdateSkillCommandHandler : IRequestHandler<UpdateSkillCommand, Database.Models.Skill>
 {
     private readonly IMapper _mapper;
     private readonly EmployeeInfoDbContext _dbContext;
@@ -17,7 +19,7 @@ internal sealed class UpdateSkillCommandHandler : IRequestHandler<UpdateSkillCom
         _dbContext = dbContext;
     }
 
-    public async Task<Models.Skill> Handle(UpdateSkillCommand request, CancellationToken cancellationToken)
+    public async Task<Database.Models.Skill> Handle(UpdateSkillCommand request, CancellationToken cancellationToken)
     {
         var skill = await _dbContext.Skills
             .FirstOrDefaultAsync(x => x.Id == request.Id) 

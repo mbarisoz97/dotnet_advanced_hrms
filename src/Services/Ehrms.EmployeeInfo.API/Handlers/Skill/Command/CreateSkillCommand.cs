@@ -1,11 +1,13 @@
-﻿namespace Ehrms.EmployeeInfo.API.Handlers.Skill.Command;
+﻿using Ehrms.EmployeeInfo.API.Database.Context;
 
-public sealed class CreateSkillCommand : IRequest<Models.Skill>
+namespace Ehrms.EmployeeInfo.API.Handlers.Skill.Command;
+
+public sealed class CreateSkillCommand : IRequest<Database.Models.Skill>
 {
     public string Name { get; set; } = string.Empty;
 }
 
-internal sealed class CreateSkillCommandHandler : IRequestHandler<CreateSkillCommand, Models.Skill>
+internal sealed class CreateSkillCommandHandler : IRequestHandler<CreateSkillCommand, Database.Models.Skill>
 {
     private readonly IMapper _mapper;
     private readonly EmployeeInfoDbContext _dbContext;
@@ -16,14 +18,14 @@ internal sealed class CreateSkillCommandHandler : IRequestHandler<CreateSkillCom
         _dbContext = dbContext;
     }
 
-    public async Task<Models.Skill> Handle(CreateSkillCommand request, CancellationToken cancellationToken)
+    public async Task<Database.Models.Skill> Handle(CreateSkillCommand request, CancellationToken cancellationToken)
     {
         if (IsSkillNameInUse(request.Name))
         {
             throw new SkillNameIsInUseException($"'{request.Name}' already in use.");
         }
 
-        var skill = _mapper.Map<Models.Skill>(request);
+        var skill = _mapper.Map<Database.Models.Skill>(request);
         _dbContext.Skills.Add(skill);
         await _dbContext.SaveChangesAsync();
 

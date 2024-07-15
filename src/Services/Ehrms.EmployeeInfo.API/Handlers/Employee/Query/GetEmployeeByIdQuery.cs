@@ -1,11 +1,13 @@
-﻿namespace Ehrms.EmployeeInfo.API.Handlers.Employee.Query;
+﻿using Ehrms.EmployeeInfo.API.Database.Context;
 
-public sealed class GetEmployeeByIdQuery : IRequest<Models.Employee>
+namespace Ehrms.EmployeeInfo.API.Handlers.Employee.Query;
+
+public sealed class GetEmployeeByIdQuery : IRequest<Database.Models.Employee>
 {
     public Guid Id { get; set; }
 }
 
-internal sealed class GetEmployeeByIdQueryHandler : IRequestHandler<GetEmployeeByIdQuery, Models.Employee>
+internal sealed class GetEmployeeByIdQueryHandler : IRequestHandler<GetEmployeeByIdQuery, Database.Models.Employee>
 {
     private readonly EmployeeInfoDbContext _context;
 
@@ -14,9 +16,9 @@ internal sealed class GetEmployeeByIdQueryHandler : IRequestHandler<GetEmployeeB
         _context = context;
     }
 
-    public async Task<Models.Employee> Handle(GetEmployeeByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Database.Models.Employee> Handle(GetEmployeeByIdQuery request, CancellationToken cancellationToken)
     {
-        Models.Employee employee = await _context.Employees
+        Database.Models.Employee employee = await _context.Employees
            .AsNoTracking()
            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken)
            ?? throw new ArgumentException($"Could not find employee with id {request.Id}");

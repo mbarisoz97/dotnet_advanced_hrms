@@ -1,4 +1,6 @@
-﻿namespace Ehrms.EmployeeInfo.API.UnitTests.TestHelpers;
+﻿using Ehrms.EmployeeInfo.API.Database.Context;
+
+namespace Ehrms.EmployeeInfo.API.UnitTests.TestHelpers;
 
 internal static class DbContextFactory
 {

@@ -1,4 +1,6 @@
-﻿namespace Ehrms.EmployeeInfo.API.Handlers.Employee.Command;
+﻿using Ehrms.EmployeeInfo.API.Database.Context;
+
+namespace Ehrms.EmployeeInfo.API.Handlers.Employee.Command;
 
 public sealed class DeleteEmployeeCommand : IRequest
 {

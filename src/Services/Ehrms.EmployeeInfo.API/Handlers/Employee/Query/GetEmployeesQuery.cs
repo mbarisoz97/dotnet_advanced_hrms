@@ -1,10 +1,12 @@
-﻿namespace Ehrms.EmployeeInfo.API.Handlers.Employee.Query;
+﻿using Ehrms.EmployeeInfo.API.Database.Context;
 
-public sealed class GetEmployeesQuery : IRequest<IQueryable<Models.Employee>>
+namespace Ehrms.EmployeeInfo.API.Handlers.Employee.Query;
+
+public sealed class GetEmployeesQuery : IRequest<IQueryable<Database.Models.Employee>>
 {
 }
 
-internal sealed class GetEmployeesQueryHandler : IRequestHandler<GetEmployeesQuery, IQueryable<Models.Employee>>
+internal sealed class GetEmployeesQueryHandler : IRequestHandler<GetEmployeesQuery, IQueryable<Database.Models.Employee>>
 {
     private readonly EmployeeInfoDbContext _dbContext;
 
@@ -13,7 +15,7 @@ internal sealed class GetEmployeesQueryHandler : IRequestHandler<GetEmployeesQue
         _dbContext = dbContext;
     }
 
-    public Task<IQueryable<Models.Employee>> Handle(GetEmployeesQuery request, CancellationToken cancellationToken)
+    public Task<IQueryable<Database.Models.Employee>> Handle(GetEmployeesQuery request, CancellationToken cancellationToken)
     {
         return Task.FromResult(_dbContext.Employees.AsQueryable());
     }

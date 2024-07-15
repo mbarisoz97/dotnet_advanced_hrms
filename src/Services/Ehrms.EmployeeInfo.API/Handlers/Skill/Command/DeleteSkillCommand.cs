@@ -1,4 +1,6 @@
-﻿namespace Ehrms.EmployeeInfo.API.Handlers.Skill.Command;
+﻿using Ehrms.EmployeeInfo.API.Database.Context;
+
+namespace Ehrms.EmployeeInfo.API.Handlers.Skill.Command;
 
 internal sealed class DeleteSkillCommand : IRequest
 {
