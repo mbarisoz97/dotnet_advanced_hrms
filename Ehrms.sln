@@ -59,6 +59,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ehrms.Web.Client", "src\Fro
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "backend", "backend", "{BAC9EEE0-9ED6-428D-B3B1-E69B4AB166DC}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{BECD6B86-2AD1-401F-B720-63E9B3FD6E3C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ehrms.ProjectManagemet.TestHelpers", "test\Shared\Ehrms.ProjectManagemet.TestHelpers\Ehrms.ProjectManagemet.TestHelpers.csproj", "{3398AF99-245C-418C-8C3B-F23BAC33986B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -141,6 +145,10 @@ Global
 		{4F11E4CF-4C4E-44C2-A85C-9DE6C58EC88D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4F11E4CF-4C4E-44C2-A85C-9DE6C58EC88D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4F11E4CF-4C4E-44C2-A85C-9DE6C58EC88D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3398AF99-245C-418C-8C3B-F23BAC33986B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3398AF99-245C-418C-8C3B-F23BAC33986B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3398AF99-245C-418C-8C3B-F23BAC33986B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3398AF99-245C-418C-8C3B-F23BAC33986B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -171,6 +179,8 @@ Global
 		{4400432C-E384-4BA0-AAE2-93278657DCFD} = {3FA44BBB-6123-4CFA-A3D5-22E724DC6B9D}
 		{4F11E4CF-4C4E-44C2-A85C-9DE6C58EC88D} = {3FA44BBB-6123-4CFA-A3D5-22E724DC6B9D}
 		{BAC9EEE0-9ED6-428D-B3B1-E69B4AB166DC} = {6BCCF7F9-9E97-40AE-82D8-94AA9C7D3794}
+		{BECD6B86-2AD1-401F-B720-63E9B3FD6E3C} = {F73A0A42-DD87-487A-9788-7F0B2DB2E4E1}
+		{3398AF99-245C-418C-8C3B-F23BAC33986B} = {BECD6B86-2AD1-401F-B720-63E9B3FD6E3C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {39A0E1C3-1F8D-4840-AD0D-087F270984A4}

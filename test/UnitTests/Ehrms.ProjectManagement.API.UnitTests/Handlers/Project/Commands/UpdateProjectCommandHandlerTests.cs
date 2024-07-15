@@ -58,7 +58,7 @@ public class UpdateProjectCommandHandlerTests
 
         var command = new UpdateProjectCommandFaker().Generate();
         command.Id = project.Id;
-        command.EmployeeIdCollection.Add(employee.Id);
+        command.Employees.Add(employee.Id);
 
         var updatedProject = await _handler.Handle(command, default);
 

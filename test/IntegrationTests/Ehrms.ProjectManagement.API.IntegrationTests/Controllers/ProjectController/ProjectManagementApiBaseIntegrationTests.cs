@@ -1,25 +1,29 @@
 ﻿using Ehrms.Shared;
 using System.Net.Http.Headers;
+using Ehrms.ProjectManagement.API.Context;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Ehrms.ProjectManagement.API.IntegrationTests.Controllers.ProjectController;
 
 public abstract class ProjectManagementApiBaseIntegrationTests : IClassFixture<ProjectManagementWebApplicationFactory>
 {
-    protected readonly ProjectManagementWebApplicationFactory _factory;
-    protected readonly HttpClient _client;
+    protected readonly HttpClient client;
+	protected readonly ProjectDbContext dbContext;
 
-    protected ProjectManagementApiBaseIntegrationTests(ProjectManagementWebApplicationFactory factory)
+	protected ProjectManagementApiBaseIntegrationTests(ProjectManagementWebApplicationFactory factory)
     {
-        _factory = factory;
-        _client = _factory.CreateClient();
+        client = factory.CreateClient();
 
-        var request = new AuthenticationRequest
+		client = factory.CreateClient();
+		var scope = factory.Services.CreateScope();
+		dbContext = scope.ServiceProvider.GetRequiredService<ProjectDbContext>();
+
+		var request = new AuthenticationRequest
         {
             Username = "TestUser",
             Password = "TestPassword"
         };
         var jwt = new JwtTokenHandler().Generate(request);
-        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.AccessToken);
-        _factory = factory;
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.AccessToken);
     }
 }

@@ -4,9 +4,9 @@ namespace Ehrms.Web.Client;
 
 public interface IEmployeeServiceClient
 {
-    Task CreateEmployeeAsync(Employee employee);
-    Task<Employee> UpdateEmployeeAsync(Employee employee);
+    Task CreateEmployeeAsync(EmployeeModel employee);
+    Task<EmployeeModel> UpdateEmployeeAsync(EmployeeModel employee);
     Task DeleteEmployeeAsync(Guid id);
-    Task<Employee> GetEmployeeAsync(Guid id);
-    Task<IEnumerable<Employee>> GetEmployeesAsync(int pageNumber, int pageSize = 20);
+    Task<EmployeeModel> GetEmployeeAsync(Guid id);
+    Task<Response<IEnumerable<EmployeeModel>>> GetEmployeesAsync();
 }

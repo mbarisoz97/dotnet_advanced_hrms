@@ -1,0 +1,118 @@
+﻿@attribute [Route(ProjectRouting.Index)]
+@attribute [StreamRendering]
+
+@inject IModalService ModalService
+@inject IToastService ToastService
+@inject IProjectServiceClient ProjectServiceClient
+@inject NavigationManager NavigationManager
+
+@if (Projects == null)
+{
+	<Loading></Loading>
+	return;
+}
+
+<div class="row">
+	<div class="d-flex flex-row justify-content-between">
+		<SearchBar SearchBarPlaceHolder="Search Projects"></SearchBar>
+		<div>
+			<button @onclick="ShowCreateProjectDialog" class="btn btn-success">
+				<i class="bi bi-person-plus"></i>
+			</button>
+		</div>
+	</div>
+</div>
+
+@if (!Projects.Any())
+{
+	<h1>No project records found.</h1>
+	return;
+}
+<div class="row">
+	<div class="table-responsive-lg">
+		<table class="table table-hover table-bordered">
+			<thead>
+				<tr>
+					<th>#</th>
+					<th>Project</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var project in Projects)
+				{
+					<tr>
+						<td></td>
+						<td>@project.Name</td>
+						<td>
+							<MudTooltip Text="Edit">
+								<MudIconButton Icon="@Icons.Material.Filled.ModeEdit" @onclick="@(()=>ShowUpdateProjectDialog(project))" />
+							</MudTooltip>
+							<MudTooltip Text="Delete">
+								<MudIconButton Icon="@Icons.Material.Filled.Delete" @onclick="@(()=>ShowDeleteConfirmationDialog(project))" />
+							</MudTooltip>
+							<MudTooltip Text="Read More">
+								<MudIconButton Icon="@Icons.Material.Filled.ReadMore" Href=@($"{ProjectRouting.History}/{project.Id}") />
+							</MudTooltip>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+</div>
+
+@code {
+	private IEnumerable<ProjectModel>? Projects { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		await UpdateProjects();
+	}
+
+	private async Task UpdateProjects()
+	{
+		var response = await ProjectServiceClient.GetProjectsAsync();
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			Projects = response.Content;
+			return;
+		}
+
+		ToastService.ShowError($"Service returned : {response.StatusCode}");
+	}
+
+	private async Task ShowUpdateProjectDialog(ProjectModel project)
+	{
+		var modalParameters = new ModalParameters()
+			.Add(nameof(ProjectModel.Id), project.Id);
+
+		var modalReference = ModalService.Show<ProjectUpdatePage>("Update project", modalParameters);
+		var result = await modalReference.Result;
+
+		await UpdateProjects();
+	}
+
+	private async Task ShowCreateProjectDialog()
+	{
+		var modalReference = ModalService.Show<ProjectCreatePage>("Create a new project");
+		var result = await modalReference.Result;
+
+		await UpdateProjects();
+	}
+
+	private async Task ShowDeleteConfirmationDialog(ProjectModel project)
+	{
+		var modalParameters = new ModalParameters()
+			.Add(nameof(ProjectModel.Id), project.Id);
+
+		var modalReference = ModalService.Show<ProjectDeletePage>("Delete a project", modalParameters);
+		var result = await modalReference.Result;
+
+		if (result.Confirmed)
+		{
+			ToastService.ShowSuccess("Project deleted successfully.");
+			await UpdateProjects();
+		}
+	}
+}

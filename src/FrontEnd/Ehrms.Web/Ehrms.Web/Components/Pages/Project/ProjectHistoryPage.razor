@@ -1,0 +1,74 @@
+﻿@attribute [Route($"{ProjectRouting.History}/{{id:guid}}")]
+@attribute [Authorize]
+@attribute [StreamRendering]
+
+@inject IToastService ToastService
+@inject IProjectServiceClient ProjectServiceClient
+
+@if (EmploymentRecords == null)
+{
+	<Loading></Loading>
+	return;
+}
+
+<h2>Employment History</h2>
+
+<br />
+
+@foreach (var employmentRecordGroup in GetGroupedEmployments())
+{
+	<MudExpansionPanel Expanded="false" Text="@employmentRecordGroup.EmployeeName">
+		<MudTimeline TimelineOrientation="TimelineOrientation.Vertical" TimelinePosition="TimelinePosition.Start">
+			@foreach (var employmentRecord in employmentRecordGroup.EmploymentRecords.OrderBy(x => x.StartedAt))
+			{
+				if (employmentRecord.EndedAt != null)
+				{
+					<MudTimelineItem Color="Color.Error">
+						<MudText Align="Align.Start">@employmentRecord.StartedAt - @employmentRecord.EndedAt</MudText>
+					</MudTimelineItem>
+				}
+				else
+				{
+					<MudTimelineItem Color="Color.Success">
+						<MudText Align="Align.Start">@employmentRecord.StartedAt</MudText>
+					</MudTimelineItem>
+				}
+			}
+		</MudTimeline>
+	</MudExpansionPanel>
+}
+
+@code {
+	[Parameter]
+	public Guid Id { get; set; }
+
+	private IEnumerable<EmploymentModel>? EmploymentRecords { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		var response = await ProjectServiceClient.GetProjectHistoryAsync(Id);
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			EmploymentRecords = response.Content;
+			return;
+		}
+
+		ToastService.ShowError($"Could not read project history. Service returned {response.StatusCode}");
+	}
+
+	private IEnumerable<GroupedEmploymentModel> GetGroupedEmployments()
+	{
+		if (EmploymentRecords == null)
+		{
+			return [];
+		}
+
+		return EmploymentRecords.GroupBy(x => new { x.EmployeeId, x.EmployeeName })
+			.Select(y => new GroupedEmploymentModel()
+				{
+					EmployeeId = y.Key.EmployeeId,
+					EmployeeName = y.Key.EmployeeName,
+					EmploymentRecords = y.ToList()
+				});
+	}
+}

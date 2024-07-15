@@ -11,7 +11,7 @@ public class ProjectControllerGetIntegrationTests : ProjectManagementApiBaseInte
 	[Fact]
 	public async Task Get_NonExistingProject_ReturnsNotFound()
 	{
-		var getProjectResponse = await _client.GetAsync($"{Endpoints.ProjectApi}/{Guid.NewGuid()}");
+		var getProjectResponse = await client.GetAsync($"{Endpoints.ProjectApi}/{Guid.NewGuid()}");
 
 		getProjectResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
 	}
@@ -21,11 +21,11 @@ public class ProjectControllerGetIntegrationTests : ProjectManagementApiBaseInte
 	{
 		var createProjectCommand = new CreateProjectCommandFaker().Generate();
 
-		var putProjectResponse = await _client.PutAsJsonAsync(Endpoints.ProjectApi, createProjectCommand);
+		var putProjectResponse = await client.PutAsJsonAsync(Endpoints.ProjectApi, createProjectCommand);
 		putProjectResponse.EnsureSuccessStatusCode();
 		var readProjectDtoFromPut = await putProjectResponse.Content.ReadFromJsonAsync<ReadProjectDto>();
 
-		var getProjectResponse = await _client.GetAsync($"{Endpoints.ProjectApi}/{readProjectDtoFromPut!.Id}");
+		var getProjectResponse = await client.GetAsync($"{Endpoints.ProjectApi}/{readProjectDtoFromPut!.Id}");
 
 		getProjectResponse.StatusCode.Should().Be(HttpStatusCode.OK);
 

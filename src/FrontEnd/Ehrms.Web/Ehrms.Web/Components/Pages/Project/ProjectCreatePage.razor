@@ -1,0 +1,24 @@
+﻿@inject IToastService ToastService
+@inject IProjectServiceClient ProjectServiceClient
+@inject NavigationManager NavigationManager
+
+<ProjectForm IsEditMode="false" OnValidSubmit="CreateProject" />
+
+@code {
+	private async Task CreateProject(ProjectModel project)
+	{
+		var response = await ProjectServiceClient.CreateProjectAsync(project);
+		
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			ToastService.ShowSuccess($"New project created successfully");
+			return;
+		}
+		
+		if (response.StatusCode == HttpStatusCode.Conflict)
+		{
+			ToastService.ShowError($"A record with this name has already been created");
+			return;
+		}
+	}
+}

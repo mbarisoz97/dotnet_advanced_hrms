@@ -11,7 +11,7 @@
     [Parameter]
     public Guid Id { get; set; }
 
-    private async Task UpdateEmployeeInfo(Employee employee)
+    private async Task UpdateEmployeeInfo(EmployeeModel employee)
     {
         employee.Id = Id;
         await EmployeeService.UpdateEmployeeAsync(employee);
