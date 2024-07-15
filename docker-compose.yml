@@ -64,6 +64,18 @@ services:
     networks:
         - proxybackend
  
+  ehrms.employeeinfo.api.db:
+    image: mcr.microsoft.com/mssql/server
+    ports:
+      - 1434:1433
+    volumes:
+      - ./.container/db/employeeInfoDb/data:/var/opt/mssql/data
+    environment:
+      - SA_PASSWORD=yourStrong(!)Password
+      - ACCEPT_EULA=Y
+    networks:
+        - proxybackend
+
   ehrms.projectmanagement.api:
     image: ${DOCKER_REGISTRY-}ehrmsprojectmanagementapi
     build:

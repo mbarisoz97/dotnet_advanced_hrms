@@ -17,6 +17,7 @@ public static class DependencyInjection
 
 	private static IServiceCollection AddAssemblyTypes(this IServiceCollection services)
 	{
+		services.AddScoped<EmployeeInfoDatabaseSeed>();
 		services.AddScoped<DbContext, EmployeeInfoDbContext>();
 		services.AddTransient<GlobalExceptionHandlingMiddleware>();
 
