@@ -36,6 +36,20 @@ services:
       dockerfile: src/Services/Ehrms.Authentication.API/Dockerfile
     networks:
         - proxybackend
+    depends_on:
+       - ehrms.authentication.api.db
+
+  ehrms.authentication.api.db:
+    image: mcr.microsoft.com/mssql/server
+    ports:
+      - 1433:1433
+    volumes:
+      - ./.container/db/authdb/data:/var/opt/mssql/data
+    environment:
+      - SA_PASSWORD=yourStrong(!)Password
+      - ACCEPT_EULA=Y
+    networks:
+        - proxybackend
 
   ehrms.employeeinfo.api:
     image: ${DOCKER_REGISTRY-}ehrmsemployeeinfoapi

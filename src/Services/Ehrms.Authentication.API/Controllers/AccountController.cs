@@ -3,6 +3,9 @@ using System.Security.Cryptography;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
+using Ehrms.Authentication.API.Models;
+using Ehrms.Authentication.API.Database.Models;
+using Ehrms.Authentication.API.Extension;
 
 namespace Ehrms.Authentication.API.Controllers;
 [Route("api/[controller]")]
@@ -16,11 +19,6 @@ public class AccountController : ControllerBase
 	{
 		_tokenHandler = tokenHandler;
 		_userManager = userManager;
-
-		_userManager.CreateAsync(new Controllers.User
-		{
-			UserName = "testUser"
-		}, "Passw0rd!");
 	}
 
 	[HttpPost("Login")]
