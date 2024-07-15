@@ -15,8 +15,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddProjectManagementApi();
 builder.Services.AddDbContext<ProjectDbContext>(options =>
 {
-    options.UseInMemoryDatabase("ProjectManagementDb");
+	var connectionString = builder.Configuration.GetConnectionString("ProjectManagementDb");
+	options.UseSqlServer(connectionString, options => options.EnableRetryOnFailure());
 });
+
 builder.Services.AddMassTransit(busConfigurator =>
 {
     busConfigurator.SetKebabCaseEndpointNameFormatter();
