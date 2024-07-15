@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
 using Ehrms.EmployeeInfo.API.Database.Models;
+using Elastic.CommonSchema;
+using Microsoft.AspNetCore.Identity;
 
 namespace Ehrms.EmployeeInfo.API.Database.Context;
 

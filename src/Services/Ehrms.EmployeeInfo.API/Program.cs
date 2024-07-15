@@ -64,6 +64,13 @@ app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.MapControllers();
 
+using (var scope = app.Services.CreateScope())
+{
+	var services = scope.ServiceProvider;
+	var dbInitializer = services.GetRequiredService<EmployeeInfoDatabaseSeed>();
+	await dbInitializer.SeedAsync();
+}
+
 app.Run();
 
 //Do not remove following partial definition.
