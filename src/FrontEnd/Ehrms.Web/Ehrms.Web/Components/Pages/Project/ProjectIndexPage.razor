@@ -4,6 +4,7 @@
 @inject IModalService ModalService
 @inject IToastService ToastService
 @inject IProjectServiceClient ProjectServiceClient
+@inject NavigationManager NavigationManager
 
 @if (Projects == null)
 {
@@ -27,7 +28,6 @@
 	<h1>No project records found.</h1>
 	return;
 }
-
 <div class="row">
 	<div class="table-responsive-lg">
 		<table class="table table-hover table-bordered">
@@ -45,12 +45,15 @@
 						<td></td>
 						<td>@project.Name</td>
 						<td>
-							<button class="text-danger" @onclick="@(()=>ShowUpdateSkillDialog(project))">
-								<i class="bi bi-pencil-square"></i>
-							</button>
-							<button class="text-danger" @onclick="@(()=>ShowDeleteConfirmationDialog(project))">
-								<i class="bi bi-trash"></i>
-							</button>
+							<MudTooltip Text="Edit">
+								<MudIconButton Icon="@Icons.Material.Filled.ModeEdit" @onclick="@(()=>ShowUpdateProjectDialog(project))" />
+							</MudTooltip>
+							<MudTooltip Text="Delete">
+								<MudIconButton Icon="@Icons.Material.Filled.Delete" @onclick="@(()=>ShowDeleteConfirmationDialog(project))" />
+							</MudTooltip>
+							<MudTooltip Text="Read More">
+								<MudIconButton Icon="@Icons.Material.Filled.ReadMore" Href=@($"{ProjectRouting.History}/{project.Id}") />
+							</MudTooltip>
 						</td>
 					</tr>
 				}
@@ -79,7 +82,7 @@
 		ToastService.ShowError($"Service returned : {response.StatusCode}");
 	}
 
-	private async Task ShowUpdateSkillDialog(ProjectModel project)
+	private async Task ShowUpdateProjectDialog(ProjectModel project)
 	{
 		var modalParameters = new ModalParameters()
 			.Add(nameof(ProjectModel.Id), project.Id);

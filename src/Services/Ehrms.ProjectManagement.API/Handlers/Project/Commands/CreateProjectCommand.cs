@@ -29,7 +29,7 @@ internal sealed class CreateProjectCommandHandler : IRequestHandler<CreateProjec
 		return project;
 	}
 
-	private async Task<ICollection<Employment>> GetEmployments(Models.Project project, ICollection<Guid> employees)
+	private async Task<ICollection<Models.Employment>> GetEmployments(Models.Project project, ICollection<Guid> employees)
 	{
 		if (employees.Count == 0)
 		{
@@ -48,7 +48,7 @@ internal sealed class CreateProjectCommandHandler : IRequestHandler<CreateProjec
 		return await Task.FromResult(project.Employments);
 	}
 
-	private static Employment CreateNewEmploymentRecord(Models.Project project, Employee employee) => new()
+	private static Models.Employment CreateNewEmploymentRecord(Models.Project project, Employee employee) => new()
 	{
 		StartedAt = DateOnly.FromDateTime(DateTime.UtcNow),
 		Employee = employee,

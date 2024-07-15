@@ -16,3 +16,19 @@ public class ProjectModel
 	[Required]
 	public ICollection<Guid> Employees { get; set; } = [];
 }
+
+public sealed class EmploymentModel
+{
+	public Guid Id { get; set; }
+	public DateOnly StartedAt { get; set; }
+	public DateOnly? EndedAt { get; set; }
+	public Guid EmployeeId { get; set; }
+	public string EmployeeName { get; set; } = string.Empty;
+}
+
+public sealed class GroupedEmploymentModel
+{
+	public Guid EmployeeId { get; set; }
+	public string EmployeeName { get; set; } = string.Empty;
+	public ICollection<EmploymentModel> EmploymentRecords { get; set; } = [];
+}

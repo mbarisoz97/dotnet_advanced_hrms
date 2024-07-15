@@ -43,9 +43,9 @@ internal sealed class UpdateProjectCommandHandler : IRequestHandler<UpdateProjec
 
 	private async Task CreateEmploymenRecordsForNewEmployees(Models.Project project, ICollection<Guid> employeeIdCollection)
 	{
-		var currentProjectEmployments = project.Employments
-			.Where(x => x.EndedAt == null)
-			.Select(x => x.Employee?.Id);
+		var currentProjectEmployments = _dbContext.Employments
+			.Where(x => x.EndedAt == null && x.ProjectId == project.Id)
+			.Select(x => x.EmployeeId);
 
 		var newEmploymentRecords = employeeIdCollection
 			.Where(x => !currentProjectEmployments.Contains(x));
@@ -53,7 +53,7 @@ internal sealed class UpdateProjectCommandHandler : IRequestHandler<UpdateProjec
 		var employeesCreateToEmploymentRecord = _dbContext.Employees.Where(x => newEmploymentRecords.Contains(x.Id));
 		foreach (var employee in employeesCreateToEmploymentRecord)
 		{
-			_dbContext.Employments.Add(new Employment
+			_dbContext.Employments.Add(new Models.Employment
 			{
 				Employee = employee,
 				Project = project,
