@@ -11,9 +11,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAuthenticationApi();
 
-builder.Services.AddDbContext<ApplicationUserDbContext>(config =>
+builder.Services.AddDbContext<ApplicationUserDbContext>(options =>
 {
-	config.UseInMemoryDatabase("AuthenticationDb");
+	var connectionString = builder.Configuration.GetConnectionString("AuthDb");
+	options.UseSqlServer(connectionString, options => options.EnableRetryOnFailure());
 });
 
 builder.Services.AddIdentity<User, Role>()
