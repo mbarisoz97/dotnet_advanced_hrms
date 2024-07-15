@@ -14,8 +14,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddProjectManagementApi();
 builder.Services.AddDbContext<ProjectDbContext>(options =>
 {
-    options.UseInMemoryDatabase("ProjectManagementDb");
+	var connectionString = builder.Configuration.GetConnectionString("ProjectManagementDb");
+	options.UseSqlServer(connectionString, options => options.EnableRetryOnFailure());
 });
+
 builder.Services.AddMassTransit(busConfigurator =>
 {
     busConfigurator.SetKebabCaseEndpointNameFormatter();
@@ -62,7 +64,13 @@ app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.MapControllers();
 
-app.Run();
+using (var scope = app.Services.CreateScope())
+{
+	var services = scope.ServiceProvider;
+	var dbInitializer = services.GetRequiredService<ProjectManagementDatabaseSeed>();
+	await dbInitializer.SeedAsync();
+}
 
+app.Run();
 
 public partial class Program { }

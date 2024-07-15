@@ -1,4 +1,6 @@
-﻿namespace Ehrms.ProjectManagement.API.UnitTests.Handlers.Project.Queries;
+﻿using Ehrms.ProjectManagement.API.Database.Context;
+
+namespace Ehrms.ProjectManagement.API.UnitTests.Handlers.Project.Queries;
 
 public class GetProjectByIdQueryHandlerTests
 {

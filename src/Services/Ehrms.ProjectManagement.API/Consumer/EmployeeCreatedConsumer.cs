@@ -1,4 +1,7 @@
-﻿namespace Ehrms.ProjectManagement.API.Consumer;
+﻿using Ehrms.ProjectManagement.API.Database.Context;
+using Ehrms.ProjectManagement.API.Database.Models;
+
+namespace Ehrms.ProjectManagement.API.Consumer;
 
 internal sealed class EmployeeCreatedConsumer : IConsumer<EmployeeCreatedEvent>
 {

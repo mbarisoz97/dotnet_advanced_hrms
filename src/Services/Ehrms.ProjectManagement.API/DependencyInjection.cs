@@ -16,6 +16,7 @@ internal static class DependencyInjection
 
     private static void AddAssemblyTypes(IServiceCollection services)
     {
+        services.AddScoped<ProjectManagementDatabaseSeed>();
         services.AddTransient<GlobalExceptionHandlingMiddleware>();
     }
 

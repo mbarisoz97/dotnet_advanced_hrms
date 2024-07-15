@@ -1,4 +1,4 @@
-﻿using Ehrms.ProjectManagement.API.Models;
+﻿using Ehrms.ProjectManagement.API.Database.Models;
 using Microsoft.VisualStudio.TestPlatform.Common.Utilities;
 using System.Net;
 

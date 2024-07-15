@@ -1,4 +1,6 @@
-﻿namespace Ehrms.ProjectManagement.API.UnitTests.TestHelpers;
+﻿using Ehrms.ProjectManagement.API.Database.Context;
+
+namespace Ehrms.ProjectManagement.API.UnitTests.TestHelpers;
 
 internal static class CustomDbContextFactory
 {

@@ -1,4 +1,6 @@
-﻿namespace Ehrms.ProjectManagement.API.UnitTests.Handlers.Project.Commands;
+﻿using Ehrms.ProjectManagement.API.Database.Context;
+
+namespace Ehrms.ProjectManagement.API.UnitTests.Handlers.Project.Commands;
 
 public class CreateProjectCommandHandlerTests
 {

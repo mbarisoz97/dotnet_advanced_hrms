@@ -1,4 +1,6 @@
-﻿namespace Ehrms.ProjectManagement.API.Consumer;
+﻿using Ehrms.ProjectManagement.API.Database.Context;
+
+namespace Ehrms.ProjectManagement.API.Consumer;
 
 internal sealed class EmployeeDeletedConsumer : IConsumer<EmployeeDeletedEvent>
 {

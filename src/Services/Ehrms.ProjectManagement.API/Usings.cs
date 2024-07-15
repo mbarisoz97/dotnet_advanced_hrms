@@ -14,8 +14,8 @@ global using Ehrms.ProjectManagement.API.Exceptions;
 global using Ehrms.Contracts.Employee;
 
 global using Ehrms.ProjectManagement.API;
-global using Ehrms.ProjectManagement.API.Models;
-global using Ehrms.ProjectManagement.API.Context;
+global using Ehrms.ProjectManagement.API.Database.Context;
 
 global using Ehrms.ProjectManagement.API.Dtos.Project;
+global using Ehrms.ProjectManagement.API.Database.Models;
 global using Ehrms.ProjectManagement.API.Handlers.Project.Commands;
