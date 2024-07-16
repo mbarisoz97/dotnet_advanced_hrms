@@ -1,6 +1,7 @@
 ﻿namespace Ehrms.TrainingManagement.API.Handlers.Training.Commands;
+using Training = Database.Models.Training;
 
-public sealed class UpdateTrainingCommand : IRequest<Models.Training>
+public sealed class UpdateTrainingCommand : IRequest<Training>
 {
 	public Guid Id { get; set; }
 	public string Name { get; set; } = string.Empty;
@@ -9,7 +10,7 @@ public sealed class UpdateTrainingCommand : IRequest<Models.Training>
 	public ICollection<Guid> Participants { get; set; } = [];
 }
 
-internal sealed class UpdateTrainingCommandHandler : IRequestHandler<UpdateTrainingCommand, Models.Training>
+internal sealed class UpdateTrainingCommandHandler : IRequestHandler<UpdateTrainingCommand, Training>
 {
 	private readonly IMapper _mapper;
 	private readonly TrainingDbContext _trainingDbContext;
@@ -20,7 +21,7 @@ internal sealed class UpdateTrainingCommandHandler : IRequestHandler<UpdateTrain
 		_trainingDbContext = trainingDbContext;
 	}
 
-	public async Task<Models.Training> Handle(UpdateTrainingCommand request, CancellationToken cancellationToken)
+	public async Task<Training> Handle(UpdateTrainingCommand request, CancellationToken cancellationToken)
 	{
 		var training = await GetTraining(request, cancellationToken);
 		_mapper.Map(request, training);
@@ -32,14 +33,14 @@ internal sealed class UpdateTrainingCommandHandler : IRequestHandler<UpdateTrain
 		return training;
 	}
 
-	private async Task<Models.Training> SetParticipants(Models.Training training, ICollection<Guid> participants)
+	private async Task<Training> SetParticipants(Training training, ICollection<Guid> participants)
 	{
 		RemoveParticipants(training, participants);
 		await AddPariticipants(training, participants);
 
 		return training;
 	}
-	private void RemoveParticipants(Models.Training training, ICollection<Guid> participants)
+	private void RemoveParticipants(Training training, ICollection<Guid> participants)
 	{
 		var participantsToRemove = training.Participants
 			.Where(x => !participants.Contains(x.Id))
@@ -51,7 +52,7 @@ internal sealed class UpdateTrainingCommandHandler : IRequestHandler<UpdateTrain
 		}
 	}
 
-	private async Task AddPariticipants(Models.Training training, ICollection<Guid> participants)
+	private async Task AddPariticipants(Training training, ICollection<Guid> participants)
 	{
 		var participantsToAdd = _trainingDbContext.Employees
 			.Where(x => participants.Contains(x.Id));
@@ -59,7 +60,7 @@ internal sealed class UpdateTrainingCommandHandler : IRequestHandler<UpdateTrain
 		await participantsToAdd.ForEachAsync(x => training.Participants.Add(x));
 	}
 
-	private async Task<Models.Training> GetTraining(UpdateTrainingCommand request, CancellationToken cancellationToken)
+	private async Task<Training> GetTraining(UpdateTrainingCommand request, CancellationToken cancellationToken)
 	{
 		return await _trainingDbContext.Trainings
 			.Include(x => x.Participants)
