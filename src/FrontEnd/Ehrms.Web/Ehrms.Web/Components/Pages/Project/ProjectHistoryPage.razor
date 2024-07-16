@@ -5,65 +5,105 @@
 @inject IToastService ToastService
 @inject IProjectServiceClient ProjectServiceClient
 
-@if (EmploymentRecords == null)
-{
-	<Loading></Loading>
-	return;
-}
-
-<h2>Employment History</h2>
-
-<br />
-
-@foreach (var employmentRecordGroup in GetGroupedEmployments())
-{
-	<MudExpansionPanel Expanded="false" Text="@employmentRecordGroup.EmployeeName">
-		<MudTimeline TimelineOrientation="TimelineOrientation.Vertical" TimelinePosition="TimelinePosition.Start">
-			@foreach (var employmentRecord in employmentRecordGroup.EmploymentRecords.OrderBy(x => x.StartedAt))
+<MudTable Items="@EmploymentRecords"
+		  Dense="true"
+		  Hover="true"
+		  Loading="@Loading"
+		  Bordered="true"
+		  Striped="true">
+	<ToolBarContent>
+		<MudIconButton Size="Size.Medium" Icon="@Icons.Material.Filled.ArrowBack" Href="@(ProjectRouting.Index)" />
+		<MudText Typo="Typo.h6">Employments</MudText>
+		<MudSpacer />
+		<MudTextField @bind-Value="SearchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+	</ToolBarContent>
+	<HeaderContent>
+		<MudTh></MudTh>
+		<MudTh>Employee</MudTh>
+	</HeaderContent>
+	<RowTemplate>
+		<MudTd>
+			@if (context.EmploymentRecords.Any(x => x.EndedAt == null))
 			{
-				if (employmentRecord.EndedAt != null)
-				{
-					<MudTimelineItem Color="Color.Error">
-						<MudText Align="Align.Start">@employmentRecord.StartedAt - @employmentRecord.EndedAt</MudText>
-					</MudTimelineItem>
-				}
-				else
-				{
-					<MudTimelineItem Color="Color.Success">
-						<MudText Align="Align.Start">@employmentRecord.StartedAt</MudText>
-					</MudTimelineItem>
-				}
+				<MudTimelineItem Color="Color.Success" />
 			}
-		</MudTimeline>
-	</MudExpansionPanel>
-}
+			else
+			{
+				<MudTimelineItem Color="Color.Error" />
+			}
+		</MudTd>
+		<MudTd>
+			<MudExpansionPanel Expanded="false" Text="@context.EmployeeName">
+				<MudTimeline TimelineOrientation="TimelineOrientation.Vertical" TimelinePosition="TimelinePosition.Start">
+					@foreach (var employmentRecord in context.EmploymentRecords.OrderBy(x => x.StartedAt))
+					{
+						if (employmentRecord.EndedAt != null)
+						{
+							<MudTimelineItem Color="Color.Error">
+								<MudText Align="Align.Start">@employmentRecord.StartedAt - @employmentRecord.EndedAt</MudText>
+							</MudTimelineItem>
+						}
+						else
+						{
+							<MudTimelineItem Color="Color.Success">
+								<MudText Align="Align.Start">@employmentRecord.StartedAt</MudText>
+							</MudTimelineItem>
+						}
+					}
+				</MudTimeline>
+			</MudExpansionPanel>
+		</MudTd>
+	</RowTemplate>
+	<PagerContent>
+		<MudTablePager />
+	</PagerContent>
+</MudTable>
 
 @code {
 	[Parameter]
 	public Guid Id { get; set; }
 
-	private IEnumerable<EmploymentModel>? EmploymentRecords { get; set; }
+	private IEnumerable<GroupedEmploymentModel>? EmploymentRecords { get; set; } = [];
+
+	private bool Loading { get; set; }
+	private string SearchString { get; set; } = "";
 
 	protected override async Task OnInitializedAsync()
 	{
+		ShowLoadingBar();
+
 		var response = await ProjectServiceClient.GetProjectHistoryAsync(Id);
 		if (response.StatusCode == HttpStatusCode.OK)
 		{
-			EmploymentRecords = response.Content;
-			return;
+			EmploymentRecords = GetGroupedEmployments(response.Content);
+		}
+		else
+		{
+			ToastService.ShowError($"Could not read project history. Service returned {response.StatusCode}");
+
 		}
 
-		ToastService.ShowError($"Could not read project history. Service returned {response.StatusCode}");
+		HideLoadingBar();
 	}
 
-	private IEnumerable<GroupedEmploymentModel> GetGroupedEmployments()
+	private void ShowLoadingBar()
 	{
-		if (EmploymentRecords == null)
+		Loading = true;
+	}
+
+	private void HideLoadingBar()
+	{
+		Loading = false;
+	}
+
+	private IEnumerable<GroupedEmploymentModel> GetGroupedEmployments(IEnumerable<EmploymentModel>? employments)
+	{
+		if (employments == null)
 		{
 			return [];
 		}
 
-		return EmploymentRecords.GroupBy(x => new { x.EmployeeId, x.EmployeeName })
+		return employments.GroupBy(x => new { x.EmployeeId, x.EmployeeName })
 			.Select(y => new GroupedEmploymentModel()
 				{
 					EmployeeId = y.Key.EmployeeId,
