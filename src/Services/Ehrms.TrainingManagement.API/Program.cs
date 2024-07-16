@@ -63,7 +63,15 @@ app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.MapControllers();
 
+using (var scope = app.Services.CreateScope())
+{
+	var services = scope.ServiceProvider;
+	var dbInitializer = services.GetRequiredService<TrainingDbSeed>();
+	await dbInitializer.SeedAsync();
+}
+
 app.Run();
 
-
+//Do not delete following partial class definition
+//It is required for integration tests.
 public partial class Program { }
