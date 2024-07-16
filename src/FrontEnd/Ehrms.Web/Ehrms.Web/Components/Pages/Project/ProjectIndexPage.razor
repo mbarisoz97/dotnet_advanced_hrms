@@ -29,13 +29,13 @@
 		<MudTd DataLabel="Name">@context.Name</MudTd>
 		<MudTd>
 			<MudTooltip Text="Edit">
-				<MudIconButton Icon="@Icons.Material.Filled.ModeEdit" @onclick="@(()=>ShowUpdateProjectDialog(context))" />
+				<MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.ModeEdit" @onclick="@(()=>ShowUpdateProjectDialog(context))" />
 			</MudTooltip>
 			<MudTooltip Text="Delete">
-				<MudIconButton Icon="@Icons.Material.Filled.Delete" @onclick="@(()=>ShowDeleteConfirmationDialog(context))" />
+				<MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.Delete" @onclick="@(()=>ShowDeleteConfirmationDialog(context))" />
 			</MudTooltip>
 			<MudTooltip Text="Read More">
-				<MudIconButton Icon="@Icons.Material.Filled.ReadMore" Href=@($"{ProjectRouting.History}/{context.Id}") />
+				<MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.ReadMore" Href=@($"{ProjectRouting.History}/{context.Id}") />
 			</MudTooltip>
 		</MudTd>
 	</RowTemplate>
