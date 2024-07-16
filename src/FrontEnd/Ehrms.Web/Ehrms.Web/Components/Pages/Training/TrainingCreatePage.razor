@@ -1,0 +1,23 @@
+﻿@inject IToastService ToastService
+@inject ITrainingServiceClient TrainingServiceClient
+
+<TrainingForm IsEditMode="false" OnValidSubmit="CreateTraining"></TrainingForm>
+
+@code {
+	private async Task CreateTraining(TrainingModel training)
+	{
+		var response = await TrainingServiceClient.CreateTrainingAsync(training);
+
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			ToastService.ShowSuccess($"New training created successfully");
+			return;
+		}
+
+		if (response.StatusCode == HttpStatusCode.Conflict)
+		{
+			ToastService.ShowError($"A record with this name has already been created");
+			return;
+		}
+	}
+}

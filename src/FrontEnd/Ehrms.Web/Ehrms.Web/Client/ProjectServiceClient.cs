@@ -16,7 +16,7 @@ internal sealed class ProjectServiceClient : IProjectServiceClient
 	public async Task<Response<ProjectModel>> CreateProjectAsync(ProjectModel project)
 	{
 		var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
-		var response = await client.PutAsJsonAsync(_endpointProvider.ProjectEndpoint, project);
+		var response = await client.PutAsJsonAsync(_endpointProvider.TrainingManagementServiceEndpoint, project);
 
 		return new Response<ProjectModel>()
 		{
@@ -28,7 +28,7 @@ internal sealed class ProjectServiceClient : IProjectServiceClient
 	public async Task<Response<Guid>> DeleteProjectAsync(Guid id)
 	{
 		var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
-		var response = await client.DeleteAsync($"{_endpointProvider.ProjectEndpoint}/{id}");
+		var response = await client.DeleteAsync($"{_endpointProvider.TrainingManagementServiceEndpoint}/{id}");
 
 		return new Response<Guid>()
 		{
@@ -40,7 +40,7 @@ internal sealed class ProjectServiceClient : IProjectServiceClient
 	public async Task<Response<ProjectModel>> GetProjectAsync(Guid id)
 	{
 		var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
-		var response = await client.GetAsync($"{_endpointProvider.ProjectEndpoint}/{id}");
+		var response = await client.GetAsync($"{_endpointProvider.TrainingManagementServiceEndpoint}/{id}");
 
 		return new Response<ProjectModel>()
 		{
@@ -52,7 +52,7 @@ internal sealed class ProjectServiceClient : IProjectServiceClient
 	public async Task<Response<IEnumerable<EmploymentModel>>> GetProjectHistoryAsync(Guid id)
 	{
 		var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
-		var response = await client.GetAsync($"{_endpointProvider.EmploymentApiEndpoint}/{id}");
+		var response = await client.GetAsync($"{_endpointProvider.TrainingManagementServiceEndpoint}/{id}");
 
 		return new()
 		{
@@ -64,7 +64,7 @@ internal sealed class ProjectServiceClient : IProjectServiceClient
 	public async Task<Response<IEnumerable<ProjectModel>>> GetProjectsAsync()
 	{
 		var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
-		var response = await client.GetAsync(_endpointProvider.ProjectEndpoint);
+		var response = await client.GetAsync(_endpointProvider.TrainingManagementServiceEndpoint);
 
 		return new Response<IEnumerable<ProjectModel>>()
 		{
@@ -76,7 +76,7 @@ internal sealed class ProjectServiceClient : IProjectServiceClient
 	public async Task<Response<ProjectModel>> UpdateProjectAsync(ProjectModel project)
 	{
 		var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
-		var response = await client.PostAsJsonAsync(_endpointProvider.ProjectEndpoint, project);
+		var response = await client.PostAsJsonAsync(_endpointProvider.TrainingManagementServiceEndpoint, project);
 
 		return new Response<ProjectModel>()
 		{

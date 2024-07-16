@@ -19,8 +19,12 @@ internal sealed class GetTrainingByIdQueryHandler : IRequestHandler<GetTrainingB
 
     public async Task<Database.Models.Training> Handle(GetTrainingByIdQuery request, CancellationToken cancellationToken)
     {
-        return await _dbContext.Trainings.AsNoTracking()
+        var trarining= await _dbContext.Trainings
+            .Include(x=>x.Participants)
+            .AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken) 
             ?? throw new TrainingNotFoundException($"Could not find training with id '{request.Id}'");
+        
+        return trarining;
     }
 }
