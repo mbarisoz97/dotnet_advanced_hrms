@@ -1,4 +1,6 @@
-﻿namespace Ehrms.TrainingManagement.API.UnitTests.Handlers.Training;
+﻿using Ehrms.TrainingManagement.API.Database.Models;
+
+namespace Ehrms.TrainingManagement.API.UnitTests.Handlers.Training;
 
 public class UpdateTrainingHandlerCommandTests
 {

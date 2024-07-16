@@ -1,4 +1,4 @@
-﻿using Ehrms.TrainingManagement.API.Models;
+﻿using Ehrms.TrainingManagement.API.Database.Models;
 using System.Net;
 using System.Net.Http.Json;
 

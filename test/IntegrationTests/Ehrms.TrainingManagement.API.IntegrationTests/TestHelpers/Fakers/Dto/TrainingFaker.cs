@@ -1,4 +1,4 @@
-﻿using Ehrms.TrainingManagement.API.Models;
+﻿using Ehrms.TrainingManagement.API.Database.Models;
 
 namespace Ehrms.TrainingManagement.API.IntegrationTests.TestHelpers.Fakers.Dto;
 

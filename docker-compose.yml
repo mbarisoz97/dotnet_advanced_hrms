@@ -119,6 +119,18 @@ services:
     networks:
         - proxybackend
 
+  ehrms.trainingmanagement.api.db:
+    image: mcr.microsoft.com/mssql/server
+    ports:
+      - 1436:1433
+    volumes:
+      - ./.container/db/trainingManagementDb/data:/var/opt/mssql/data
+    environment:
+      - SA_PASSWORD=yourStrong(!)Password
+      - ACCEPT_EULA=Y
+    networks:
+        - proxybackend
+
   ehrms.web:
     image: ${DOCKER_REGISTRY-}ehrmsweb
     build:

@@ -9,6 +9,7 @@ internal static class DependencyInjection
 {
 	internal static IServiceCollection AddTrainingManagementApi(this IServiceCollection services)
 	{
+		services.AddScoped<TrainingDbSeed>();
 		services.AddTransient<GlobalExceptionHandlingMiddleware>();
 		AddThirdPartyLibraries(services);
 		return services;

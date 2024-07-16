@@ -1,5 +1,5 @@
-﻿using Ehrms.TrainingManagement.API.Handlers.Training.Commands;
-using Ehrms.TrainingManagement.API.Models;
+﻿using Ehrms.TrainingManagement.API.Database.Models;
+using Ehrms.TrainingManagement.API.Handlers.Training.Commands;
 using System.Net;
 using System.Net.Http.Json;
 

@@ -2,12 +2,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Ehrms.TrainingManagement.API.Context;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Testcontainers.MsSql;
 using DotNet.Testcontainers.Builders;
 using MassTransit;
+using Ehrms.TrainingManagement.API.Database.Context;
 
 namespace Ehrms.TrainingManagement.API.IntegrationTests.TestHelpers.Configurators;
 

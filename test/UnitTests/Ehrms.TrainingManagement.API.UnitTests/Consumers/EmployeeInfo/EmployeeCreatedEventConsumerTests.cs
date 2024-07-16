@@ -3,7 +3,7 @@ using MassTransit;
 using Ehrms.Contracts.Employee;
 using Ehrms.TrainingManagement.API.Consumers.EmployeeEvent;
 using Ehrms.TrainingManagement.API.UnitTests.TestHelpers.Fakers.Events;
-using Ehrms.TrainingManagement.API.Context;
+using Ehrms.TrainingManagement.API.Database.Context;
 
 namespace Ehrms.TrainingManagement.API.UnitTests.Consumers.EmployeeInfo;
 

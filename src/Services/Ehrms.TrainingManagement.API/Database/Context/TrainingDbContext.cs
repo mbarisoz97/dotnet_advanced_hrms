@@ -1,6 +1,4 @@
-﻿using Ehrms.TrainingManagement.API.Models;
-
-namespace Ehrms.TrainingManagement.API.Context;
+﻿namespace Ehrms.TrainingManagement.API.Database.Context;
 
 public class TrainingDbContext : DbContext
 {
