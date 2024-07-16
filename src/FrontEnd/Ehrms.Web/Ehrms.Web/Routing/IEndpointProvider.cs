@@ -7,4 +7,5 @@ internal interface IEndpointProvider
 	string EmployeeInfoServiceEndpoint { get; }
 	string? ProjectEndpoint { get; }
 	string? EmploymentApiEndpoint { get; }
+	string? TrainingManagementServiceEndpoint { get; }
 }

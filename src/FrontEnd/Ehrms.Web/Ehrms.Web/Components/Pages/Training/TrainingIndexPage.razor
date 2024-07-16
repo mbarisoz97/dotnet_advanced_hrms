@@ -1,0 +1,59 @@
+﻿@attribute [Route($"{TrainingRouting.Index}")]
+@attribute [StreamRendering]
+@attribute [Authorize]
+
+@inject IToastService ToastService
+@inject ITrainingServiceClient TrainingServiceClient
+
+<MudTable Items="@TrainingModels" Dense="true" Hover="true" Loading="@_loading" Bordered="true" Striped="true">
+	<ToolBarContent>
+		<MudText Typo="Typo.h6">Trainings</MudText>
+		<MudSpacer />
+		<MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+		<MudTooltip Text="Add Training">
+			<MudIconButton Icon="@Icons.Material.Filled.AddBox" />
+		</MudTooltip>
+	</ToolBarContent>
+	<HeaderContent>
+		<MudTh>Name</MudTh>
+		<MudTh>Planned Date</MudTh>
+		<MudTh></MudTh>
+	</HeaderContent>
+	<RowTemplate>
+		<MudTd DataLabel="Nr">@context.Name</MudTd>
+		<MudTd DataLabel="Nr">@context.PlannedAt</MudTd>
+		<MudTh Class="justify-end">
+			<MudTooltip Text="Edit Training">
+				<MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
+			</MudTooltip>
+			<MudTooltip Text="Delete">
+				<MudIconButton Color="Color.Error" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />
+			</MudTooltip>
+			<MudTooltip Text="More">
+				<MudIconButton Icon="@Icons.Material.Filled.ReadMore" Size="Size.Small" />
+			</MudTooltip>
+		</MudTh>
+	</RowTemplate>
+	<PagerContent>
+		<MudTablePager />
+	</PagerContent>
+</MudTable>
+
+@code {
+	private IEnumerable<TrainingModel>? TrainingModels { get; set; } = [];
+
+	private bool _loading = true;
+	private string _searchString = "";
+
+	protected override async Task OnInitializedAsync()
+	{
+		var response = await TrainingServiceClient.GetTrainings();
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			TrainingModels = response.Content;
+			_loading = false;
+			return;
+		}
+		ToastService.ShowError($"Could not load trainings. Service returned {response.StatusCode}");
+	}
+}
