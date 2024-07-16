@@ -6,80 +6,77 @@
 @inject IProjectServiceClient ProjectServiceClient
 @inject NavigationManager NavigationManager
 
-@if (Projects == null)
-{
-	<Loading></Loading>
-	return;
-}
-
-<div class="row">
-	<div class="d-flex flex-row justify-content-between">
-		<SearchBar SearchBarPlaceHolder="Search Projects"></SearchBar>
-		<div>
-			<button @onclick="ShowCreateProjectDialog" class="btn btn-success">
-				<i class="bi bi-person-plus"></i>
-			</button>
-		</div>
-	</div>
-</div>
-
-@if (!Projects.Any())
-{
-	<h1>No project records found.</h1>
-	return;
-}
-<div class="row">
-	<div class="table-responsive-lg">
-		<table class="table table-hover table-bordered">
-			<thead>
-				<tr>
-					<th>#</th>
-					<th>Project</th>
-					<th></th>
-				</tr>
-			</thead>
-			<tbody>
-				@foreach (var project in Projects)
-				{
-					<tr>
-						<td></td>
-						<td>@project.Name</td>
-						<td>
-							<MudTooltip Text="Edit">
-								<MudIconButton Icon="@Icons.Material.Filled.ModeEdit" @onclick="@(()=>ShowUpdateProjectDialog(project))" />
-							</MudTooltip>
-							<MudTooltip Text="Delete">
-								<MudIconButton Icon="@Icons.Material.Filled.Delete" @onclick="@(()=>ShowDeleteConfirmationDialog(project))" />
-							</MudTooltip>
-							<MudTooltip Text="Read More">
-								<MudIconButton Icon="@Icons.Material.Filled.ReadMore" Href=@($"{ProjectRouting.History}/{project.Id}") />
-							</MudTooltip>
-						</td>
-					</tr>
-				}
-			</tbody>
-		</table>
-	</div>
-</div>
+<MudTable Items="@Projects"
+		  Dense="true"
+		  Hover="true"
+		  Loading="@Loading"
+		  Bordered="true"
+		  Striped="true"
+		  Filter="new Func<ProjectModel, bool>(SearchFilter)">
+	<ToolBarContent>
+		<MudText Typo="Typo.h6">Projects</MudText>
+		<MudSpacer />
+		<MudTextField @bind-Value="SearchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+		<MudTooltip Text="Add Project">
+			<MudIconButton Size="Size.Large" Color="Color.Success" Icon="@Icons.Material.Filled.AddBox" @onclick="ShowCreateProjectDialog" />
+		</MudTooltip>
+	</ToolBarContent>
+	<HeaderContent>
+		<MudTh>Name</MudTh>
+		<MudTh></MudTh>
+	</HeaderContent>
+	<RowTemplate>
+		<MudTd DataLabel="Name">@context.Name</MudTd>
+		<MudTd>
+			<MudTooltip Text="Edit">
+				<MudIconButton Icon="@Icons.Material.Filled.ModeEdit" @onclick="@(()=>ShowUpdateProjectDialog(context))" />
+			</MudTooltip>
+			<MudTooltip Text="Delete">
+				<MudIconButton Icon="@Icons.Material.Filled.Delete" @onclick="@(()=>ShowDeleteConfirmationDialog(context))" />
+			</MudTooltip>
+			<MudTooltip Text="Read More">
+				<MudIconButton Icon="@Icons.Material.Filled.ReadMore" Href=@($"{ProjectRouting.History}/{context.Id}") />
+			</MudTooltip>
+		</MudTd>
+	</RowTemplate>
+	<PagerContent>
+		<MudTablePager />
+	</PagerContent>
+</MudTable>
 
 @code {
 	private IEnumerable<ProjectModel>? Projects { get; set; }
+
+	private bool Loading { get; set; } = true;
+	private string SearchString { get; set; } = string.Empty;
 
 	protected override async Task OnInitializedAsync()
 	{
 		await UpdateProjects();
 	}
 
+	private void ShowLoadingBar()
+	{
+		Loading = true;
+	}
+	private void HideLoadingBar()
+	{
+		Loading = false;
+	}
+
 	private async Task UpdateProjects()
 	{
+		ShowLoadingBar();
 		var response = await ProjectServiceClient.GetProjectsAsync();
 		if (response.StatusCode == HttpStatusCode.OK)
 		{
 			Projects = response.Content;
-			return;
 		}
-
-		ToastService.ShowError($"Service returned : {response.StatusCode}");
+		else
+		{
+			ToastService.ShowError($"Service returned : {response.StatusCode}");
+		}
+		HideLoadingBar();
 	}
 
 	private async Task ShowUpdateProjectDialog(ProjectModel project)
@@ -112,5 +109,18 @@
 			ToastService.ShowSuccess("Project deleted successfully.");
 			await UpdateProjects();
 		}
+	}
+
+	private bool SearchFilter(ProjectModel element) => Search(element, SearchString);
+	private bool Search(ProjectModel element, string searchString)
+	{
+		if (element == null)
+		{
+			return false;
+		}
+
+		return (string.IsNullOrWhiteSpace(searchString) ||
+			element.Name!.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+			element.Description!.Contains(searchString, StringComparison.OrdinalIgnoreCase));
 	}
 }
