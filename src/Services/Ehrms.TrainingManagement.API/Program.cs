@@ -1,3 +1,4 @@
+using Ehrms.TrainingManagement.API.Database.Context;
 using Ehrms.TrainingManagement.API.Middleware;
 using Serilog;
 

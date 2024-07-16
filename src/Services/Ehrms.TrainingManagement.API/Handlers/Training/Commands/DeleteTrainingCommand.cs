@@ -1,4 +1,6 @@
-﻿namespace Ehrms.TrainingManagement.API.Handlers.Training.Commands;
+﻿using Ehrms.TrainingManagement.API.Database.Context;
+
+namespace Ehrms.TrainingManagement.API.Handlers.Training.Commands;
 
 internal sealed class DeleteTrainingCommand : IRequest
 {

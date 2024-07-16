@@ -1,8 +1,10 @@
-﻿namespace Ehrms.TrainingManagement.API.Handlers.Training.Queries;
+﻿using Ehrms.TrainingManagement.API.Database.Context;
 
-internal sealed record GetTrainingsQuery : IRequest<IQueryable<Models.Training>>;
+namespace Ehrms.TrainingManagement.API.Handlers.Training.Queries;
 
-internal sealed class GetTrainingsQueryHandler : IRequestHandler<GetTrainingsQuery, IQueryable<Models.Training>>
+internal sealed record GetTrainingsQuery : IRequest<IQueryable<Database.Models.Training>>;
+
+internal sealed class GetTrainingsQueryHandler : IRequestHandler<GetTrainingsQuery, IQueryable<Database.Models.Training>>
 {
     private readonly TrainingDbContext _dbContext;
 
@@ -11,7 +13,7 @@ internal sealed class GetTrainingsQueryHandler : IRequestHandler<GetTrainingsQue
         _dbContext = context;
     }
 
-    public Task<IQueryable<Models.Training>> Handle(GetTrainingsQuery request, CancellationToken cancellationToken)
+    public Task<IQueryable<Database.Models.Training>> Handle(GetTrainingsQuery request, CancellationToken cancellationToken)
     {
         var trainings = _dbContext.Trainings.AsNoTracking();
         return Task.FromResult(trainings);

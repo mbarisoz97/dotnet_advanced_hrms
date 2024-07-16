@@ -1,13 +1,14 @@
-﻿using Ehrms.TrainingManagement.API.Exceptions;
+﻿using Ehrms.TrainingManagement.API.Database.Context;
+using Ehrms.TrainingManagement.API.Exceptions;
 
 namespace Ehrms.TrainingManagement.API.Handlers.Training.Queries;
 
-internal sealed class GetTrainingByIdQuery : IRequest<Models.Training>
+internal sealed class GetTrainingByIdQuery : IRequest<Database.Models.Training>
 {
     public Guid Id { get; set; }    
 }
 
-internal sealed class GetTrainingByIdQueryHandler : IRequestHandler<GetTrainingByIdQuery, Models.Training>
+internal sealed class GetTrainingByIdQueryHandler : IRequestHandler<GetTrainingByIdQuery, Database.Models.Training>
 {
     private readonly TrainingDbContext _dbContext;
 
@@ -16,7 +17,7 @@ internal sealed class GetTrainingByIdQueryHandler : IRequestHandler<GetTrainingB
         _dbContext = dbContext;
     }
 
-    public async Task<Models.Training> Handle(GetTrainingByIdQuery request, CancellationToken cancellationToken)
+    public async Task<Database.Models.Training> Handle(GetTrainingByIdQuery request, CancellationToken cancellationToken)
     {
         return await _dbContext.Trainings.AsNoTracking()
             .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken) 

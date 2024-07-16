@@ -1,4 +1,5 @@
 ﻿using Ehrms.Contracts.Employee;
+using Ehrms.TrainingManagement.API.Database.Models;
 
 namespace Ehrms.TrainingManagement.API.Profiles;
 

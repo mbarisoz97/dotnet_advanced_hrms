@@ -1,6 +1,8 @@
-﻿namespace Ehrms.TrainingManagement.API.Handlers.Training.Commands;
+﻿using Ehrms.TrainingManagement.API.Database.Context;
 
-public sealed class CreateTrainingCommand : IRequest<Models.Training>
+namespace Ehrms.TrainingManagement.API.Handlers.Training.Commands;
+
+public sealed class CreateTrainingCommand : IRequest<Database.Models.Training>
 {
 	public string Name { get; set; } = string.Empty;
 	public string Description { get; set; } = string.Empty;
@@ -8,7 +10,7 @@ public sealed class CreateTrainingCommand : IRequest<Models.Training>
 	public ICollection<Guid> Participants { get; set; } = [];
 }
 
-public sealed class CreateTrainingCommandHandler : IRequestHandler<CreateTrainingCommand, Models.Training>
+public sealed class CreateTrainingCommandHandler : IRequestHandler<CreateTrainingCommand, Database.Models.Training>
 {
 	private readonly IMapper _mapper;
 	private readonly TrainingDbContext _dbContext;
@@ -19,9 +21,9 @@ public sealed class CreateTrainingCommandHandler : IRequestHandler<CreateTrainin
 		_dbContext = dbContext;
 	}
 
-	public async Task<Models.Training> Handle(CreateTrainingCommand request, CancellationToken cancellationToken)
+	public async Task<Database.Models.Training> Handle(CreateTrainingCommand request, CancellationToken cancellationToken)
 	{
-		Models.Training training = new();
+		Database.Models.Training training = new();
 		_mapper.Map(request, training);
 
 		await _dbContext.Employees

@@ -1,6 +1,8 @@
-﻿namespace Ehrms.TrainingManagement.API.Handlers.Training.Commands;
+﻿using Ehrms.TrainingManagement.API.Database.Context;
 
-public sealed class UpdateTrainingCommand : IRequest<Models.Training>
+namespace Ehrms.TrainingManagement.API.Handlers.Training.Commands;
+
+public sealed class UpdateTrainingCommand : IRequest<Database.Models.Training>
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = string.Empty;
@@ -9,7 +11,7 @@ public sealed class UpdateTrainingCommand : IRequest<Models.Training>
     public ICollection<Guid> Participants { get; set; } = [];
 }
 
-internal sealed class UpdateTrainingCommandHandler : IRequestHandler<UpdateTrainingCommand, Models.Training>
+internal sealed class UpdateTrainingCommandHandler : IRequestHandler<UpdateTrainingCommand, Database.Models.Training>
 {
     private readonly IMapper _mapper;
     private readonly TrainingDbContext _trainingDbContext;
@@ -20,7 +22,7 @@ internal sealed class UpdateTrainingCommandHandler : IRequestHandler<UpdateTrain
         _trainingDbContext = trainingDbContext;
     }
 
-    public async Task<Models.Training> Handle(UpdateTrainingCommand request, CancellationToken cancellationToken)
+    public async Task<Database.Models.Training> Handle(UpdateTrainingCommand request, CancellationToken cancellationToken)
     {
         var training = await _trainingDbContext.Trainings
             .AsNoTracking()

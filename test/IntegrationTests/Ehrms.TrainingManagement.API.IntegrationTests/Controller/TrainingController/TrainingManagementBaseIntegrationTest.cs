@@ -1,6 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using Ehrms.Shared;
-using Ehrms.TrainingManagement.API.Models;
+using Ehrms.TrainingManagement.API.Database.Models;
 
 namespace Ehrms.TrainingManagement.API.IntegrationTests.Controller.TrainingController;
 
