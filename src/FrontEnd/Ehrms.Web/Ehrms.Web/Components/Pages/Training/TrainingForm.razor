@@ -1,6 +1,7 @@
 ﻿@attribute [StreamRendering]
 
 @inject ITrainingServiceClient TrainingServiceClient
+@inject IEmployeeServiceClient EmployeeServiceClient
 
 @if (Training == null)
 {
@@ -26,6 +27,14 @@
 		<ValidationMessage class="text-danger" For="(()=> Training.PlannedAt)"></ValidationMessage>
 	</div>
 	<div class="mt-3">
+		<MudSelect T="EmployeeModel" Label="Select Participants" MultiSelection="true" @bind-SelectedValues="Participants" AdornmentIcon="@Icons.Material.Filled.Add" AnchorOrigin="Origin.BottomCenter">
+			@foreach (var employee in Employees)
+			{
+				<MudSelectItem T="EmployeeModel" Value="@employee">@($"{employee.FirstName} {employee.LastName}")</MudSelectItem>
+			}
+		</MudSelect>
+	</div>
+	<div class="mt-3">
 		<MudTooltip Text="Save">
 			<MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save" ButtonType="ButtonType.Submit" />
 		</MudTooltip>
@@ -40,20 +49,51 @@
 	[SupplyParameterFromForm]
 	public TrainingModel? Training { get; set; }
 
+	private IEnumerable<EmployeeModel> Employees { get; set; } = Enumerable.Empty<EmployeeModel>();
+	private IEnumerable<EmployeeModel> Participants { get; set; } = Enumerable.Empty<EmployeeModel>();
+
 	protected override async Task OnInitializedAsync()
 	{
-		if (!IsEditMode)
+		await FillEmployeeData();
+		if (IsEditMode)
+		{
+			await FillTrainingData();
+		}
+		else
 		{
 			Training ??= new();
-			return;
 		}
-
-		var response = await TrainingServiceClient.GetTrainingAsync(Id);
-		Training = response.Content;
 	}
 
 	protected async Task ValidSubmit()
 	{
+		Training.Participants = Participants.Select(x => x.Id).ToList();
 		await OnValidSubmit.InvokeAsync(Training);
+	}
+
+	private async Task FillEmployeeData()
+	{
+		var response = await EmployeeServiceClient.GetEmployeesAsync();
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			Employees = response.Content ?? [];
+			return;
+		}
+	}
+
+	private async Task FillTrainingData()
+	{
+		var response = await TrainingServiceClient.GetTrainingAsync(Id);
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			Training = response.Content;
+
+			if (IsEditMode)
+			{
+				Participants = Employees.Where(x => Training.Participants.Contains(x.Id));
+			}
+
+			return;
+		}
 	}
 }

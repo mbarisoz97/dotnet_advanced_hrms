@@ -14,4 +14,10 @@ internal class UpdateTrainingCommandFaker : Faker<UpdateTrainingCommand>
         RuleFor(e=>e.Id, id);
         return this;
     }
+
+    public UpdateTrainingCommandFaker WithParticipants(ICollection<Employee> participants)
+    {
+        RuleFor(e => e.Participants, participants.Select(x=>x.Id).ToList());
+        return this;    
+    }
 }

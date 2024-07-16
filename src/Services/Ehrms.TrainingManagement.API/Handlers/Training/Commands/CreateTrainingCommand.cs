@@ -26,10 +26,10 @@ public sealed class CreateTrainingCommandHandler : IRequestHandler<CreateTrainin
 		Database.Models.Training training = new();
 		_mapper.Map(request, training);
 
-		await _dbContext.Employees
-				.AsNoTracking()
-				.Where(x => request.Participants.Contains(x.Id))
-				.ForEachAsync(training.Participants.Add);
+		var participants = _dbContext.Employees
+				.Where(x => request.Participants.Contains(x.Id));
+
+		await participants.ForEachAsync(training.Participants.Add);
 
 		await _dbContext.AddAsync(training, cancellationToken);
 		await _dbContext.SaveChangesAsync(cancellationToken);

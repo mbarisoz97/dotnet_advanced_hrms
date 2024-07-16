@@ -15,4 +15,6 @@ public sealed class TrainingModel
 
 	[Required]
 	public DateTime? PlannedAt { get; set; }
+
+	public ICollection<Guid> Participants { get; set; } = [];
 }
