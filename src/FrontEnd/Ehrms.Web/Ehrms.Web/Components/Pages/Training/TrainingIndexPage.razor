@@ -3,6 +3,7 @@
 @attribute [Authorize]
 
 @inject IToastService ToastService
+@inject IModalService ModalService
 @inject ITrainingServiceClient TrainingServiceClient
 
 <MudTable Items="@TrainingModels" Dense="true" Hover="true" Loading="@_loading" Bordered="true" Striped="true">
@@ -11,7 +12,7 @@
 		<MudSpacer />
 		<MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
 		<MudTooltip Text="Add Training">
-			<MudIconButton Icon="@Icons.Material.Filled.AddBox" />
+			<MudIconButton Color="Color.Success" Icon="@Icons.Material.Filled.AddBox" @onclick="@(()=>ShowCreateTrainingDialog())" />
 		</MudTooltip>
 	</ToolBarContent>
 	<HeaderContent>
@@ -20,8 +21,8 @@
 		<MudTh></MudTh>
 	</HeaderContent>
 	<RowTemplate>
-		<MudTd DataLabel="Nr">@context.Name</MudTd>
-		<MudTd DataLabel="Nr">@context.PlannedAt</MudTd>
+		<MudTd DataLabel="Name">@context.Name</MudTd>
+		<MudTd DataLabel="Date">@context.PlannedAt</MudTd>
 		<MudTh Class="justify-end">
 			<MudTooltip Text="Edit Training">
 				<MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
@@ -55,5 +56,15 @@
 			return;
 		}
 		ToastService.ShowError($"Could not load trainings. Service returned {response.StatusCode}");
+	}
+
+	private async Task ShowCreateTrainingDialog()
+	{
+		var modalReference = ModalService.Show<TrainingCreatePage>("Create new training");
+		var modalResult = await modalReference.Result;
+
+		if (modalResult.Confirmed)
+		{
+		}
 	}
 }

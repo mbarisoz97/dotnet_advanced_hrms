@@ -10,5 +10,9 @@ public sealed class TrainingModel
 	[Length(2, 50)]
 	public string? Name { get; set; }
 
-	public DateTime PlannedAt { get; set; }
+	[Required]
+	public string? Description { get; set; }
+
+	[Required]
+	public DateTime? PlannedAt { get; set; }
 }
