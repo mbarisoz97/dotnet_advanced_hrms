@@ -4,12 +4,18 @@
 
 @inject IEmployeeServiceClient EmployeeServiceServiceClient
 
-<MudTable Items="@_employees" Dense="true" Hover="true" Loading="@Loading" Bordered="true" Striped="true">
+<MudTable Items="@_employees"
+		  Dense="true"
+		  Hover="true"
+		  Loading="@Loading"
+		  Bordered="true"
+		  Striped="true"
+		  Filter="new Func<EmployeeModel, bool>(SearchFilter)">
 	<ToolBarContent>
 		<MudText Typo="Typo.h6">Employees</MudText>
 		<MudSpacer />
 		<MudTextField @bind-Value="SearchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-		<MudTooltip Text="Add Training">
+		<MudTooltip Text="Add Employee">
 			<MudIconButton Size="Size.Large" Color="Color.Success" Icon="@Icons.Material.Filled.AddBox" Href="@(EmployeeRouting.Create)" />
 		</MudTooltip>
 	</ToolBarContent>
@@ -54,5 +60,20 @@
 			_employees = response.Content;
 		}
 		Loading = false;
+	}
+
+	private bool SearchFilter(EmployeeModel element) => Search(element, SearchString);
+
+	private bool Search(EmployeeModel element, string searchString)
+	{
+		if (element == null)
+		{
+			return false;
+		}
+
+		return (string.IsNullOrWhiteSpace(searchString) ||
+			element.FirstName!.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+			element.LastName!.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+			element.Qualification!.Contains(searchString, StringComparison.OrdinalIgnoreCase));
 	}
 }
