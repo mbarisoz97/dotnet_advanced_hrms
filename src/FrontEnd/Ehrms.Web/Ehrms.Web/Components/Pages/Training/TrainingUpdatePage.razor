@@ -1,0 +1,21 @@
+﻿@inject IToastService ToastService
+@inject ITrainingServiceClient TrainingServiceClient
+
+<TrainingForm IsEditMode="true" Id="Id" OnValidSubmit="UpdateTraining"></TrainingForm>
+
+@code {
+	[Parameter]
+	public Guid Id { get; set; }
+
+	private async Task UpdateTraining(TrainingModel training)
+	{
+		var response = await TrainingServiceClient.UpdateTrainingAsync(training);
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			ToastService.ShowSuccess($"Training updated successfully");
+			return;
+		}
+
+		ToastService.ShowError($"Could not update training. Service returned : {response.StatusCode}");
+	}
+}

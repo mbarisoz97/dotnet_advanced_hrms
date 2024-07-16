@@ -40,13 +40,16 @@
 	[SupplyParameterFromForm]
 	public TrainingModel? Training { get; set; }
 
-	protected override Task OnInitializedAsync()
+	protected override async Task OnInitializedAsync()
 	{
 		if (!IsEditMode)
 		{
-			Training = new();
+			Training ??= new();
+			return;
 		}
-		return Task.CompletedTask;
+
+		var response = await TrainingServiceClient.GetTrainingAsync(Id);
+		Training = response.Content;
 	}
 
 	protected async Task ValidSubmit()

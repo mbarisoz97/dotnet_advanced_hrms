@@ -13,10 +13,10 @@ internal sealed class TrainingServiceClient : ITrainingServiceClient
 		_httpClientFactoryWrapper = httpClientFactoryWrapper;
 	}
 
-	public async Task<Response<Guid>> CreateTrainingAsync(TrainingModel trainingModel)
+	public async Task<Response<Guid>> CreateTrainingAsync(TrainingModel training)
 	{
 		var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
-		var response = await client.PutAsJsonAsync(_endpointProvider.TrainingManagementServiceEndpoint, trainingModel);
+		var response = await client.PutAsJsonAsync(_endpointProvider.TrainingManagementServiceEndpoint, training);
 
 		return new()
 		{
@@ -58,6 +58,18 @@ internal sealed class TrainingServiceClient : ITrainingServiceClient
 		{
 			StatusCode = response.StatusCode,
 			Content = await response.GetContentAs<IEnumerable<TrainingModel>>()
+		};
+	}
+
+	public async Task<Response<TrainingModel>> UpdateTrainingAsync(TrainingModel training)
+	{
+		var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
+		var response = await client.PostAsJsonAsync(_endpointProvider.TrainingManagementServiceEndpoint, training);
+
+		return new()
+		{
+			StatusCode = response.StatusCode,
+			Content = await response.GetContentAs<TrainingModel>()
 		};
 	}
 }

@@ -23,17 +23,17 @@
 	<RowTemplate>
 		<MudTd DataLabel="Name">@context.Name</MudTd>
 		<MudTd DataLabel="Date">@context.PlannedAt</MudTd>
-		<MudTh Class="justify-end">
+		<MudTd>
 			<MudTooltip Text="Edit">
-				<MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
+				<MudIconButton @onclick="@(()=>ShowUpdateTrainingDialog(context))"  Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
 			</MudTooltip>
 			<MudTooltip Text="Delete">
 				<MudIconButton @onclick="@(()=>ShowDeleteTrainingDialog(context))" Color=" Color.Error" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />
 			</MudTooltip>
-			<MudTooltip Text=" More">
+			<MudTooltip Text="More">
 				<MudIconButton Icon="@Icons.Material.Filled.ReadMore" Size="Size.Small" />
 			</MudTooltip>
-		</MudTh>
+		</MudTd>
 	</RowTemplate>
 	<PagerContent>
 		<MudTablePager />
@@ -55,6 +55,17 @@
 	{
 		var modalReference = ModalService.Show<TrainingCreatePage>("Create new training");
 		var modalResult = await modalReference.Result;
+
+		await UpdateTrainings();
+	}
+
+	private async Task ShowUpdateTrainingDialog(TrainingModel training)
+	{
+		var modalParameters = new ModalParameters()
+			.Add(nameof(ProjectModel.Id), training.Id);
+
+		var modalReference = ModalService.Show<TrainingUpdatePage>("Update training", modalParameters);
+		var result = await modalReference.Result;
 
 		await UpdateTrainings();
 	}
