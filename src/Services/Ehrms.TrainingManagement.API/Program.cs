@@ -1,4 +1,3 @@
-using Ehrms.TrainingManagement.API.Database.Context;
 using Ehrms.TrainingManagement.API.Middleware;
 using Serilog;
 
@@ -13,9 +12,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddTrainingManagementApi();
-builder.Services.AddDbContext<TrainingDbContext>(config =>
+builder.Services.AddDbContext<TrainingDbContext>(options =>
 {
-	config.UseInMemoryDatabase("TrainingDb");
+	var connectionString = builder.Configuration.GetConnectionString("TrainingManagementDb");
+	options.UseSqlServer(connectionString, options => options.EnableRetryOnFailure());
 });
 builder.Services.AddMassTransit(busConfigurator =>
 {
