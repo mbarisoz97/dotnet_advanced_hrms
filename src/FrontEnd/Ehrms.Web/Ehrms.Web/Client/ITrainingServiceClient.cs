@@ -4,6 +4,8 @@ namespace Ehrms.Web.Client;
 
 public interface ITrainingServiceClient
 {
+	Task<Response<Guid>> DeleteTrainingAsync(Guid id);
+	Task<Response<TrainingModel>> GetTrainingAsync(Guid id);
 	Task<Response<IEnumerable<TrainingModel>>> GetTrainings();
 	Task<Response<Guid>> CreateTrainingAsync(TrainingModel trainingModel);
 }

@@ -96,8 +96,6 @@
 	private async Task ShowCreateProjectDialog()
 	{
 		var modalReference = ModalService.Show<ProjectCreatePage>("Create a new project");
-		var result = await modalReference.Result;
-
 		await UpdateProjects();
 	}
 
