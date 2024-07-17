@@ -1,0 +1,36 @@
+﻿@inject IProjectServiceClient ProjectServiceClient
+@attribute [StreamRendering]
+
+<MudCard>
+	<MudCardHeader>
+		<CardHeaderContent>
+			<MudText Typo="Typo.h5">Employee - Project</MudText>
+		</CardHeaderContent>
+	</MudCardHeader>
+	<MudCardContent>
+		<MudChart Height="300px" Width="300px" ChartType="ChartType.Donut" LegendPosition="Position.Left" InputData="@_data" InputLabels="@_labels">
+		</MudChart>
+	</MudCardContent>
+</MudCard>
+
+@code {
+	private double[] _data = [];
+	private string[] _labels = [];
+
+	protected override async Task OnInitializedAsync()
+	{
+		var response = await ProjectServiceClient.GetProjectsAsync();
+		if (response.StatusCode != HttpStatusCode.OK)
+		{
+			return;
+		}
+
+		if (response.Content == null)
+		{
+			return;
+		}
+
+		_data = response.Content.Select(x => (double)x.Employees.Count).ToArray();
+		_labels = response.Content.Select(x => x.Name).ToArray();
+	}
+}
