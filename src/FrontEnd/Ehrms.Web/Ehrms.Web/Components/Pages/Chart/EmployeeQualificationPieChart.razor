@@ -1,0 +1,37 @@
+﻿@attribute [StreamRendering]
+
+@inject IEmployeeServiceClient EmployeeServiceClient
+
+<MudCard>
+	<MudCardHeader>
+		<CardHeaderContent>
+			<MudText Typo="Typo.h5">Employee - Qualification</MudText>
+		</CardHeaderContent>
+	</MudCardHeader>
+	<MudCardContent>
+		<MudChart Height="300px" Width="300px" ChartType="ChartType.Donut" LegendPosition="Position.Left" InputData="@_data" InputLabels="@_labels" />
+	</MudCardContent>
+</MudCard>
+
+@code {
+	private double[] _data = [];
+	private string[] _labels = [];
+
+	protected override async Task OnInitializedAsync()
+	{
+		var response = await EmployeeServiceClient.GetEmployeesAsync();
+		if (response.StatusCode != HttpStatusCode.OK)
+		{
+			return;
+		}
+
+		if (response.Content == null)
+		{
+			return;
+		}
+
+		var group = response.Content.GroupBy(x => x.Qualification);
+		_data = group.Select(x => (double)x.Count()).ToArray();
+		_labels = group.Select(x => x.Key).ToArray();
+	}
+}

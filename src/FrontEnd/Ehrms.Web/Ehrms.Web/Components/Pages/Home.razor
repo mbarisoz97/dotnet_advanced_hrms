@@ -1,32 +1,7 @@
 ﻿@page "/"
 @attribute [Authorize]
 
-@inject IProjectServiceClient ProjectServiceClient
-
-<MudPaper Class="pa-4">
-	<MudChart ChartType="ChartType.Pie" InputData="@_data" InputLabels="@_labels" Width="300px" Height="300px" />
+<MudPaper Class="d-flex align-content-around flex-wrap flex-grow-1 gap-4" Elevation="0">
+	<ProjectPieChart></ProjectPieChart>
+	<EmployeeQualificationPieChart></EmployeeQualificationPieChart>
 </MudPaper>
-
-@code {
-	private double[] _data = [];
-	private string[] _labels = [];
-
-	Random random = new Random();
-
-	protected override async Task OnInitializedAsync()
-	{
-		var response = await ProjectServiceClient.GetProjectsAsync();
-		if (response.StatusCode != HttpStatusCode.OK)
-		{
-			return;
-		}
-
-		if (response.Content == null)
-		{
-			return;
-		}
-
-		_data = response.Content.Select(x => (double)x.Employees.Count).ToArray();
-		_labels = response.Content.Select(x => x.Name).ToArray();
-	}
-}
