@@ -2,20 +2,28 @@
 @attribute [Authorize]
 @rendermode @(new InteractiveServerRenderMode(prerender: false))
 
+@inject IToastService ToastService
 @inject IEmployeeServiceClient EmployeeService
 @inject NavigationManager NavigationManager
 
 <EmployeeForm IsEditMode="true" EmployeeId="@Id" OnValidSubmit="UpdateEmployeeInfo" />
 
 @code {
-    [Parameter]
-    public Guid Id { get; set; }
+	[Parameter]
+	public Guid Id { get; set; }
 
-    private async Task UpdateEmployeeInfo(EmployeeModel employee)
-    {
-        employee.Id = Id;
-        await EmployeeService.UpdateEmployeeAsync(employee);
+	private async Task UpdateEmployeeInfo(EmployeeModel employee)
+	{
+		employee.Id = Id;
+		var response = await EmployeeService.UpdateEmployeeAsync(employee);
 
-        NavigationManager.NavigateTo(EmployeeRouting.Index);
-    }
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			ToastService.ShowSuccess("Employee updated succesfully.");
+		}
+		else
+		{
+			ToastService.ShowError($"Could not update employee. Service returned : {response.StatusCode}");
+		}
+	}
 }

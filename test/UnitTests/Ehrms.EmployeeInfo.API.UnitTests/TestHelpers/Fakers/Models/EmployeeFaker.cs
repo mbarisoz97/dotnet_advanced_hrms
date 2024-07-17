@@ -11,4 +11,10 @@ internal class EmployeeFaker : Faker<Employee>
 		RuleFor(e => e.DateOfBirth, f => f.Date.BetweenDateOnly(new DateOnly(2000, 1, 1), new DateOnly(2022, 12, 1)));
 		RuleFor(e => e.Qualification, f => f.Name.JobTitle());
 	}
+
+	public EmployeeFaker WithSkills(ICollection<Skill> skills)
+	{
+		RuleFor(e => e.Skills, skills);
+		return this;
+	}
 }

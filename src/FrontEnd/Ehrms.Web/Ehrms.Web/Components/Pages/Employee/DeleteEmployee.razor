@@ -52,7 +52,11 @@ else
 
 	protected override async Task OnInitializedAsync()
 	{
-		employeeRecord ??= await EmployeeInfoServiceClient.GetEmployeeAsync(Id);
+		var response = await EmployeeInfoServiceClient.GetEmployeeAsync(Id);
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			employeeRecord ??= response.Content;
+		}
 	}
 
 	protected async Task Remove()

@@ -8,4 +8,9 @@ public sealed class ReadEmployeeDto
     public string Qualification { get; set; } = string.Empty;
     public DateOnly DateOfBirth { get; set; }
     public ICollection<Guid> Skills { get; set; } = [];
+
+	public override string ToString()
+    {
+        return $"{FirstName} {LastName}";
+    }
 }
