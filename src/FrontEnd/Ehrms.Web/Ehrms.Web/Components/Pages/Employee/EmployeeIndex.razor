@@ -14,9 +14,9 @@
 	<ToolBarContent>
 		<MudText Typo="Typo.h6">Employees</MudText>
 		<MudSpacer />
-		<MudTextField @bind-Value="SearchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+		<MudTextField @bind-Value="SearchString" Placeholder="Search Employee" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.PersonSearch" IconSize="Size.Medium" Class="mt-0"></MudTextField>
 		<MudTooltip Text="Add Employee">
-			<MudIconButton Size="Size.Large" Color="Color.Success" Icon="@Icons.Material.Filled.AddBox" Href="@(EmployeeRouting.Create)" />
+			<MudIconButton Size="Size.Medium" Color="Color.Success" Icon="@Icons.Material.Filled.PersonAdd" Href="@(EmployeeRouting.Create)" />
 		</MudTooltip>
 	</ToolBarContent>
 	<HeaderContent>
@@ -27,10 +27,10 @@
 		<MudTh></MudTh>
 	</HeaderContent>
 	<RowTemplate>
-		<MudTd DataLabel="Name">@context.FirstName</MudTd>
-		<MudTd DataLabel="Date">@context.LastName</MudTd>
-		<MudTd DataLabel="Name">@context.DateOfBirth</MudTd>
-		<MudTd DataLabel="Date">@context.Qualification</MudTd>
+		<MudTd DataLabel="First Name">@context.FirstName</MudTd>
+		<MudTd DataLabel="Last Name">@context.LastName</MudTd>
+		<MudTd DataLabel="Date Of Birth">@context.DateOfBirth</MudTd>
+		<MudTd DataLabel="Qualification">@context.Qualification</MudTd>
 		<MudTd Class="d-flex justify-center flex-grow-1">
 			<MudTooltip Text="Edit">
 				<MudIconButton Href="@($"{EmployeeRouting.Update}/{context.Id}")" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />

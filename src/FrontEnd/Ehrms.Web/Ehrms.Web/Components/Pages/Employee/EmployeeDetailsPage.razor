@@ -1,7 +1,4 @@
 ﻿@attribute [Route($"{EmployeeRouting.Details}/{{id:guid}}")]
-@attribute [StreamRendering]
-
-@inject IEmploymentServiceClient EmploymentService
 
 <MudToolBar>
 	<MudIconButton Size="Size.Medium" Icon="@Icons.Material.Filled.ArrowBack" Href="@(EmployeeRouting.Index)" />
@@ -10,9 +7,15 @@
 </MudToolBar>
 
 <MudStack Spacing="2">
-	<MudButton DropShadow="true" OnClick="OnExpandCollapseClick">Employment History</MudButton>
+	<MudButton DropShadow="true" OnClick="OnEmployeeInformationExpandCollapseClick">Employee Information</MudButton>
 	<MudDivider />
-	<MudCollapse Expanded="_expanded">
+	<MudCollapse Expanded="_employeeInformationExpanded">
+		<EmployeeInformationPage EmployeeId="Id"></EmployeeInformationPage>
+	</MudCollapse>
+
+	<MudButton DropShadow="true" OnClick="OnEmploymentHistoryExpandCollapseClick">Employment History</MudButton>
+	<MudDivider />
+	<MudCollapse Expanded="_employmentHistoryExpanded">
 		<EmployeeEmploymentHistoryPage EmployeeId="Id"></EmployeeEmploymentHistoryPage>
 	</MudCollapse>
 </MudStack>
@@ -21,10 +24,16 @@
 	[Parameter]
 	public Guid Id { get; set; }
 
-	private bool _expanded = false;
+	private bool _employeeInformationExpanded = true;
+	private bool _employmentHistoryExpanded = false;
 
-	private void OnExpandCollapseClick()
+	private void OnEmploymentHistoryExpandCollapseClick()
 	{
-		_expanded = !_expanded;
+		_employmentHistoryExpanded = !_employmentHistoryExpanded;
+	}
+
+	private void OnEmployeeInformationExpandCollapseClick()
+	{
+		_employeeInformationExpanded = !_employeeInformationExpanded;
 	}
 }
