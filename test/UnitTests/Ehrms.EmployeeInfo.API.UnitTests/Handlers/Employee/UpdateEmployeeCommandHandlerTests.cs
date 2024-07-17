@@ -25,8 +25,9 @@ public class UpdateEmployeeCommandHandlerTests
 		await dbContext.Employees.AddAsync(employee);
 		await dbContext.SaveChangesAsync();
 
-		var command = new UpdateEmployeeCommandFaker().Generate();
-		command.Id = employee.Id;
+		var command = new UpdateEmployeeCommandFaker()
+			.WithId(employee.Id)
+			.Generate();
 
 		EmployeeUpdatedEvent? employeeUpdatedEvent = null;
 		_publishEndpointMock.Setup(x => x.Publish(It.IsAny<EmployeeUpdatedEvent>(), It.IsAny<CancellationToken>()))
@@ -59,18 +60,55 @@ public class UpdateEmployeeCommandHandlerTests
 	public async Task Handle_ExistingEmployee_UpdatesEmployeeRecord()
 	{
 		var dbContext = DbContextFactory.Create(DatabaseName);
+		var skills = new SkillFaker().Generate(2);
+		await dbContext.AddRangeAsync(skills);
+
 		var employee = new EmployeeFaker().Generate();
 		await dbContext.Employees.AddAsync(employee);
 		await dbContext.SaveChangesAsync();
 
-		var command = new UpdateEmployeeCommandFaker().Generate();
-		command.Id = employee.Id;
-		var updateEmployee = await _handler.Handle(command, default);
+		var command = new UpdateEmployeeCommandFaker()
+			.WithId(employee.Id)
+			.WithSkills(skills.Select(x=>x.Id).ToArray())
+			.Generate();
 
-		updateEmployee?.Id.Should().Be(command.Id);
-		updateEmployee?.FirstName.Should().Be(command.FirstName);
-		updateEmployee?.LastName.Should().Be(command.LastName);
-		updateEmployee?.DateOfBirth.Should().Be(command.DateOfBirth);
-		updateEmployee?.Qualification.Should().Be(command.Qualification);
+		var updatedEmployee = await _handler.Handle(command, default);
+
+		updatedEmployee?.Id.Should().Be(command.Id);
+		updatedEmployee?.FirstName.Should().Be(command.FirstName);
+		updatedEmployee?.LastName.Should().Be(command.LastName);
+		updatedEmployee?.DateOfBirth.Should().Be(command.DateOfBirth);
+		updatedEmployee?.Qualification.Should().Be(command.Qualification);
+		updatedEmployee?.Skills.Should().HaveCount(command.Skills.Count);
+	}
+
+	[Fact]
+	public async Task Handle_RemovedEmployeeSkills_UpdatesEmployeeSuccessfully()
+	{
+		var dbContext = DbContextFactory.Create(DatabaseName);
+		var initialSkills = new SkillFaker().Generate(2);
+		await dbContext.AddRangeAsync(initialSkills);
+
+		var employee = new EmployeeFaker()
+			.WithSkills(initialSkills)
+			.Generate();
+
+		await dbContext.Employees.AddAsync(employee);
+		await dbContext.SaveChangesAsync();
+
+		var updatedSkills = Array.Empty<Guid>();
+		var command = new UpdateEmployeeCommandFaker()
+			.WithId(employee.Id)
+			.WithSkills(updatedSkills)
+			.Generate();
+
+		var updatedEmployee = await _handler.Handle(command, default);
+
+		updatedEmployee?.Id.Should().Be(command.Id);
+		updatedEmployee?.FirstName.Should().Be(command.FirstName);
+		updatedEmployee?.LastName.Should().Be(command.LastName);
+		updatedEmployee?.DateOfBirth.Should().Be(command.DateOfBirth);
+		updatedEmployee?.Qualification.Should().Be(command.Qualification);
+		updatedEmployee?.Skills.Should().HaveCount(command.Skills.Count);
 	}
 }

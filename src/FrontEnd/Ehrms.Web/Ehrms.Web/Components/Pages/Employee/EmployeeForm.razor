@@ -1,4 +1,6 @@
-﻿@inject IEmployeeServiceClient EmployeeService
+﻿@inject ISkillServiceClient SkillService
+@inject IEmployeeServiceClient EmployeeService
+
 @attribute [StreamRendering]
 
 @if (Employee == null)
@@ -29,6 +31,14 @@
 		<ValidationMessage class="text-danger" For="(()=> Employee.Qualification)"></ValidationMessage>
 	</div>
 	<div class="mt-3">
+		<MudSelect T="SkillModel" Label="Employee Skills" MultiSelection="true" @bind-SelectedValues="SelectedSkills" AdornmentIcon="@Icons.Material.Filled.Add" AnchorOrigin="Origin.BottomCenter">
+			@foreach (var skill in Skills)
+			{
+				<MudSelectItem T="SkillModel" Value="@skill">@(skill.Name)</MudSelectItem>
+			}
+		</MudSelect>
+	</div>
+	<div class="mt-3">
 		<button class="btn btn-primary" type="submit">
 			<i class="bi bi-floppy"></i> Save
 		</button>
@@ -36,23 +46,20 @@
 </EditForm>
 
 @code {
-	[Parameter]
-	public bool IsEditMode { get; set; }
+	[Parameter] public bool IsEditMode { get; set; }
+	[Parameter] public Guid EmployeeId { get; set; }
+	[Parameter] public EventCallback<EmployeeModel> OnValidSubmit { get; set; }
+	[SupplyParameterFromForm] public EmployeeModel? Employee { get; set; }
 
-	[Parameter]
-	public Guid EmployeeId { get; set; }
-
-	[SupplyParameterFromForm]
-	public EmployeeModel? Employee { get; set; }
-
-	[Parameter]
-	public EventCallback<EmployeeModel> OnValidSubmit { get; set; }
+	private IEnumerable<SkillModel> Skills { get; set; } = [];
+	private IEnumerable<SkillModel> SelectedSkills { get; set; } = [];
 
 	protected override async Task OnInitializedAsync()
 	{
-		if(IsEditMode)
+		await FillSkillDataInForm();
+		if (IsEditMode)
 		{
-			Employee ??= await EmployeeService.GetEmployeeAsync(EmployeeId);
+			await FillEmployeeInfoInForm();
 		}
 		else
 		{
@@ -62,6 +69,31 @@
 
 	protected async Task ValidSubmit()
 	{
+		Employee!.Skills = SelectedSkills.Select(s => s.Id).ToList();
 		await OnValidSubmit.InvokeAsync(Employee);
+	}
+
+	private async Task FillSkillDataInForm()
+	{
+		var response = await SkillService.GetSkillsAsync();
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			Skills = response.Content ?? [];
+		}
+	}
+
+	private async Task FillEmployeeInfoInForm()
+	{
+		var response = await EmployeeService.GetEmployeeAsync(EmployeeId);
+
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			Employee ??= response.Content;
+		}
+
+		if (IsEditMode && Employee != null)
+		{
+			SelectedSkills = Skills.Where(x => Employee.Skills.Contains(x.Id));
+		}
 	}
 }

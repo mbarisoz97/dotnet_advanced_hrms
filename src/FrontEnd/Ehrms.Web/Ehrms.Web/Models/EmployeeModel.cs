@@ -22,8 +22,5 @@ public sealed class EmployeeModel
 	[Length(2, 50)]
 	public string? Qualification { get; set; }
 
-	public override string ToString()
-	{
-		return $"{FirstName} {LastName}";
-	}
+	public ICollection<Guid> Skills { get; set; } = [];
 }

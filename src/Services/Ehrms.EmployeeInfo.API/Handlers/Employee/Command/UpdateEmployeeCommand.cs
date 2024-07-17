@@ -27,44 +27,56 @@ internal sealed class UpdateEmployeeCommandHandler : IRequestHandler<UpdateEmplo
 
 	public async Task<Database.Models.Employee> Handle(UpdateEmployeeCommand request, CancellationToken cancellationToken)
 	{
-		Database.Models.Employee employee = await _dbContext.Employees
-			.AsNoTracking()
-			.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken)
-				?? throw new EmployeeNotFoundException($"Could not find employee with id '{request.Id}'");
-
+		var employee = await GetEmployee(request, cancellationToken);
 		_mapper.Map(request, employee);
-		employee = SetEmployeeSkills(employee, request.Skills);
+		employee = await SetSkills(employee, request.Skills);
 
 		_dbContext.Update(employee);
 		await _dbContext.SaveChangesAsync(cancellationToken);
-
-		var employeeUpdatedEvent = _mapper.Map<EmployeeUpdatedEvent>(employee);
-		await _publishEndpoint.Publish(employeeUpdatedEvent, cancellationToken);
+		await PublishEmployeeUpdateEvent(employee, cancellationToken);
 
 		return employee;
 	}
 
-	private Database.Models.Employee SetEmployeeSkills(Database.Models.Employee employee, ICollection<Guid> employeeSkills)
+	private async Task PublishEmployeeUpdateEvent(Database.Models.Employee updateEmployee, CancellationToken cancellationToken)
 	{
-		var skillToRemove = employee.Skills
-			.Where(x => !employeeSkills.Contains(x.Id));
+		var employeeUpdatedEvent = _mapper.Map<EmployeeUpdatedEvent>(updateEmployee);
+		await _publishEndpoint.Publish(employeeUpdatedEvent, cancellationToken);
+	}
 
-		foreach (var skill in skillToRemove)
+	private async Task<Database.Models.Employee> SetSkills(Database.Models.Employee employee, ICollection<Guid> skills)
+	{
+		RemoveSkills(employee, skills);
+		await AddSkills(employee, skills);
+
+		return employee;
+	}
+
+	private void RemoveSkills(Database.Models.Employee employee, ICollection<Guid> currentSkillIdentifiers)
+	{
+		var skillsToRemove = employee.Skills
+			.Where(x => !currentSkillIdentifiers.Contains(x.Id))
+			.ToList();
+
+		foreach (var skill in skillsToRemove)
 		{
 			employee.Skills.Remove(skill);
 		}
+	}
 
-		var skillsToAdd = _dbContext.Skills.AsNoTracking()
-			.Where(x => employeeSkills
-				.Contains(x.Id))
-			.Where(s => !employee.Skills.Select(e => e.Id)
-				.Contains(s.Id));
+	private async Task AddSkills(Database.Models.Employee employee, ICollection<Guid> currentSkillIdentifiers)
+	{
+		var skillsToAdd = _dbContext.Skills
+			.Where(x => currentSkillIdentifiers.Contains(x.Id));
 
-		foreach (var skill in skillsToAdd)
-		{
-			employee.Skills.Add(skill);
-		}
+		await skillsToAdd.ForEachAsync(x => employee.Skills.Add(x));
+	}
 
-		return employee;
+	private async Task<Database.Models.Employee> GetEmployee(UpdateEmployeeCommand request, CancellationToken cancellationToken)
+	{
+		return await _dbContext.Employees
+			.Include(e => e.Skills)
+			.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken)
+				?? throw new EmployeeNotFoundException($"Could not find employee with id '{request.Id}'");
 	}
 }
