@@ -38,6 +38,9 @@
 			<MudTooltip Text="Delete">
 				<MudIconButton Href="@($"{EmployeeRouting.Delete}/{context.Id}")" Color=" Color.Error" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />
 			</MudTooltip>
+			<MudTooltip Text="Details">
+				<MudIconButton Href="@($"{EmployeeRouting.Details}/{context.Id}")" Color=" Color.Info" Icon="@Icons.Material.Filled.ReadMore" Size="Size.Small" />
+			</MudTooltip>
 		</MudTd>
 	</RowTemplate>
 	<PagerContent>
