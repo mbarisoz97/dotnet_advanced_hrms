@@ -1,12 +1,13 @@
-﻿using Ehrms.ProjectManagement.API.Database.Models;
-
-namespace Ehrms.ProjectManagement.API.Profiles;
+﻿namespace Ehrms.ProjectManagement.API.Profiles;
 
 internal class EmploymentMappingProfile : Profile
 {
 	public EmploymentMappingProfile()
 	{
-		CreateMap<Employment, EmploymentDto>()
+		CreateMap<Employment, ProjectEmploymentDto>()
 			.ForMember(x => x.EmployeeName, opt => opt.MapFrom(src => src.Employee.FirstName + " " + src.Employee.LastName));
+
+		CreateMap<Employment, WorkerEmploymentDto>()
+			.ForMember(x => x.ProjectName, opt => opt.MapFrom(src => src.Project.Name));
 	}
 }

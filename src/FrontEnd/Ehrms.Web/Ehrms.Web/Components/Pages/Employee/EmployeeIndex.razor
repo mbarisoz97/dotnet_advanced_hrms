@@ -31,7 +31,7 @@
 		<MudTd DataLabel="Date">@context.LastName</MudTd>
 		<MudTd DataLabel="Name">@context.DateOfBirth</MudTd>
 		<MudTd DataLabel="Date">@context.Qualification</MudTd>
-		<MudTd>
+		<MudTd Class="d-flex justify-center flex-grow-1">
 			<MudTooltip Text="Edit">
 				<MudIconButton Href="@($"{EmployeeRouting.Update}/{context.Id}")" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
 			</MudTooltip>
