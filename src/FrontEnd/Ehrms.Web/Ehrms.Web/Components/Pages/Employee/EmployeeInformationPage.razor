@@ -1,0 +1,34 @@
+﻿@rendermode @(new InteractiveServerRenderMode(prerender: false))
+
+@inject IToastService ToastService
+@inject IEmployeeServiceClient EmployeeService
+@inject ISkillServiceClient SkillServiceClient
+
+@if (Employee == null)
+{
+	return;
+}
+
+<MudTextField @bind-Value="Employee.FirstName" Label="First Name" ReadOnly="true" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Person" />
+<MudTextField @bind-Value="Employee.LastName" Label="Last Name" ReadOnly="true" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.TextDecrease" />
+<MudTextField @bind-Value="Employee.DateOfBirth" Label="Date Of Birth" ReadOnly="true" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.DateRange" />
+<MudTextField @bind-Value="Employee.Qualification" Label="Qualification" ReadOnly="true" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Stars" />
+
+@code {
+	[Parameter]
+	public Guid EmployeeId { get; set; }
+	private EmployeeModel? Employee { get; set; } 
+
+	protected override async Task OnInitializedAsync()
+	{
+		var response = await EmployeeService.GetEmployeeAsync(EmployeeId);
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			Employee = response.Content;
+		}
+		else
+		{
+			ToastService.ShowError($"Could not load employee information. Service returned : {response.StatusCode}");
+		}
+	}
+}

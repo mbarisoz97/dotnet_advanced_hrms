@@ -1,0 +1,39 @@
+﻿@attribute [Route($"{EmployeeRouting.Details}/{{id:guid}}")]
+
+<MudToolBar>
+	<MudIconButton Size="Size.Medium" Icon="@Icons.Material.Filled.ArrowBack" Href="@(EmployeeRouting.Index)" />
+	<MudText Typo="Typo.h6">Profile of Employee</MudText>
+	<MudSpacer />
+</MudToolBar>
+
+<MudStack Spacing="2">
+	<MudButton DropShadow="true" OnClick="OnEmployeeInformationExpandCollapseClick">Employee Information</MudButton>
+	<MudDivider />
+	<MudCollapse Expanded="_employeeInformationExpanded">
+		<EmployeeInformationPage EmployeeId="Id"></EmployeeInformationPage>
+	</MudCollapse>
+
+	<MudButton DropShadow="true" OnClick="OnEmploymentHistoryExpandCollapseClick">Employment History</MudButton>
+	<MudDivider />
+	<MudCollapse Expanded="_employmentHistoryExpanded">
+		<EmployeeEmploymentHistoryPage EmployeeId="Id"></EmployeeEmploymentHistoryPage>
+	</MudCollapse>
+</MudStack>
+
+@code {
+	[Parameter]
+	public Guid Id { get; set; }
+
+	private bool _employeeInformationExpanded = true;
+	private bool _employmentHistoryExpanded = false;
+
+	private void OnEmploymentHistoryExpandCollapseClick()
+	{
+		_employmentHistoryExpanded = !_employmentHistoryExpanded;
+	}
+
+	private void OnEmployeeInformationExpandCollapseClick()
+	{
+		_employeeInformationExpanded = !_employeeInformationExpanded;
+	}
+}

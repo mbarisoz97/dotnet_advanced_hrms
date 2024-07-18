@@ -6,6 +6,7 @@ internal static class EmployeeRouting
 	internal const string Create = $"{Index}/Create";
 	internal const string Update = $"{Index}/Update";
 	internal const string Delete = $"{Index}/Delete";
+	internal const string Details = $"{Index}/Details";
 }
 
 internal static class SkillRouting

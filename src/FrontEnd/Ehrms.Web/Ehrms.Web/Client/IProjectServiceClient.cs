@@ -5,7 +5,7 @@ namespace Ehrms.Web.Client;
 public interface IProjectServiceClient
 {
 	Task<Response<ProjectModel>> CreateProjectAsync(ProjectModel project);
-	Task<Response<IEnumerable<EmploymentModel>>> GetProjectHistoryAsync(Guid id);
+	Task<Response<IEnumerable<ProjectEmploymentModel>>> GetProjectHistoryAsync(Guid id);
 	Task<Response<ProjectModel>> GetProjectAsync(Guid id);
     Task<Response<Guid>> DeleteProjectAsync(Guid id);
     Task<Response<IEnumerable<ProjectModel>>> GetProjectsAsync();

@@ -49,7 +49,7 @@ internal sealed class ProjectServiceClient : IProjectServiceClient
 		};
 	}
 
-	public async Task<Response<IEnumerable<EmploymentModel>>> GetProjectHistoryAsync(Guid id)
+	public async Task<Response<IEnumerable<ProjectEmploymentModel>>> GetProjectHistoryAsync(Guid id)
 	{
 		var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
 		var response = await client.GetAsync($"{_endpointProvider.EmploymentApiEndpoint}/{id}");
@@ -57,7 +57,7 @@ internal sealed class ProjectServiceClient : IProjectServiceClient
 		return new()
 		{
 			StatusCode = response.StatusCode,
-			Content = await response.GetContentAs<IEnumerable<EmploymentModel>>()
+			Content = await response.GetContentAs<IEnumerable<ProjectEmploymentModel>>()
 		};
 	}
 

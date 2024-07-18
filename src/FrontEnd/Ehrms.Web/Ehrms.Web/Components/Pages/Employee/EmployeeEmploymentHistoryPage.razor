@@ -1,0 +1,91 @@
+﻿@attribute [StreamRendering]
+
+@inject IEmploymentServiceClient EmploymentService
+
+<MudTable Items="@EmploymentRecords"
+		  Dense="true"
+		  Hover="true"
+		  Loading="@_loading"
+		  Bordered="true"
+		  Striped="true">
+	<HeaderContent>
+		<MudTh>Status</MudTh>
+		<MudTh>Project</MudTh>
+	</HeaderContent>
+	<RowTemplate>
+		<MudTd>
+			@if (context.EmploymentRecords.Any(x => x.EndedAt == null))
+			{
+				<MudTimelineItem Color="Color.Success">
+					<MudText Align="Align.Justify">Active</MudText>
+				</MudTimelineItem>
+			}
+			else
+			{
+				<MudTimelineItem Color="Color.Error">
+					<MudText Align="Align.Justify">Inactive</MudText>
+				</MudTimelineItem>
+			}
+		</MudTd>
+		<MudTd>
+			<MudExpansionPanel Expanded="false" Text="@context.ProjectName">
+				<MudTimeline TimelineOrientation="TimelineOrientation.Vertical" TimelinePosition="TimelinePosition.Start">
+					@foreach (var employmentRecord in context.EmploymentRecords.OrderBy(x => x.StartedAt))
+					{
+						if (employmentRecord.EndedAt != null)
+						{
+							<MudTimelineItem Color="Color.Error">
+								<MudText Align="Align.Start">@employmentRecord.StartedAt - @employmentRecord.EndedAt</MudText>
+							</MudTimelineItem>
+						}
+						else
+						{
+							<MudTimelineItem Color="Color.Success">
+								<MudText Align="Align.Start">@employmentRecord.StartedAt</MudText>
+							</MudTimelineItem>
+						}
+					}
+				</MudTimeline>
+			</MudExpansionPanel>
+		</MudTd>
+	</RowTemplate>
+	<PagerContent>
+		<MudTablePager />
+	</PagerContent>
+</MudTable>
+
+@code {
+	[Parameter]
+	public Guid EmployeeId { get; set; }
+
+	private bool _loading = true;
+
+	private IEnumerable<GroupedWorkerEmploymentModel>? EmploymentRecords { get; set; } = [];
+
+	protected override async Task OnInitializedAsync()
+	{
+		_loading = true;
+		var response = await EmploymentService.GetEmploymenHistoryByEmployeeId(EmployeeId);
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			EmploymentRecords = GetGroupedEmployments(response.Content);
+		}
+		_loading = false;
+	}
+
+	private IEnumerable<GroupedWorkerEmploymentModel> GetGroupedEmployments(IEnumerable<WorkerEmploymentModel>? employments)
+	{
+		if (employments == null)
+		{
+			return [];
+		}
+
+		return employments.GroupBy(x => new { x.ProjectId, x.ProjectName })
+			.Select(y => new GroupedWorkerEmploymentModel()
+				{
+					ProjectId = y.Key.ProjectId,
+					ProjectName = y.Key.ProjectName,
+					EmploymentRecords = y.ToList()
+				});
+	}
+}

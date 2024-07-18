@@ -63,7 +63,7 @@
 	[Parameter]
 	public Guid Id { get; set; }
 
-	private IEnumerable<GroupedEmploymentModel>? EmploymentRecords { get; set; } = [];
+	private IEnumerable<GroupedProjectEmploymentModel>? EmploymentRecords { get; set; } = [];
 
 	private bool Loading { get; set; }
 	private string SearchString { get; set; } = "";
@@ -96,7 +96,7 @@
 		Loading = false;
 	}
 
-	private IEnumerable<GroupedEmploymentModel> GetGroupedEmployments(IEnumerable<EmploymentModel>? employments)
+	private IEnumerable<GroupedProjectEmploymentModel> GetGroupedEmployments(IEnumerable<ProjectEmploymentModel>? employments)
 	{
 		if (employments == null)
 		{
@@ -104,7 +104,7 @@
 		}
 
 		return employments.GroupBy(x => new { x.EmployeeId, x.EmployeeName })
-			.Select(y => new GroupedEmploymentModel()
+			.Select(y => new GroupedProjectEmploymentModel()
 				{
 					EmployeeId = y.Key.EmployeeId,
 					EmployeeName = y.Key.EmployeeName,
