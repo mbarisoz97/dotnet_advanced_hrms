@@ -1,4 +1,7 @@
-﻿using Ehrms.ProjectManagement.API.PipelineBehaviors;
+﻿using Ehrms.Contracts.Skill;
+using Ehrms.ProjectManagement.API.Consumer.EmployeeEvents;
+using Ehrms.ProjectManagement.API.Consumer.SkillEvents;
+using Ehrms.ProjectManagement.API.PipelineBehaviors;
 using FluentValidation;
 using System.Reflection;
 
@@ -19,7 +22,6 @@ internal static class DependencyInjection
         services.AddScoped<ProjectManagementDatabaseSeed>();
         services.AddTransient<GlobalExceptionHandlingMiddleware>();
     }
-
     private static void AddThirdPartyLibraries(IServiceCollection services)
     {
         var assembly = Assembly.GetExecutingAssembly();
@@ -33,4 +35,19 @@ internal static class DependencyInjection
 				.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 		});
     }
+
+
+    internal static IBusRegistrationConfigurator AddEventConsumers(this IBusRegistrationConfigurator busConfigurator)
+    {
+		busConfigurator.AddConsumer<EmployeeCreatedConsumer>();
+		busConfigurator.AddConsumer<EmployeeUpdatedConsumer>();
+		busConfigurator.AddConsumer<EmployeeDeletedConsumer>();
+
+		busConfigurator.AddConsumer<SkillCreatedEventConsumer>();
+		busConfigurator.AddConsumer<SkillUpdatedEventConsumer>();
+		busConfigurator.AddConsumer<SkillDeletedEventConsumer>();
+
+		return busConfigurator;
+
+	}
 }
