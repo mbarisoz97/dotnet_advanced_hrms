@@ -1,5 +1,4 @@
-﻿using Bogus;
-using Ehrms.ProjectManagement.API.Database.Models;
+﻿using Ehrms.ProjectManagement.API.Database.Models;
 
 namespace Ehrms.ProjectManagement.API.UnitTests.TestHelpers.Faker;
 
