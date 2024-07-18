@@ -16,4 +16,11 @@ internal class ProjectFaker : Faker<Project>
         RuleFor(x => x.Employments, employments);
         return this;
     }
+
+    public ProjectFaker WithRequiredSkills(ICollection<Skill> skills)
+    {
+        RuleFor(x=>x.RequiredProjectSkills, skills);
+        return this;
+    }
+
 }

@@ -1,13 +1,11 @@
-﻿using Ehrms.ProjectManagement.API.Database.Context;
-
-namespace Ehrms.ProjectManagement.API.Handlers.Project.Commands;
-
+﻿namespace Ehrms.ProjectManagement.API.Handlers.Project.Commands;
 public sealed class UpdateProjectCommand : IRequest<Database.Models.Project>
 {
 	public Guid Id { get; set; }
 	public string Name { get; set; } = string.Empty;
 	public string Description { get; set; } = string.Empty;
 	public ICollection<Guid> Employees { get; set; } = [];
+	public ICollection<Guid> RequiredSkills { get; set; } = [];
 }
 
 internal sealed class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand, Database.Models.Project>
@@ -28,6 +26,7 @@ internal sealed class UpdateProjectCommandHandler : IRequestHandler<UpdateProjec
 
 		await SetEmploymentEndDateForRemovedEmployees(project, request.Employees);
 		await CreateEmploymenRecordsForNewEmployees(project, request.Employees);
+		await SetRequiredProjectSkils(project, request.RequiredSkills);
 
 		_dbContext.Update(project);
 		await _dbContext.SaveChangesAsync(cancellationToken);
@@ -39,6 +38,7 @@ internal sealed class UpdateProjectCommandHandler : IRequestHandler<UpdateProjec
 	{
 		return await _dbContext.Projects
 			.Include(x => x.Employments)
+			.Include(x => x.RequiredProjectSkills)
 			.FirstOrDefaultAsync(x => x.Id == id)
 			?? throw new ProjectNotFoundException($"Could not find project with id '{id}'");
 	}
@@ -63,7 +63,6 @@ internal sealed class UpdateProjectCommandHandler : IRequestHandler<UpdateProjec
 		}
 		await _dbContext.SaveChangesAsync();
 	}
-
 	private async Task SetEmploymentEndDateForRemovedEmployees(Database.Models.Project project, ICollection<Guid> employeeIdCollection)
 	{
 		var employmentRecordsToEnd = _dbContext.Employments
@@ -81,5 +80,18 @@ internal sealed class UpdateProjectCommandHandler : IRequestHandler<UpdateProjec
 
 		_dbContext.UpdateRange(employmentRecordsToEnd);
 		await _dbContext.SaveChangesAsync();
+	}
+	private async Task SetRequiredProjectSkils(Database.Models.Project project, ICollection<Guid> requiredSkillIdentifiers)
+	{
+		var skillsToRemove =  _dbContext.Skills
+			.Where(x => !requiredSkillIdentifiers.Contains(x.Id));
+
+		await skillsToRemove.ForEachAsync(x => project.RequiredProjectSkills.Remove(x));
+
+		var skillsToAdd =  _dbContext.Skills
+			.Where(x => requiredSkillIdentifiers.Contains(x.Id) &&
+					   !project.RequiredProjectSkills.Contains(x));
+
+		await skillsToAdd.ForEachAsync(project.RequiredProjectSkills.Add);
 	}
 }
