@@ -15,6 +15,7 @@ public class SkillMappingProfiles : Profile
 	private void AddEntityToMessageQueueEventMappings()
 	{
 		CreateMap<Skill, SkillCreatedEvent>();
+		CreateMap<Skill, SkillUpdatedEvent>();
 	}
 
 	private void AddCommandToEntityMappings()
