@@ -10,6 +10,12 @@ public class SkillMappingProfiles : Profile
 		AddEntityToDtoMappings();
 		AddCommandToEntityMappings();
 		AddEntityToMessageQueueEventMappings();
+		AddCommandToMessageQueueEventMappings();
+	}
+
+	private void AddCommandToMessageQueueEventMappings()
+	{
+		CreateMap<DeleteSkillCommand, SkillDeletedEvent>();
 	}
 
 	private void AddEntityToMessageQueueEventMappings()
