@@ -1,6 +1,4 @@
-﻿using Ehrms.ProjectManagement.API.Database.Context;
-
-namespace Ehrms.ProjectManagement.API.Handlers.Project.Queries;
+﻿namespace Ehrms.ProjectManagement.API.Handlers.Project.Queries;
 
 internal sealed record GetProjectsQuery : IRequest<IQueryable<Database.Models.Project>> { }
 

@@ -8,6 +8,7 @@ public class ProjectDbContext : DbContext
 	{
 	}
 
+	public DbSet<Skill> Skills { get; set; }
 	public DbSet<Project> Projects { get; set; }
 	public DbSet<Employee> Employees { get; set; }
 	public DbSet<Employment> Employments { get; set; }

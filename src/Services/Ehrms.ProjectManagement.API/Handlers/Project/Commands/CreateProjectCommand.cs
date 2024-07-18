@@ -1,13 +1,11 @@
-﻿using Ehrms.ProjectManagement.API.Database.Context;
-using Ehrms.ProjectManagement.API.Database.Models;
-
-namespace Ehrms.ProjectManagement.API.Handlers.Project.Commands;
+﻿namespace Ehrms.ProjectManagement.API.Handlers.Project.Commands;
 
 public sealed class CreateProjectCommand : IRequest<Database.Models.Project>
 {
 	public string Name { get; set; } = string.Empty;
 	public string Description { get; set; } = string.Empty;
 	public ICollection<Guid> Employees { get; set; } = [];
+	public ICollection<Guid> RequiredSkills { get; set; } = [];
 }
 
 internal sealed class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand, Database.Models.Project>
@@ -25,10 +23,10 @@ internal sealed class CreateProjectCommandHandler : IRequestHandler<CreateProjec
 	{
 		var project = _mapper.Map<Database.Models.Project>(request);
 		project.Employments = await GetEmployments(project, request.Employees);
+		project.RequiredProjectSkills = await GetSkillsAsync(project, request.RequiredSkills);
 
 		await _dbContext.Projects.AddAsync(project, cancellationToken);
 		await _dbContext.SaveChangesAsync(cancellationToken);
-
 		return project;
 	}
 
@@ -49,6 +47,18 @@ internal sealed class CreateProjectCommandHandler : IRequestHandler<CreateProjec
 		}
 
 		return await Task.FromResult(project.Employments);
+	}
+
+	private async Task<ICollection<Skill>> GetSkillsAsync(Database.Models.Project project, ICollection<Guid> skills)
+	{
+		if (skills.Count == 0)
+		{
+			return [];
+		}
+
+		return _dbContext.Skills
+			.Where(x => skills.Contains(x.Id))
+			.ToList();
 	}
 
 	private static Database.Models.Employment CreateNewEmploymentRecord(Database.Models.Project project, Employee employee) => new()

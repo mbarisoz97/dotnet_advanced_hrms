@@ -15,4 +15,7 @@ public class ProjectModel
 
 	[Required]
 	public ICollection<Guid> Employees { get; set; } = [];
+
+	[Required]
+	public ICollection<Guid> RequiredSkills { get; set; } = [];
 }

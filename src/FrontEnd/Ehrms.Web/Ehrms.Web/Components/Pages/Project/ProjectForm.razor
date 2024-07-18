@@ -1,6 +1,7 @@
 ﻿@attribute [StreamRendering]
 
 @inject IToastService ToastService
+@inject ISkillServiceClient SkillServiceClient
 @inject IProjectServiceClient ProjectServiceClient
 @inject IEmployeeServiceClient EmployeeServiceClient
 
@@ -23,10 +24,18 @@
 		<ValidationMessage class="text-danger" For="(()=> Project.Description)"></ValidationMessage>
 	</div>
 	<div class="mt-3">
-		<MudSelect T="EmployeeModel" Label="Select Employees" MultiSelection="true" @bind-SelectedValues="SelectedEmployees" AdornmentIcon="@Icons.Material.Filled.Add" AnchorOrigin="Origin.BottomCenter">
+		<MudSelect T="EmployeeModel" Label="Employees" MultiSelection="true" @bind-SelectedValues="SelectedEmployees" AdornmentIcon="@Icons.Material.Filled.Add" AnchorOrigin="Origin.BottomCenter">
 			@foreach (var employee in Employees)
 			{
 				<MudSelectItem T="EmployeeModel" Value="@employee">@($"{employee.FirstName} {employee.LastName}")</MudSelectItem>
+			}
+		</MudSelect>
+	</div>
+	<div class="mt-3">
+		<MudSelect T="SkillModel" Label="Required Skills" MultiSelection="true" @bind-SelectedValues="SelectedSkills" AdornmentIcon="@Icons.Material.Filled.Add" AnchorOrigin="Origin.BottomCenter">
+			@foreach (var skill in Skills)
+			{
+				<MudSelectItem T="SkillModel" Value="@skill">@(skill.Name)</MudSelectItem>
 			}
 		</MudSelect>
 	</div>
@@ -46,15 +55,22 @@
 	private IEnumerable<EmployeeModel> Employees { get; set; } = Enumerable.Empty<EmployeeModel>();
 	private IEnumerable<EmployeeModel> SelectedEmployees { get; set; } = Enumerable.Empty<EmployeeModel>();
 
+	private IEnumerable<SkillModel> Skills { get; set; } = Enumerable.Empty<SkillModel>();
+	private IEnumerable<SkillModel> SelectedSkills { get; set; } = Enumerable.Empty<SkillModel>();
+
 	protected async Task ValidSubmit()
 	{
 		Project!.Employees = SelectedEmployees.Select(x => x.Id).ToList() ?? [];
+		Project!.RequiredSkills = SelectedSkills.Select(x => x.Id).ToList() ?? [];
+
 		await OnValidSubmit.InvokeAsync(Project);
 	}
 
 	protected override async Task OnInitializedAsync()
 	{
+		await FillSkillDataInForm();
 		await FillEmployeeDataInForm();
+
 		if (IsEditMode)
 		{
 			await FillProjectDataInForm();
@@ -71,10 +87,11 @@
 		if (response.StatusCode == HttpStatusCode.OK)
 		{
 			Employees = response.Content ?? [];
-			return;
 		}
-
-		ToastService.ShowError($"Could not get employee list. Service returned {response.StatusCode}");
+		else
+		{
+			ToastService.ShowError($"Could not get employee list. Service returned {response.StatusCode}");
+		}
 	}
 
 	private async Task FillProjectDataInForm()
@@ -83,13 +100,31 @@
 		if (response.StatusCode == HttpStatusCode.OK)
 		{
 			Project = response.Content;
-			if (IsEditMode)
+			if (IsEditMode && Project != null)
 			{
 				SelectedEmployees = Employees.Where(x => Project.Employees.Contains(x.Id));
+				SelectedSkills = Skills.Where(x => Project.RequiredSkills.Contains(x.Id));
 			}
-			return;
 		}
+		else
+		{
+			ToastService.ShowError($"Could not load project data. Service returned : {response.StatusCode}");
+		}
+	}
 
-		ToastService.ShowError($"Could not load project data. Service returned : {response.StatusCode}");
+	private async Task FillSkillDataInForm()
+	{
+		var response = await SkillServiceClient.GetSkillsAsync();
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			if (IsEditMode)
+			{
+				Skills = response.Content ?? [];
+			}
+		}
+		else
+		{
+			ToastService.ShowError($"Could not load project data. Service returned : {response.StatusCode}");
+		}
 	}
 }

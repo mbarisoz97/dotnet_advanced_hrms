@@ -1,4 +1,7 @@
-﻿using System.Net;
+﻿using Ehrms.ProjectManagement.API.Database.Models;
+using Ehrms.ProjectManagement.API.Handlers.Project.Queries;
+using Ehrms.ProjectManagemet.TestHelpers.Fakers.Model;
+using System.Net;
 
 namespace Ehrms.ProjectManagement.API.IntegrationTests.Controllers.ProjectController;
 
@@ -12,7 +15,6 @@ public class ProjectControllerGetIntegrationTests : ProjectManagementApiBaseInte
 	public async Task Get_NonExistingProject_ReturnsNotFound()
 	{
 		var getProjectResponse = await client.GetAsync($"{Endpoints.ProjectApi}/{Guid.NewGuid()}");
-
 		getProjectResponse.StatusCode.Should().Be(HttpStatusCode.NotFound);
 	}
 
@@ -33,5 +35,32 @@ public class ProjectControllerGetIntegrationTests : ProjectManagementApiBaseInte
 
 		readProjectDtoFromGet?.Id.Should().Be(readProjectDtoFromPut.Id);
 		readProjectDtoFromGet?.Should().BeEquivalentTo(createProjectCommand);
+	}
+
+	[Fact]
+	public async Task Get_ExistingProjectWithRequiredSkills_ReturnsOkWithReadProjectDto()
+	{
+		var skills = new SkillFaker().Generate(4);
+		await dbContext.AddRangeAsync(skills);
+
+		var employments = Array.Empty<Employment>();
+		var project = new ProjectFaker()
+			.WithRequiredSkills(skills)
+			.WithEmployments(employments)
+			.Generate();
+		await dbContext.AddAsync(project);
+		await dbContext.SaveChangesAsync();
+
+		var getProjectResponse = await client.GetAsync($"{Endpoints.ProjectApi}/{project!.Id}");
+
+		getProjectResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+		var readProjectDtoFromGet = await getProjectResponse.Content.ReadFromJsonAsync<ReadProjectDto>();
+
+		readProjectDtoFromGet.Should().BeEquivalentTo(project, options =>
+			options.Excluding(o => o.RequiredProjectSkills)
+			.Excluding(o => o.Employments));
+		
+		readProjectDtoFromGet?.RequiredSkills.Should().HaveCount(skills.Count);
+		readProjectDtoFromGet?.Employees.Should().HaveCount(employments.Length);
 	}
 }

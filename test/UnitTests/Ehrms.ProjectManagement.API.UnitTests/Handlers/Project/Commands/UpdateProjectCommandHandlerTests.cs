@@ -1,4 +1,5 @@
 ﻿using Ehrms.ProjectManagement.API.Database.Context;
+using MassTransit.Transports.Components;
 
 namespace Ehrms.ProjectManagement.API.UnitTests.Handlers.Project.Commands;
 
@@ -93,4 +94,32 @@ public class UpdateProjectCommandHandlerTests
         updatedProject.Employments.Should().HaveCount(1);
         updatedProject.Employments.Should().OnlyContain(x=> x.EndedAt != null);
     }
+
+
+	[Fact]
+	public async Task Handle_UpdatedSkillRequirements_UpdatesProjectDetails()
+	{
+        var skills = new SkillFaker().Generate(4);
+        await _projectDbContext.AddRangeAsync(skills);
+
+		var project = new ProjectFaker()
+            .WithRequiredSkills(skills)
+            .Generate();
+		await _projectDbContext.Projects.AddAsync(project);
+		await _projectDbContext.SaveChangesAsync();
+
+        var updatedSkillSet = skills.Take(2).ToList();
+        var command = new UpdateProjectCommandFaker()
+            .WithRequiredSkills(updatedSkillSet)
+            .Generate();
+		command.Id = project.Id;
+
+		var updatedProject = await _handler.Handle(command, default);
+
+        updatedProject.Should().BeEquivalentTo(command, options=>
+            options.Excluding(x=>x.RequiredSkills)
+                   .Excluding(x=>x.Employees));
+		
+        updatedProject.RequiredProjectSkills.Should().HaveCount(updatedSkillSet.Count);
+	}
 }

@@ -23,4 +23,12 @@ internal class CreateProjectCommandFaker : Faker<CreateProjectCommand>
 		RuleFor(x => x.Employees, employeeIdCollection);
 		return this;
 	}
+
+	public CreateProjectCommandFaker WithRequiredSkills(ICollection<Skill> skills)
+	{
+		var skillIdCollection = skills.Select(x => x.Id).ToList();
+		RuleFor(x => x.RequiredSkills, skillIdCollection);
+		return this;
+	}
+
 }

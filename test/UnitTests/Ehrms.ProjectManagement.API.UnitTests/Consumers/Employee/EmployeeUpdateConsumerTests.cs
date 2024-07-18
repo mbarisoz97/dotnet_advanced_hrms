@@ -1,4 +1,6 @@
-﻿namespace Ehrms.ProjectManagement.API.UnitTests.Consumers.Employee;
+﻿using Ehrms.ProjectManagement.API.Consumer.EmployeeEvents;
+
+namespace Ehrms.ProjectManagement.API.UnitTests.Consumers.Employee;
 
 public class EmployeeUpdateConsumerTests
 {

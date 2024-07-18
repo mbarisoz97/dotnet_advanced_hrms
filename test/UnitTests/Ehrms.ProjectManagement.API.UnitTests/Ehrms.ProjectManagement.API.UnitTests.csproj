@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\src\Services\Ehrms.ProjectManagement.API\Ehrms.ProjectManagement.API.csproj" />
+    <ProjectReference Include="..\..\Shared\Ehrms.ProjectManagemet.TestHelpers\Ehrms.ProjectManagemet.TestHelpers.csproj" />
   </ItemGroup>
 
   <ItemGroup>

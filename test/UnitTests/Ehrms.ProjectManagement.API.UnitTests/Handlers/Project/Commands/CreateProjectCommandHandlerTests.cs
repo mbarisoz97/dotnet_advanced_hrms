@@ -56,4 +56,28 @@ public class CreateProjectCommandHandlerTests
 		project?.Description.Should().Be(command.Description);
 		project?.Employments?.Should().HaveCount(employeeCollection.Count);
 	}
+
+	[Fact]
+	public async Task Handle_WithRequiredSkillds_SavesProject()
+	{
+		var skills = new SkillFaker().Generate(3);
+		await _projectDbContext.AddRangeAsync(skills);
+		var employees = new EmployeeFaker().Generate(4);
+		await _projectDbContext.AddRangeAsync(employees);
+		await _projectDbContext.SaveChangesAsync();
+
+		CreateProjectCommand command = new CreateProjectCommandFaker()
+			.WithRequiredSkills(skills)
+			.WithEmployees(employees)
+			.Generate();
+
+		var project = await _handler.Handle(command, default);
+
+		project.Should().BeEquivalentTo(command, options =>
+			options.Excluding(x => x.Employees)
+				   .Excluding(x => x.RequiredSkills));
+
+		project.Employments.Should().HaveCount(employees.Count);
+		project.RequiredProjectSkills.Should().HaveCount(skills.Count);
+	}
 }
