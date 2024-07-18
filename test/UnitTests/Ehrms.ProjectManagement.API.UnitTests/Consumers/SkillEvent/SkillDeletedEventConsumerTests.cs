@@ -1,7 +1,4 @@
-﻿using Ehrms.Contracts.Skill;
-using Ehrms.ProjectManagement.API.Consumer.SkillEvents;
-
-namespace Ehrms.ProjectManagement.API.UnitTests.Consumers.SkillEvent;
+﻿namespace Ehrms.ProjectManagement.API.UnitTests.Consumers.SkillEvent;
 
 public class SkillDeletedEventConsumerTests
 {

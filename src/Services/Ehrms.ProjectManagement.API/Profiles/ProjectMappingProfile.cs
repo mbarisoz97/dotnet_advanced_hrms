@@ -1,6 +1,4 @@
-﻿using Ehrms.ProjectManagement.API.Database.Models;
-
-namespace Ehrms.ProjectManagement.API.Profiles;
+﻿namespace Ehrms.ProjectManagement.API.Profiles;
 
 internal class ProjectMappingProfile : Profile
 {
@@ -18,7 +16,11 @@ internal class ProjectMappingProfile : Profile
 				opt => opt.MapFrom(
 					src => src.Employments
 					.Where(x => x.EndedAt == null)
-					.Select(x => x.EmployeeId)));
+					.Select(x => x.EmployeeId)))
+			
+			.ForMember(dest => dest.RequiredSkills,
+				opt => opt.MapFrom(
+					src=> src.RequiredProjectSkills.Select(x=> x.Id)));
 	}
 
 	private void AddCommandToModelMappings()

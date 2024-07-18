@@ -25,6 +25,7 @@ internal sealed class GetProjectByIdQueryHandler : IRequestHandler<GetProjectByI
     {
         return _dbContext.Projects
             .Include(x=>x.Employments)
+            .Include(x=>x.RequiredProjectSkills)
             .FirstOrDefault(x => x.Id == id)
             ?? throw new ProjectNotFoundException($"Could not find project with id  '{id}'");
     }

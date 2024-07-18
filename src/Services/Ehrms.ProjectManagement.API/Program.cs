@@ -1,6 +1,5 @@
-using Ehrms.Shared;
 using Serilog;
-using Ehrms.ProjectManagement.API.Consumer.EmployeeEvents;
+using Ehrms.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 

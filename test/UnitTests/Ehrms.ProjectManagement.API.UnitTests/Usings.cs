@@ -20,3 +20,7 @@ global using MassTransit;
 global using Microsoft.Extensions.Logging;
 global using Moq;
 global using Ehrms.ProjectManagement.API.UnitTests.TestHelpers.Faker.Event;
+
+global using Ehrms.Contracts.Skill;
+global using Ehrms.ProjectManagement.API.Consumer.SkillEvents;
+global using Ehrms.ProjectManagemet.TestHelpers.Fakers.Model;
