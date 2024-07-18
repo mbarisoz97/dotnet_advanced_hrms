@@ -13,7 +13,6 @@ global using Ehrms.ProjectManagement.API.UnitTests.TestHelpers.Faker.Command;
 global using Ehrms.ProjectManagement.API.Profiles;
 global using Microsoft.EntityFrameworkCore;
 global using Ehrms.ProjectManagement.API.Exceptions;
-global using Ehrms.ProjectManagement.API.Consumer;
 
 global using Ehrms.ProjectManagement.API.UnitTests.TestHelpers;
 global using Ehrms.Contracts.Employee;

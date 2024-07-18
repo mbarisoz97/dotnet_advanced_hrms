@@ -4,7 +4,6 @@ global using MassTransit;
 
 global using Microsoft.AspNetCore.Mvc;
 global using Microsoft.EntityFrameworkCore;
-global using Ehrms.ProjectManagement.API.Consumer;
 global using Ehrms.ProjectManagement.API.Middleware;
 
 global using Ehrms.Shared.Common;

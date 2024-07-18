@@ -1,6 +1,7 @@
 ﻿using Ehrms.ProjectManagement.API.Database.Context;
+using Ehrms.ProjectManagement.API.Consumer.EmployeeEvents;
 
-namespace Ehrms.ProjectManagement.API.Consumer;
+namespace Ehrms.ProjectManagement.API.Consumer.EmployeeEvents;
 
 internal sealed class EmployeeUpdatedConsumer : IConsumer<EmployeeUpdatedEvent>
 {
