@@ -1,5 +1,4 @@
-﻿@attribute [Route($"{ProjectRouting.History}/{{id:guid}}")]
-@attribute [Authorize]
+﻿@attribute [Authorize]
 @attribute [StreamRendering]
 
 @using ApexCharts
@@ -7,21 +6,17 @@
 @inject IToastService ToastService
 @inject IProjectServiceClient ProjectServiceClient
 
-@if (EmploymentRecords == null)
-{
-	<div class="text-center text-muted" style="min-height:300px">
-		<h3>Loading chart<span class="animated-dots"></span></h3>
-	</div>
-}
-else
-{
-	<MudStack Spacing="2">
-		<MudButton OnClick="OnExpandCollapseClick">Project Employment Timeline</MudButton>
-		<MudDivider />
-		<MudCollapse Expanded="_expanded">
-			<ApexChart TItem="ProjectEmploymentModel"
-					   Options=options
-					   XAxisType="XAxisType.Datetime">
+<MudStack Spacing="2">
+	<MudButton OnClick="OnExpandCollapseClick">Project Employment Timeline</MudButton>
+	<MudDivider />
+	<MudCollapse Expanded="_isProjectTimeLineSectionExpanded">
+		@if (EmploymentRecords == null)
+		{
+			<MudProgressLinear Color="MudBlazor.Color.Primary" Indeterminate="true" Class="my-7" />
+		}
+		else
+		{
+			<ApexChart TItem="ProjectEmploymentModel" Options=options XAxisType="XAxisType.Datetime">
 				<ApexRangeSeries TItem="ProjectEmploymentModel"
 								 Items="EmploymentRecords"
 								 XValue="@(e => e.EmployeeName)"
@@ -30,9 +25,9 @@ else
 												? ((DateOnly)e.EndedAt!).ToDateTime(TimeOnly.MinValue).ToUnixTimeMilliseconds()
 												: DateTime.Now.ToUnixTimeMilliseconds())" />
 			</ApexChart>
-		</MudCollapse>
-	</MudStack>
-}
+		}
+	</MudCollapse>
+</MudStack>
 
 @code {
 	[Parameter]
@@ -40,17 +35,8 @@ else
 
 	private IEnumerable<ProjectEmploymentModel>? EmploymentRecords { get; set; }
 
-	private bool Loading { get; set; }
-	private string SearchString { get; set; } = "";
-
-	private ApexChartOptions<ProjectEmploymentModel>? options;
-
-	private bool _expanded = false;
-
-	private void OnExpandCollapseClick()
-	{
-		_expanded = !_expanded;
-	}
+	private bool _isProjectTimeLineSectionExpanded = false;
+	private ApexChartOptions<ProjectEmploymentModel> options;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -81,5 +67,10 @@ else
 					}
 				}
 			};
+	}
+
+	private void OnExpandCollapseClick()
+	{
+		_isProjectTimeLineSectionExpanded = !_isProjectTimeLineSectionExpanded;
 	}
 }

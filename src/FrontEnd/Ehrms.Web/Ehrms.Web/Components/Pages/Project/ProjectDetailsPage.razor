@@ -1,0 +1,13 @@
+﻿@attribute [Route($"{ProjectRouting.Details}/{{id:guid}}")]
+@attribute [Authorize]
+
+<MudStack Spacing="2">
+	<MudDivider></MudDivider>
+	<ProjectHistoryPage Id="Id"></ProjectHistoryPage>
+</MudStack>
+
+@code
+{
+	[Parameter]
+	public Guid Id { get; set; }
+}

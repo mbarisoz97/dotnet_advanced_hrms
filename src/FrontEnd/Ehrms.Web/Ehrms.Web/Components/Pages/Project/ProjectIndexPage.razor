@@ -27,7 +27,7 @@
 	</HeaderContent>
 	<RowTemplate>
 		<MudTd DataLabel="Name">@context.Name</MudTd>
-		<MudTd>
+		<MudTd Class="d-flex justify-center flex-grow-1">
 			<MudTooltip Text="Edit">
 				<MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.ModeEdit" @onclick="@(()=>ShowUpdateProjectDialog(context))" />
 			</MudTooltip>
@@ -35,7 +35,7 @@
 				<MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.Delete" @onclick="@(()=>ShowDeleteConfirmationDialog(context))" />
 			</MudTooltip>
 			<MudTooltip Text="Read More">
-				<MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.ReadMore" Href=@($"{ProjectRouting.History}/{context.Id}") />
+				<MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.ReadMore" Href=@($"{ProjectRouting.Details}/{context.Id}") />
 			</MudTooltip>
 		</MudTd>
 	</RowTemplate>
