@@ -2,113 +2,84 @@
 @attribute [Authorize]
 @attribute [StreamRendering]
 
+@using ApexCharts
+
 @inject IToastService ToastService
 @inject IProjectServiceClient ProjectServiceClient
 
-<MudTable Items="@EmploymentRecords"
-		  Dense="true"
-		  Hover="true"
-		  Loading="@Loading"
-		  Bordered="true"
-		  Striped="true">
-	<ToolBarContent>
-		<MudIconButton Size="Size.Medium" Icon="@Icons.Material.Filled.ArrowBack" Href="@(ProjectRouting.Index)" />
-		<MudText Typo="Typo.h6">Employments</MudText>
-		<MudSpacer />
-		<MudTextField @bind-Value="SearchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-	</ToolBarContent>
-	<HeaderContent>
-		<MudTh></MudTh>
-		<MudTh>Employee</MudTh>
-	</HeaderContent>
-	<RowTemplate>
-		<MudTd>
-			@if (context.EmploymentRecords.Any(x => x.EndedAt == null))
-			{
-				<MudTimelineItem Color="Color.Success" />
-			}
-			else
-			{
-				<MudTimelineItem Color="Color.Error" />
-			}
-		</MudTd>
-		<MudTd>
-			<MudExpansionPanel Expanded="false" Text="@context.EmployeeName">
-				<MudTimeline TimelineOrientation="TimelineOrientation.Vertical" TimelinePosition="TimelinePosition.Start">
-					@foreach (var employmentRecord in context.EmploymentRecords.OrderBy(x => x.StartedAt))
-					{
-						if (employmentRecord.EndedAt != null)
-						{
-							<MudTimelineItem Color="Color.Error">
-								<MudText Align="Align.Start">@employmentRecord.StartedAt - @employmentRecord.EndedAt</MudText>
-							</MudTimelineItem>
-						}
-						else
-						{
-							<MudTimelineItem Color="Color.Success">
-								<MudText Align="Align.Start">@employmentRecord.StartedAt</MudText>
-							</MudTimelineItem>
-						}
-					}
-				</MudTimeline>
-			</MudExpansionPanel>
-		</MudTd>
-	</RowTemplate>
-	<PagerContent>
-		<MudTablePager />
-	</PagerContent>
-</MudTable>
+@if (EmploymentRecords == null)
+{
+	<div class="text-center text-muted" style="min-height:300px">
+		<h3>Loading chart<span class="animated-dots"></span></h3>
+	</div>
+}
+else
+{
+	<MudStack Spacing="2">
+		<MudButton OnClick="OnExpandCollapseClick">Project Employment Timeline</MudButton>
+		<MudDivider />
+		<MudCollapse Expanded="_expanded">
+			<ApexChart TItem="ProjectEmploymentModel"
+					   Options=options
+					   XAxisType="XAxisType.Datetime">
+				<ApexRangeSeries TItem="ProjectEmploymentModel"
+								 Items="EmploymentRecords"
+								 XValue="@(e => e.EmployeeName)"
+								 YMinValue="@(e =>e.StartedAt.ToDateTime(TimeOnly.MinValue).ToUnixTimeMilliseconds())"
+								 YMaxValue="@(e => e.EndedAt != null
+												? ((DateOnly)e.EndedAt!).ToDateTime(TimeOnly.MinValue).ToUnixTimeMilliseconds()
+												: DateTime.Now.ToUnixTimeMilliseconds())" />
+			</ApexChart>
+		</MudCollapse>
+	</MudStack>
+}
 
 @code {
 	[Parameter]
 	public Guid Id { get; set; }
 
-	private IEnumerable<GroupedProjectEmploymentModel>? EmploymentRecords { get; set; } = [];
+	private IEnumerable<ProjectEmploymentModel>? EmploymentRecords { get; set; }
 
 	private bool Loading { get; set; }
 	private string SearchString { get; set; } = "";
 
+	private ApexChartOptions<ProjectEmploymentModel>? options;
+
+	private bool _expanded = false;
+
+	private void OnExpandCollapseClick()
+	{
+		_expanded = !_expanded;
+	}
+
 	protected override async Task OnInitializedAsync()
 	{
-		ShowLoadingBar();
-
 		var response = await ProjectServiceClient.GetProjectHistoryAsync(Id);
 		if (response.StatusCode == HttpStatusCode.OK)
 		{
-			EmploymentRecords = GetGroupedEmployments(response.Content);
+			EmploymentRecords = response.Content;
 		}
 		else
 		{
 			ToastService.ShowError($"Could not read project history. Service returned {response.StatusCode}");
-
 		}
 
-		HideLoadingBar();
-	}
-
-	private void ShowLoadingBar()
-	{
-		Loading = true;
-	}
-
-	private void HideLoadingBar()
-	{
-		Loading = false;
-	}
-
-	private IEnumerable<GroupedProjectEmploymentModel> GetGroupedEmployments(IEnumerable<ProjectEmploymentModel>? employments)
-	{
-		if (employments == null)
-		{
-			return [];
-		}
-
-		return employments.GroupBy(x => new { x.EmployeeId, x.EmployeeName })
-			.Select(y => new GroupedProjectEmploymentModel()
+		options = new ApexChartOptions<ProjectEmploymentModel>
+			{
+				PlotOptions = new PlotOptions
 				{
-					EmployeeId = y.Key.EmployeeId,
-					EmployeeName = y.Key.EmployeeName,
-					EmploymentRecords = y.ToList()
-				});
+					Bar = new PlotOptionsBar
+					{
+						Horizontal = true
+					}
+				},
+				Tooltip = new ApexCharts.Tooltip
+				{
+					X = new TooltipX
+					{
+						Format = "dd MMM yyyy HH:mm"
+					}
+				}
+			};
 	}
 }
