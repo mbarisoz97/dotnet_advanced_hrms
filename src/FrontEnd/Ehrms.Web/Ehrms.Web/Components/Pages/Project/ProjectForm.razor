@@ -117,10 +117,7 @@
 		var response = await SkillServiceClient.GetSkillsAsync();
 		if (response.StatusCode == HttpStatusCode.OK)
 		{
-			if (IsEditMode)
-			{
-				Skills = response.Content ?? [];
-			}
+			Skills = response.Content ?? [];
 		}
 		else
 		{
