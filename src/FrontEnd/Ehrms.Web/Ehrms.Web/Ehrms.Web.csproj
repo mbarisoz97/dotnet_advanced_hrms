@@ -13,6 +13,7 @@
 		<ProjectReference Include="..\..\..\Shared\Ehrms.Shared\Ehrms.Shared.csproj" />
 		<ProjectReference Include="..\Ehrms.Web.Client\Ehrms.Web.Client.csproj" />
 		<PackageReference Include="BitzArt.Blazor.Cookies.Server" Version="1.0.4" />
+		<PackageReference Include="Blazor-ApexCharts" Version="3.4.0" />
 		<PackageReference Include="Blazored.Modal" Version="7.3.1" />
 		<PackageReference Include="Blazored.SessionStorage" Version="2.4.0" />
 		<PackageReference Include="Blazored.Toast" Version="4.2.1" />

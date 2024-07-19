@@ -27,7 +27,7 @@ internal static class ProjectRouting
 {
 	internal const string Index = "/Project";
 	internal const string Delete = $"{Index}/Delete";
-	internal const string History = $"{Index}/History";
+	internal const string Details = $"{Index}/Details";
 }
 
 internal static class TrainingRouting
