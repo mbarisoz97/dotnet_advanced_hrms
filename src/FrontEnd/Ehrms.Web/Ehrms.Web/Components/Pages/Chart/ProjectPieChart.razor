@@ -1,21 +1,36 @@
-﻿@inject IProjectServiceClient ProjectServiceClient
-@attribute [StreamRendering]
+﻿@attribute [StreamRendering]
 
-<MudCard>
-	<MudCardHeader>
-		<CardHeaderContent>
-			<MudText Typo="Typo.h5">Employee - Project</MudText>
-		</CardHeaderContent>
-	</MudCardHeader>
-	<MudCardContent>
-		<MudChart Height="300px" Width="300px" ChartType="ChartType.Donut" LegendPosition="Position.Left" InputData="@_data" InputLabels="@_labels">
-		</MudChart>
-	</MudCardContent>
-</MudCard>
+@inject IProjectServiceClient ProjectServiceClient
+
+@if (_data == null || _labels == null)
+{
+	<MudCard>
+		<MudCardHeader>
+			<CardHeaderContent>
+				<MudSkeleton Animation="Animation.Wave" Width="60%" />
+			</CardHeaderContent>
+		</MudCardHeader>
+		<MudSkeleton SkeletonType="SkeletonType.Rectangle" Animation="Animation.Wave" Height="300px" Width="300px" />
+	</MudCard>
+}
+else
+{
+	<MudCard>
+		<MudCardHeader>
+			<CardHeaderContent>
+				<MudText Typo="Typo.h5">Employee - Project</MudText>
+			</CardHeaderContent>
+		</MudCardHeader>
+		<MudCardContent>
+			<MudChart Height="300px" Width="300px" ChartType="ChartType.Donut" LegendPosition="Position.Left" InputData="@_data" InputLabels="@_labels">
+			</MudChart>
+		</MudCardContent>
+	</MudCard>
+}
 
 @code {
-	private double[] _data = [];
-	private string[] _labels = [];
+	private double[]? _data;
+	private string[]? _labels;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -29,7 +44,7 @@
 		{
 			return;
 		}
-
+		
 		_data = response.Content.Select(x => (double)x.Employees.Count).ToArray();
 		_labels = response.Content.Select(x => x.Name).ToArray();
 	}
