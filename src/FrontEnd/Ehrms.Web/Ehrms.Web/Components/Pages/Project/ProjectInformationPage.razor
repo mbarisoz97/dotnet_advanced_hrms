@@ -1,0 +1,41 @@
+﻿@attribute [StreamRendering]
+
+@inject IProjectServiceClient ProjectServiceClient
+@inject IToastService ToastService
+
+@if (Project == null)
+{
+	<MudSkeleton />
+	<MudSkeleton Animation="Animation.Wave" />
+	<MudSkeleton SkeletonType="SkeletonType.Rectangle" Width="100%" Height="50px" />
+}
+else
+{
+	<MudText Typo="Typo.h4">PROJECT DETAILS</MudText>
+	<MudTextField @bind-Value="Project.Name" ReadOnly="true" Label="Name" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Tag" AdornmentColor="Color.Warning" />
+	<MudTextField @bind-Value="Project.Description" ReadOnly="true" AutoGrow MaxLines="5" Label="Summary" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Summarize" AdornmentColor="Color.Info" />
+	<MudDivider/>
+	<MudPaper Class="d-flex  justify-center flex-wrap gap-4">
+		<MudChip T="string" Icon="@Icons.Material.Filled.People" Label="true" Color="Color.Warning" Style="color:white;">@(Project.Employees.Count) Employees</MudChip>
+		<MudChip T="string" Icon="@Icons.Material.Filled.Bolt" Label="true" Color="Color.Info" Style="color:black;">@(Project.RequiredSkills.Count) Required Skills</MudChip>
+	</MudPaper>
+}
+
+@code {
+	[Parameter]
+	public Guid Id { get; set; }
+	public ProjectModel? Project { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		var response = await ProjectServiceClient.GetProjectAsync(Id);
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			Project = response.Content;
+		}
+		else
+		{
+			ToastService.ShowError($"Could not load project information. Service returned : {response.StatusCode}");
+		}
+	}
+}

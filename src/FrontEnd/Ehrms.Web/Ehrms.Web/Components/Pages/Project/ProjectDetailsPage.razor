@@ -1,13 +1,31 @@
-﻿@attribute [Route($"{ProjectRouting.Details}/{{id:guid}}")]
-@attribute [Authorize]
+﻿@attribute [Authorize]
+@attribute [Route($"{ProjectRouting.Details}/{{id:guid}}")]
 
-<MudStack Spacing="2">
-	<MudDivider></MudDivider>
-	<ProjectHistoryPage Id="Id"></ProjectHistoryPage>
-</MudStack>
+
+<MudCard>
+	<ProjectInformationPage Id="Id" />
+</MudCard>
+
+<MudDivider></MudDivider>
+
+<MudCard>
+	<MudButton OnClick="ToggleProjetEmploymentTimeline">Project Employment Timeline</MudButton>
+	<MudDivider />
+	<MudCollapse Expanded="_isProjectTimeLineSectionExpanded">
+		<ProjectHistoryPage Id="Id" />
+	</MudCollapse>
+</MudCard>
 
 @code
 {
 	[Parameter]
 	public Guid Id { get; set; }
+
+	private bool _isProjectInformationSectionExpanded = true;
+	private bool _isProjectTimeLineSectionExpanded = false;
+
+	private void ToggleProjetEmploymentTimeline()
+	{
+		_isProjectTimeLineSectionExpanded = !_isProjectTimeLineSectionExpanded;
+	}
 }
