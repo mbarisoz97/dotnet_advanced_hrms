@@ -1,4 +1,6 @@
-﻿namespace Ehrms.ProjectManagement.API.Handlers.Project.Commands;
+﻿using Ehrms.Contracts.Project;
+
+namespace Ehrms.ProjectManagement.API.Handlers.Project.Commands;
 
 public sealed class CreateProjectCommand : IRequest<Database.Models.Project>
 {
@@ -11,11 +13,13 @@ public sealed class CreateProjectCommand : IRequest<Database.Models.Project>
 internal sealed class CreateProjectCommandHandler : IRequestHandler<CreateProjectCommand, Database.Models.Project>
 {
 	private readonly IMapper _mapper;
+	private readonly IPublishEndpoint _publishEndpoint;
 	private readonly ProjectDbContext _dbContext;
 
-	public CreateProjectCommandHandler(IMapper mapper, ProjectDbContext dbContext)
+	public CreateProjectCommandHandler(IMapper mapper, IPublishEndpoint publishEndpoint, ProjectDbContext dbContext)
 	{
 		_mapper = mapper;
+		_publishEndpoint = publishEndpoint;
 		_dbContext = dbContext;
 	}
 
@@ -27,6 +31,10 @@ internal sealed class CreateProjectCommandHandler : IRequestHandler<CreateProjec
 
 		await _dbContext.Projects.AddAsync(project, cancellationToken);
 		await _dbContext.SaveChangesAsync(cancellationToken);
+
+		var projectCreatedEvent = _mapper.Map<ProjectCreatedEvent>(project);
+		await _publishEndpoint.Publish(projectCreatedEvent, cancellationToken);
+
 		return project;
 	}
 

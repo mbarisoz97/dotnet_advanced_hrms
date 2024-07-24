@@ -1,4 +1,7 @@
-﻿namespace Ehrms.ProjectManagement.API.Handlers.Project.Commands;
+﻿using Ehrms.Contracts.Project;
+
+namespace Ehrms.ProjectManagement.API.Handlers.Project.Commands;
+
 public sealed class UpdateProjectCommand : IRequest<Database.Models.Project>
 {
 	public Guid Id { get; set; }
@@ -10,16 +13,33 @@ public sealed class UpdateProjectCommand : IRequest<Database.Models.Project>
 
 internal sealed class UpdateProjectCommandHandler : IRequestHandler<UpdateProjectCommand, Database.Models.Project>
 {
-	private readonly IMapper _mapper;
 	private readonly ProjectDbContext _dbContext;
 
-	public UpdateProjectCommandHandler(IMapper mapper, ProjectDbContext dbContext)
+	private readonly IMapper _mapper;
+	private readonly IPublishEndpoint _publishEndpoint;
+
+	public UpdateProjectCommandHandler(IMapper mapper, IPublishEndpoint publishEndpoint, ProjectDbContext dbContext)
 	{
 		_mapper = mapper;
 		_dbContext = dbContext;
+		_publishEndpoint = publishEndpoint;
 	}
 
 	public async Task<Database.Models.Project> Handle(UpdateProjectCommand request, CancellationToken cancellationToken)
+	{
+		var project = await UpdateProject(request, cancellationToken);
+		await PublishProjectEvent(project, cancellationToken);
+
+		return project;
+	}
+
+	private async Task PublishProjectEvent(Database.Models.Project project, CancellationToken cancellationToken)
+	{
+		var projectUpdateEvent = _mapper.Map<ProjectUpdatedEvent>(project);
+		await _publishEndpoint.Publish(projectUpdateEvent, cancellationToken);
+	}
+
+	private async Task<Database.Models.Project> UpdateProject(UpdateProjectCommand request, CancellationToken cancellationToken)
 	{
 		Database.Models.Project project = await GetProject(request.Id);
 		_mapper.Map(request, project);
@@ -30,7 +50,6 @@ internal sealed class UpdateProjectCommandHandler : IRequestHandler<UpdateProjec
 
 		_dbContext.Update(project);
 		await _dbContext.SaveChangesAsync(cancellationToken);
-
 		return project;
 	}
 
@@ -42,7 +61,6 @@ internal sealed class UpdateProjectCommandHandler : IRequestHandler<UpdateProjec
 			.FirstOrDefaultAsync(x => x.Id == id)
 			?? throw new ProjectNotFoundException($"Could not find project with id '{id}'");
 	}
-
 	private async Task CreateEmploymenRecordsForNewEmployees(Database.Models.Project project, ICollection<Guid> employeeIdCollection)
 	{
 		var currentProjectEmployments = _dbContext.Employments
