@@ -1,4 +1,5 @@
-﻿using Ehrms.TrainingManagement.API.Middleware;
+﻿using Ehrms.TrainingManagement.API.Consumer.SkillEvents;
+using Ehrms.TrainingManagement.API.Middleware;
 using Ehrms.TrainingManagement.API.PipelineBehaviors;
 using FluentValidation;
 using System.Reflection;
@@ -27,5 +28,19 @@ internal static class DependencyInjection
 			config.RegisterServicesFromAssembly(assembly)
 				.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
 		});
+	}
+
+	internal static IBusRegistrationConfigurator AddEventConsumers(this IBusRegistrationConfigurator busConfigurator)
+	{
+		busConfigurator.AddConsumer<EmployeeCreatedEventConsumer>();
+		busConfigurator.AddConsumer<EmployeeDeletedEventConsumer>();
+		busConfigurator.AddConsumer<EmployeeUpdatedEventConsumer>();
+
+		busConfigurator.AddConsumer<SkillCreatedEventConsumer>();
+		busConfigurator.AddConsumer<SkillUpdatedEventConsumer>();
+		busConfigurator.AddConsumer<SkillDeletedEventConsumer>();
+
+		return busConfigurator;
+
 	}
 }
