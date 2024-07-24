@@ -8,4 +8,6 @@ public class TrainingDbContext : DbContext
 
 	public DbSet<Training> Trainings { get; set; }
 	public DbSet<Employee> Employees { get; set; }
+	public DbSet<TrainingRecommendationRequest> RecommendationRequests { get; set; }
+	public DbSet<TrainingRecommendationResult> RecommendationResults { get; set; }
 }
