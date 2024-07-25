@@ -1,6 +1,4 @@
-﻿using MassTransit;
-using Ehrms.Contracts.Employee;
-using Ehrms.TrainingManagement.API.Database.Context;
+﻿using Ehrms.Contracts.Employee;
 
 namespace Ehrms.TrainingManagement.API.Consumers.EmployeeEvent;
 

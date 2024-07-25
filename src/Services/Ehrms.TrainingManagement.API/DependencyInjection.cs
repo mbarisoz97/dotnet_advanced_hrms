@@ -1,8 +1,7 @@
-﻿using Ehrms.TrainingManagement.API.Consumer.SkillEvents;
+﻿using FluentValidation;
+using System.Reflection;
 using Ehrms.TrainingManagement.API.Middleware;
 using Ehrms.TrainingManagement.API.PipelineBehaviors;
-using FluentValidation;
-using System.Reflection;
 
 namespace Ehrms.TrainingManagement.API;
 
@@ -40,7 +39,9 @@ internal static class DependencyInjection
 		busConfigurator.AddConsumer<SkillUpdatedEventConsumer>();
 		busConfigurator.AddConsumer<SkillDeletedEventConsumer>();
 
-		return busConfigurator;
+		busConfigurator.AddConsumer<ProjectCreatedEventConsumer>();
+		busConfigurator.AddConsumer<ProjectUpdatedEventConsumer>();
 
+		return busConfigurator;
 	}
 }

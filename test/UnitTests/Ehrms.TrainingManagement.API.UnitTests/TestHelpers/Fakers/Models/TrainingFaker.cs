@@ -1,6 +1,4 @@
-﻿using Ehrms.TrainingManagement.API.Database.Models;
-
-namespace Ehrms.TrainingManagement.API.UnitTests.TestHelpers.Fakers.Models;
+﻿namespace Ehrms.TrainingManagement.API.UnitTests.TestHelpers.Fakers.Models;
 
 internal class TrainingFaker : Faker<Training>
 {

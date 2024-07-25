@@ -31,5 +31,15 @@ public class TrainingMappingProfile : Profile
 	{
 		CreateMap<EmployeeCreatedEvent, Employee>();
 		CreateMap<EmployeeUpdatedEvent, Employee>();
+
+		CreateMap<ProjectCreatedEvent, Project>()
+			.ForMember(x=>x.Employees, src => src.Ignore())
+			.ForMember(x=>x.RequiredSkills, src => src.Ignore());
+
+		CreateMap<ProjectUpdatedEvent, Project>()
+			.ForMember(x => x.Employees, src => src.Ignore())
+			.ForMember(x => x.RequiredSkills, src => src.Ignore());
+		
+		CreateMap<ProjectDeletedEvent, Project>();
 	}
 }
