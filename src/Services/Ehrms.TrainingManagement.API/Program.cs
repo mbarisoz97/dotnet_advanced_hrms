@@ -1,5 +1,5 @@
-using Ehrms.TrainingManagement.API.Middleware;
 using Serilog;
+using Ehrms.TrainingManagement.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,14 +19,14 @@ builder.Services.AddDbContext<TrainingDbContext>(options =>
 });
 builder.Services.AddMassTransit(busConfigurator =>
 {
-	busConfigurator.SetKebabCaseEndpointNameFormatter();
+	busConfigurator.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("TrainingManagementService", false));
 	busConfigurator.AddEventConsumers();
 	busConfigurator.UsingRabbitMq((context, configurator) =>
 	{
-		configurator.Host(new Uri(builder.Configuration["MessageBroker:Host"]!), h =>
+		configurator.Host(new Uri(builder.Configuration["MessageBroker:Host"]!), host =>
 		{
-			h.Username(builder.Configuration["MessageBroker:Username"]!);
-			h.Password(builder.Configuration["MessageBroker:Password"]!);
+			host.Username(builder.Configuration["MessageBroker:Username"]!);
+			host.Password(builder.Configuration["MessageBroker:Password"]!);
 		});
 
 		configurator.ConfigureEndpoints(context);
