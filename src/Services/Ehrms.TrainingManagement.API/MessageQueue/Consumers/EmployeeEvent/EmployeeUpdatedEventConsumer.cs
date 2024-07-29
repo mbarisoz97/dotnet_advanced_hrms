@@ -1,6 +1,6 @@
 ﻿using Ehrms.Contracts.Employee;
 
-namespace Ehrms.TrainingManagement.API.Consumers.EmployeeEvent;
+namespace Ehrms.TrainingManagement.API.MessageQueue.Consumers.EmployeeEvent;
 
 public class EmployeeUpdatedEventConsumer : IConsumer<EmployeeUpdatedEvent>
 {

@@ -1,5 +1,8 @@
 ﻿using FluentValidation;
 using System.Reflection;
+using Ehrms.TrainingManagement.API.MessageQueue.Consumers.EmployeeEvent;
+using Ehrms.TrainingManagement.API.MessageQueue.Consumers.ProjectEvent;
+using Ehrms.TrainingManagement.API.MessageQueue.Consumers.SkillEvent;
 using Ehrms.TrainingManagement.API.Middleware;
 using Ehrms.TrainingManagement.API.PipelineBehaviors;
 

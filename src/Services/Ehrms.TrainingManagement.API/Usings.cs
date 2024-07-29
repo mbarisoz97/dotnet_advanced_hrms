@@ -16,7 +16,4 @@ global using Ehrms.TrainingManagement.API.Handlers.Training.Commands;
 global using MassTransit;
 global using Ehrms.Shared;
 global using Ehrms.Contracts.Project;
-global using Ehrms.TrainingManagement.API.Consumers.EmployeeEvent;
-
-global using Ehrms.TrainingManagement.API.Consumer.SkillEvents;
-global using Ehrms.TrainingManagement.API.Consumers.ProjectEvent;
+global using Ehrms.TrainingManagement.API.MessageQueue.Events;

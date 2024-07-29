@@ -1,4 +1,4 @@
-﻿namespace Ehrms.TrainingManagement.API.Consumers.ProjectEvent;
+﻿namespace Ehrms.TrainingManagement.API.MessageQueue.Consumers.ProjectEvent;
 
 public sealed class ProjectDeletedEventConsumer : IConsumer<ProjectDeletedEvent>
 {

@@ -1,9 +1,6 @@
-﻿using MassTransit;
-using Ehrms.Contracts.Employee;
-using Ehrms.TrainingManagement.API.Database.Models;
-using Ehrms.TrainingManagement.API.Database.Context;
+﻿using Ehrms.Contracts.Employee;
 
-namespace Ehrms.TrainingManagement.API.Consumers.EmployeeEvent;
+namespace Ehrms.TrainingManagement.API.MessageQueue.Consumers.EmployeeEvent;
 
 public class EmployeeCreatedEventConsumer : IConsumer<EmployeeCreatedEvent>
 {

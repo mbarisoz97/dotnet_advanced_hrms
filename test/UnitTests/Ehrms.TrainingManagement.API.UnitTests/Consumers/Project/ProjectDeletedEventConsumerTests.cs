@@ -1,9 +1,9 @@
 ﻿using Moq;
 using Microsoft.Extensions.Logging;
 using Ehrms.TrainingManagement.API.Database.Context;
-using Ehrms.TrainingManagement.API.Consumers.ProjectEvent;
 using Ehrms.TrainingManagement.API.UnitTests.TestHelpers.Fakers.Events;
 using Ehrms.Contracts.Project;
+using Ehrms.TrainingManagement.API.MessageQueue.Consumers.ProjectEvent;
 using MassTransit;
 
 namespace Ehrms.TrainingManagement.API.UnitTests.Consumers.Project;

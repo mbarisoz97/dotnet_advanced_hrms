@@ -2,9 +2,9 @@
 
 internal class SkillFaker : Faker<Skill>
 {
-	public SkillFaker()
-	{
-		RuleFor(x => x.Id, f => f.Random.Guid());
-		RuleFor(x => x.SkillName, f => f.Random.Word());
-	}
+    public SkillFaker()
+    {
+        RuleFor(x => x.Id, f => f.Random.Guid());
+        RuleFor(x => x.SkillName, f => f.Random.Word());
+    }
 }

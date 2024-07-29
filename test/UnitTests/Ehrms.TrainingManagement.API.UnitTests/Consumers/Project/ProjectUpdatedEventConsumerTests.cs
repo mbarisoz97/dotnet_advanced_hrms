@@ -3,7 +3,7 @@ using MassTransit;
 using Ehrms.Contracts.Project;
 using Microsoft.Extensions.Logging;
 using Ehrms.TrainingManagement.API.Database.Context;
-using Ehrms.TrainingManagement.API.Consumers.ProjectEvent;
+using Ehrms.TrainingManagement.API.MessageQueue.Consumers.ProjectEvent;
 using Ehrms.TrainingManagement.API.UnitTests.TestHelpers.Fakers.Events;
 
 namespace Ehrms.TrainingManagement.API.UnitTests.Consumers.Project;

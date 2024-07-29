@@ -1,6 +1,6 @@
 ﻿using Ehrms.Contracts.Skill;
 
-namespace Ehrms.TrainingManagement.API.Consumer.SkillEvents;
+namespace Ehrms.TrainingManagement.API.MessageQueue.Consumers.SkillEvent;
 
 internal sealed class SkillUpdatedEventConsumer : IConsumer<SkillUpdatedEvent>
 {

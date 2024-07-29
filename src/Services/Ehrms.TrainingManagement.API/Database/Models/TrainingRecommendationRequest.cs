@@ -2,16 +2,18 @@
 
 public enum RequestStatus
 {
-	Pending,
-	Completed,
-	Cancelled
+    Accepted,
+    Pending,
+    Completed,
+    Cancelled,
 }
 
 public sealed class TrainingRecommendationRequest : BaseEntity
 {
-	public string Title { get; set; } = string.Empty;
-	public DateTime CreatedAt { get; set; }
-	public RequestStatus RequestStatus { get; set; }
-	public Project? Project { get; set; }
-	public ICollection<TrainingRecommendationResult> TrainingRecommendation { get; set; } = [];
+    public string Title { get; set; } = string.Empty;
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public RequestStatus RequestStatus { get; set; }
+    public Guid ProjectId { get; set; }
+    public Project? Project { get; set; }
+    public ICollection<TrainingRecommendationResult> TrainingRecommendation { get; set; } = [];
 }
