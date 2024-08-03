@@ -62,4 +62,20 @@ public class TrainingController : ControllerBase
 
         return Ok(readTrainingDto);
     }
+
+    [HttpPost("Recommendation")]
+    public async Task<IActionResult> RecommendTraining([FromBody] CreateTrainingRecommendationRequestCommand command)
+    {
+        return Ok(await _mediator.Send(command));
+    }
+
+    [HttpGet("RecommendationRequests")]
+    public async Task<IActionResult> GetRecommendationRequests()
+    {
+            var query = new GetTrainingRecommendationsQuery();
+            var requestCollection = await _mediator.Send(query);
+            var requestDtoCollection = _mapper.ProjectTo<ReadTrainingRequestDto>(requestCollection);
+        
+            return Ok(requestDtoCollection);
+    }
 }

@@ -25,7 +25,7 @@ internal sealed class ProjectServiceClient : IProjectServiceClient
 		};
 	}
 
-	public async Task<Response<Guid>> DeleteProjectAsync(Guid id)
+    public async Task<Response<Guid>> DeleteProjectAsync(Guid id)
 	{
 		var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
 		var response = await client.DeleteAsync($"{_endpointProvider.ProjectManagementApiEndpoint}/{id}");

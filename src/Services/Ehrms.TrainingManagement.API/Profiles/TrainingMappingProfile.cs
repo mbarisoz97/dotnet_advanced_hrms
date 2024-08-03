@@ -6,14 +6,6 @@ public class TrainingMappingProfile : Profile
 	{
 		AddModelToDtoMappings();
 		AddCommandToModelMappings();
-		AddModelToMessageQueueEventMappings();
-	}
-
-	private void AddModelToMessageQueueEventMappings()
-	{
-		CreateMap<TrainingRecommendationRequest, TrainingRecommendationRequestAcceptedEvent >()
-			.ForMember(dest => dest.RequestId, opt => opt.MapFrom(src=>src.Id))
-			.ForMember(dest => dest.ProjectId, opt => opt.MapFrom(src => src.ProjectId));
 	}
 
 	private void AddCommandToModelMappings()

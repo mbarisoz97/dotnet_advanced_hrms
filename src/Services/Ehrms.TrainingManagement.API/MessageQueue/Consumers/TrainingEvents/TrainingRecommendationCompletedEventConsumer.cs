@@ -1,11 +1,11 @@
 namespace Ehrms.TrainingManagement.API.MessageQueue.Consumers.TrainingEvents;
 
-public sealed class TrainingRecommendationCompletedConsumer : IConsumer<TrainingRecommendationCompletedEvent>
+public sealed class TrainingRecommendationCompletedEventConsumer : IConsumer<TrainingRecommendationCompletedEvent>
 {
     private readonly TrainingDbContext _dbContext;
-    private readonly ILogger<TrainingRecommendationCompletedConsumer> _logger;
+    private readonly ILogger<TrainingRecommendationCompletedEventConsumer> _logger;
 
-    public TrainingRecommendationCompletedConsumer(TrainingDbContext dbContext, ILogger<TrainingRecommendationCompletedConsumer> logger)
+    public TrainingRecommendationCompletedEventConsumer(TrainingDbContext dbContext, ILogger<TrainingRecommendationCompletedEventConsumer> logger)
     {
         _logger = logger;
         _dbContext = dbContext;
@@ -21,6 +21,8 @@ public sealed class TrainingRecommendationCompletedConsumer : IConsumer<Training
             _logger.LogError("Could not find recommendation request with id : <{id}>", context.Message.RequestId);
             return;
         }
+
+        await Task.Delay(TimeSpan.FromMinutes(1));
         
         request.RequestStatus = RequestStatus.Completed;
 

@@ -1,0 +1,63 @@
+﻿@attribute [Route($"{TrainingRouting.Recommendation}")]
+@attribute [StreamRendering]
+
+@inject IToastService ToastService
+@inject ITrainingServiceClient TrainingServiceClient
+
+<MudTable Items="@_trainingRecommendationRequests" Dense="true" Hover="true" Loading="@_isLoading" Bordered="true" Striped="true">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Training Recommendation Requests</MudText>
+        <MudSpacer/>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Title</MudTh>
+        <MudTh>Created At</MudTh>
+        <MudTh>Request Status</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Title">@context.Title</MudTd>
+        <MudTd DataLabel="Create Date">@context.CreatedAt</MudTd>
+        <MudTd DataLabel="Request Status">
+            <MudTooltip Text="@context.RequestStatus.ToString()">
+                @if (context.RequestStatus == RequestStatus.Pending)
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.Pending" Color="Color.Warning"/>
+                }
+                else if (context.RequestStatus == RequestStatus.Accepted)
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.Circle" Color="Color.Info"/>
+                }
+                else if(context.RequestStatus == RequestStatus.Completed)
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.Circle" Color="Color.Success"/>
+                }
+            </MudTooltip>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager/>
+    </PagerContent>
+</MudTable>
+
+@code {
+    private IEnumerable<ReadTrainingRecommendationRequestModel>? _trainingRecommendationRequests;
+    private bool _isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        ShowLoadingBar();
+        var response = await TrainingServiceClient.GetTrainingRecommendationRequests();
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            _trainingRecommendationRequests = response.Content;
+        }
+        else
+        {
+            ToastService.ShowError($"Could not load training recommendation requests. Service returned : {response.StatusCode}");
+        }
+        HideLoadingBar();
+    }
+
+    private void ShowLoadingBar() => _isLoading = true;
+    private void HideLoadingBar() => _isLoading = false;
+}

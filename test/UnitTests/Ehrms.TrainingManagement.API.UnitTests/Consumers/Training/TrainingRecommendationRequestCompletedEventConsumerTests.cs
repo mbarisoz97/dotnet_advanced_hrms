@@ -6,13 +6,13 @@ namespace Ehrms.TrainingManagement.API.UnitTests.Consumers.Training;
 
 public class TrainingRecommendationRequestCompletedEventConsumerTests : UnitTestsBase<TrainingDbContext>
 {
-    private readonly TrainingRecommendationCompletedConsumer _consumer;
-    private readonly Mock<ILogger<TrainingRecommendationCompletedConsumer>> _loggerMock = new();
+    private readonly TrainingRecommendationCompletedEventConsumer _eventConsumer;
+    private readonly Mock<ILogger<TrainingRecommendationCompletedEventConsumer>> _loggerMock = new();
 
     public TrainingRecommendationRequestCompletedEventConsumerTests()
         : base(TestDbContextFactory.CreateDbContext(nameof(TrainingRecommendationRequestCompletedEventConsumerTests)))
     {
-        _consumer = new(dbContext, _loggerMock.Object);
+        _eventConsumer = new(dbContext, _loggerMock.Object);
     }
 
     [Fact]
@@ -29,7 +29,7 @@ public class TrainingRecommendationRequestCompletedEventConsumerTests : UnitTest
         Mock<ConsumeContext<TrainingRecommendationCompletedEvent>> contextMock = new();
         contextMock.Setup(x => x.Message)
             .Returns(recommendationCompletedEvent);
-        await _consumer.Consume(contextMock.Object);
+        await _eventConsumer.Consume(contextMock.Object);
 
         recommendationRequest.RequestStatus.Should().Be(RequestStatus.Completed);
     }

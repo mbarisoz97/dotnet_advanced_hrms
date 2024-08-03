@@ -15,8 +15,7 @@ public sealed class
 
     public async Task Consume(ConsumeContext<TrainingRecommendationRequestAcceptedEvent> context)
     {
-        var request =
-            await _dbContext.RecommendationRequests.FirstOrDefaultAsync(x => x.Id == context.Message.RequestId);
+        var request = await _dbContext.RecommendationRequests.FirstOrDefaultAsync(x => x.Id == context.Message.RequestId);
         if (request == null)
         {
             _logger.LogError("Ignored null event : <{event}>", nameof(TrainingRecommendationRequestAcceptedEvent));

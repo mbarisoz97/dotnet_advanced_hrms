@@ -1,3 +1,4 @@
+using Ehrms.TrainingManagement.API.MessageQueue.StateMachine;
 using Serilog;
 using Ehrms.TrainingManagement.API.Middleware;
 
@@ -21,6 +22,12 @@ builder.Services.AddMassTransit(busConfigurator =>
 {
 	busConfigurator.SetEndpointNameFormatter(new KebabCaseEndpointNameFormatter("TrainingManagementService", false));
 	busConfigurator.AddEventConsumers();
+	busConfigurator.AddSagaStateMachine<TrainingRecommendationSaga, TrainingRecommendationSagaData>()
+		.EntityFrameworkRepository(r =>
+		{
+			r.ExistingDbContext<TrainingDbContext>();
+			r.UseSqlServer();
+		});
 	busConfigurator.UsingRabbitMq((context, configurator) =>
 	{
 		configurator.Host(new Uri(builder.Configuration["MessageBroker:Host"]!), host =>
