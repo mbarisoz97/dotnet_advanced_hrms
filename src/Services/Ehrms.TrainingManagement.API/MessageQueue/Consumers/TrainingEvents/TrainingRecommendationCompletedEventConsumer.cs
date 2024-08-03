@@ -23,7 +23,8 @@ public sealed class TrainingRecommendationCompletedEventConsumer : IConsumer<Tra
         }
 
         await Task.Delay(TimeSpan.FromMinutes(1));
-        
+
+        request.UpdatedAt = DateTime.UtcNow;
         request.RequestStatus = RequestStatus.Completed;
 
         _dbContext.Update(request);

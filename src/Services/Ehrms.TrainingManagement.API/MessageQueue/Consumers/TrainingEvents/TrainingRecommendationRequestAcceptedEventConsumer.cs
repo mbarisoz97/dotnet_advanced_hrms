@@ -41,6 +41,7 @@ public sealed class
 
     private async Task SetRequestStatusAsPending(TrainingRecommendationRequest request)
     {
+        request.UpdatedAt = DateTime.UtcNow;
         request.RequestStatus = RequestStatus.Pending;
         _dbContext.Update(request);
         await _dbContext.SaveChangesAsync();
