@@ -1,4 +1,5 @@
 ﻿@attribute [Route($"{TrainingRouting.Recommendation}")]
+@attribute [Authorize]
 @attribute [StreamRendering]
 
 @inject IToastService ToastService
@@ -10,14 +11,13 @@
         <MudSpacer/>
     </ToolBarContent>
     <HeaderContent>
+        <MudTh>Request Status</MudTh>
         <MudTh>Title</MudTh>
         <MudTh>Created At</MudTh>
-        <MudTh>Request Status</MudTh>
+        <MudTh>Last Update</MudTh>
     </HeaderContent>
     <RowTemplate>
-        <MudTd DataLabel="Title">@context.Title</MudTd>
-        <MudTd DataLabel="Create Date">@context.CreatedAt</MudTd>
-        <MudTd DataLabel="Request Status">
+        <MudTd DataLabel="Request Status" Class="d-flex justify-center flex-grow-1">
             <MudTooltip Text="@context.RequestStatus.ToString()">
                 @if (context.RequestStatus == RequestStatus.Pending)
                 {
@@ -27,12 +27,15 @@
                 {
                     <MudIconButton Icon="@Icons.Material.Filled.Circle" Color="Color.Info"/>
                 }
-                else if(context.RequestStatus == RequestStatus.Completed)
+                else if (context.RequestStatus == RequestStatus.Completed)
                 {
                     <MudIconButton Icon="@Icons.Material.Filled.Circle" Color="Color.Success"/>
                 }
             </MudTooltip>
         </MudTd>
+        <MudTd DataLabel="Title">@context.Title</MudTd>
+        <MudTd DataLabel="Create Date">@context.CreatedAt</MudTd>
+        <MudTd DataLabel="Last Update">@context.UpdatedAt</MudTd>
     </RowTemplate>
     <PagerContent>
         <MudTablePager/>
