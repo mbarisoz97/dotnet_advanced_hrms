@@ -24,7 +24,8 @@ internal sealed class CreateTrainingRecommendationRequestCommandHandler
         _trainingDbContext = trainingDbContext;
     }
 
-    public async Task<Guid> Handle(CreateTrainingRecommendationRequestCommand request, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(CreateTrainingRecommendationRequestCommand request,
+        CancellationToken cancellationToken)
     {
         var project = await _trainingDbContext.Projects
                           .FirstOrDefaultAsync(x => x.Id == request.ProjectId, cancellationToken)

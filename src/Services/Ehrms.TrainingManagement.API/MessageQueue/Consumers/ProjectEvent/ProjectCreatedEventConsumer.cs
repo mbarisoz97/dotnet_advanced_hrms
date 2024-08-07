@@ -20,7 +20,7 @@ public sealed class ProjectCreatedEventConsumer : IConsumer<ProjectCreatedEvent>
 
 		var projectCreatedEvent = context.Message;
 
-		var project = _mapper.Map<Project>(context.Message);
+		var project = _mapper.Map<Project>(projectCreatedEvent);
 
 		project.RequiredSkills = await _dbContext.Skills
 			.Where(x => projectCreatedEvent.RequiredSkills.Contains(x.Id))

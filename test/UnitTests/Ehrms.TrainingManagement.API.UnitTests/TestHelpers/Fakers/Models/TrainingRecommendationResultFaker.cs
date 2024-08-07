@@ -13,7 +13,7 @@ internal sealed class TrainingRecommendationResultFaker : Faker<TrainingRecommen
         RuleFor(x => x.Skill, skill);
         return this;
     }
-
+    
     public TrainingRecommendationResultFaker WithRequest(TrainingRecommendationRequest request)
     {
         RuleFor(x => x.RecommendationRequest, request);

@@ -46,6 +46,7 @@ internal static class DependencyInjection
 
         busConfigurator.AddConsumer<ProjectCreatedEventConsumer>();
         busConfigurator.AddConsumer<ProjectUpdatedEventConsumer>();
+        busConfigurator.AddConsumer<ProjectDeletedEventConsumer>();
 
         busConfigurator.AddConsumer<TrainingRecommendationCompletedEventConsumer>();
         busConfigurator.AddConsumer<TrainingRecommendationRequestAcceptedEventConsumer>();

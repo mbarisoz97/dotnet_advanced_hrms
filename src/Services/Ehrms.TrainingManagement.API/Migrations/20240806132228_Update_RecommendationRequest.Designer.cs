@@ -4,6 +4,7 @@ using Ehrms.TrainingManagement.API.Database.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Ehrms.TrainingManagement.API.Migrations
 {
     [DbContext(typeof(TrainingDbContext))]
-    partial class TrainingDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240806132228_Update_RecommendationRequest")]
+    partial class Update_RecommendationRequest
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,9 +44,14 @@ namespace Ehrms.TrainingManagement.API.Migrations
                     b.Property<Guid?>("ProjectId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("TrainingRecommendationResultId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProjectId");
+
+                    b.HasIndex("TrainingRecommendationResultId");
 
                     b.ToTable("Employees");
                 });
@@ -69,7 +77,7 @@ namespace Ehrms.TrainingManagement.API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Name")
+                    b.Property<string>("SkillName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -205,21 +213,6 @@ namespace Ehrms.TrainingManagement.API.Migrations
                     b.ToTable("EmployeeTraining");
                 });
 
-            modelBuilder.Entity("EmployeeTrainingRecommendationResult", b =>
-                {
-                    b.Property<Guid>("EmployeesId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("TrainingRecommendationsId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("EmployeesId", "TrainingRecommendationsId");
-
-                    b.HasIndex("TrainingRecommendationsId");
-
-                    b.ToTable("EmployeeTrainingRecommendationResult");
-                });
-
             modelBuilder.Entity("ProjectSkill", b =>
                 {
                     b.Property<Guid>("ProjectsId")
@@ -240,6 +233,10 @@ namespace Ehrms.TrainingManagement.API.Migrations
                     b.HasOne("Ehrms.TrainingManagement.API.Database.Models.Project", null)
                         .WithMany("Employees")
                         .HasForeignKey("ProjectId");
+
+                    b.HasOne("Ehrms.TrainingManagement.API.Database.Models.TrainingRecommendationResult", null)
+                        .WithMany("Employees")
+                        .HasForeignKey("TrainingRecommendationResultId");
                 });
 
             modelBuilder.Entity("Ehrms.TrainingManagement.API.Database.Models.TrainingRecommendationRequest", b =>
@@ -298,21 +295,6 @@ namespace Ehrms.TrainingManagement.API.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("EmployeeTrainingRecommendationResult", b =>
-                {
-                    b.HasOne("Ehrms.TrainingManagement.API.Database.Models.Employee", null)
-                        .WithMany()
-                        .HasForeignKey("EmployeesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Ehrms.TrainingManagement.API.Database.Models.TrainingRecommendationResult", null)
-                        .WithMany()
-                        .HasForeignKey("TrainingRecommendationsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("ProjectSkill", b =>
                 {
                     b.HasOne("Ehrms.TrainingManagement.API.Database.Models.Project", null)
@@ -336,6 +318,11 @@ namespace Ehrms.TrainingManagement.API.Migrations
             modelBuilder.Entity("Ehrms.TrainingManagement.API.Database.Models.TrainingRecommendationRequest", b =>
                 {
                     b.Navigation("TrainingRecommendation");
+                });
+
+            modelBuilder.Entity("Ehrms.TrainingManagement.API.Database.Models.TrainingRecommendationResult", b =>
+                {
+                    b.Navigation("Employees");
                 });
 #pragma warning restore 612, 618
         }

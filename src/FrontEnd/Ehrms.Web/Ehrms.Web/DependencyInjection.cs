@@ -12,6 +12,7 @@ internal static class DependencyInjection
 		services.AddScoped<IEmploymentServiceClient, EmploymentServiceClient>();
 		services.AddScoped<IProjectServiceClient, ProjectServiceClient>();
 		services.AddScoped<IEmployeeServiceClient, EmployeeInfoServiceClient>();
+		services.AddScoped<ITrainingRecommendationServiceClient, TrainingRecommendationServiceClient>();
 		services.AddScoped<ISkillServiceClient, SkillServiceClient>();
 		services.AddScoped<ITrainingServiceClient, TrainingServiceClient>();
 		services.AddScoped<ITokenHandler, JwtTokenHandler>();

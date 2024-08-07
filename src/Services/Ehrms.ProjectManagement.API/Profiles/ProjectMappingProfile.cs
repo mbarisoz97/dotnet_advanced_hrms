@@ -51,7 +51,17 @@ internal class ProjectMappingProfile : Profile
 				opt => opt.MapFrom(
 					src => src.RequiredProjectSkills.Select(x => x.Id)));
 
-		CreateMap<Project, ProjectCreatedEvent>();
+		CreateMap<Project, ProjectCreatedEvent>()
+			.ForMember(dest => dest.Employees,
+				opt => opt.MapFrom(
+					src => src.Employments
+						.Where(x => x.EndedAt == null)
+						.Select(x => x.EmployeeId)))
+
+			.ForMember(dest => dest.RequiredSkills,
+				opt => opt.MapFrom(
+					src => src.RequiredProjectSkills.Select(x => x.Id)));
+		
 		CreateMap<Project, ProjectDeletedEvent>();
 	}
 }

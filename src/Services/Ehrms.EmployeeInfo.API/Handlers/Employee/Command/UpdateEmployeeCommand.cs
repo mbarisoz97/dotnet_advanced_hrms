@@ -64,12 +64,20 @@ internal sealed class UpdateEmployeeCommandHandler : IRequestHandler<UpdateEmplo
 		}
 	}
 
-	private async Task AddSkills(Database.Models.Employee employee, ICollection<Guid> currentSkillIdentifiers)
+	private  Task AddSkills(Database.Models.Employee employee, ICollection<Guid> currentSkillIdentifiers)
 	{
 		var skillsToAdd = _dbContext.Skills
 			.Where(x => currentSkillIdentifiers.Contains(x.Id));
 
-		await skillsToAdd.ForEachAsync(x => employee.Skills.Add(x));
+		foreach (var skill in skillsToAdd)
+		{
+			if (!employee.Skills.Contains(skill))
+			{
+				employee.Skills.Add(skill);
+			}
+		}
+
+		return Task.CompletedTask;
 	}
 
 	private async Task<Database.Models.Employee> GetEmployee(UpdateEmployeeCommand request, CancellationToken cancellationToken)

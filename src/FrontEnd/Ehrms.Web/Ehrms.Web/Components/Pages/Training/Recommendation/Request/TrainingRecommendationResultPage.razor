@@ -1,0 +1,38 @@
+@inject IToastService ToastService
+@inject ITrainingRecommendationServiceClient TrainingRecommendationService
+
+@if (_recommendationResults == null)
+{
+    <Loading></Loading>
+    return;
+}
+
+@foreach (var result in _recommendationResults)
+{
+    <p>Skill : @result.Skill</p>
+    @foreach(var employee in result.Employees)
+    {
+        <p>@employee.FullName</p>
+    }
+    <MudDivider></MudDivider>
+}
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    private IEnumerable<ReadTrainingRecommendationResultModel>? _recommendationResults;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await TrainingRecommendationService.GetRecommendationResults(Id);
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            _recommendationResults = response.Content;
+        }
+        else
+        {
+            ToastService.ShowError($"Could not load recommendation results. Service returned {response.StatusCode}");
+        }
+    }
+}

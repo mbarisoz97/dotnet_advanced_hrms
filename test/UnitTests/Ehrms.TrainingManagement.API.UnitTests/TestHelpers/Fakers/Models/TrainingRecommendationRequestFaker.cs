@@ -20,4 +20,10 @@ internal sealed class TrainingRecommendationRequestFaker : Faker<TrainingRecomme
         RuleFor(x => x.RequestStatus, status);
         return this;
     }
+
+    public TrainingRecommendationRequestFaker WithTrainingRecommendations(ICollection<TrainingRecommendationResult> trainingRecommendationResults)
+    {
+        RuleFor(x => x.TrainingRecommendation, trainingRecommendationResults);
+        return this;
+    }
 }

@@ -23,7 +23,6 @@ public class TrainingManagementWebApplicationFactory : WebApplicationFactory<Pro
             .WithEnvironment("MSSQL_SA_PASSWORD", "yourStrong(!)Password")
             .WithEnvironment("ACCEPT_EULA", "Y")
             .WithPortBinding(Port, 1433)
-
             .Build();
     }
 

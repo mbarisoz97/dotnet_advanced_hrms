@@ -22,8 +22,6 @@ public sealed class TrainingRecommendationCompletedEventConsumer : IConsumer<Tra
             return;
         }
 
-        await Task.Delay(TimeSpan.FromMinutes(1));
-
         request.UpdatedAt = DateTime.UtcNow;
         request.RequestStatus = RequestStatus.Completed;
 

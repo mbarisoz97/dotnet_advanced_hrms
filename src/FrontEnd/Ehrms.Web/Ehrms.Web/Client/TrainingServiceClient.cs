@@ -25,30 +25,6 @@ internal sealed class TrainingServiceClient : ITrainingServiceClient
         };
     }
 
-    public async Task<Response<Guid>> CreateTrainingRecommendationRequest(CreateTrainingRecommendationRequestModel createTrainingRecommendationRequest)
-    {
-        var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
-        var response = await client.PostAsJsonAsync($"{_endpointProvider.TrainingManagementServiceEndpoint}/Recommendation", createTrainingRecommendationRequest);
-
-        return new()
-        {
-            StatusCode = response.StatusCode,
-            Content = await response.GetContentAs<Guid>()
-        };
-    }
-
-    public async Task<Response<IEnumerable<ReadTrainingRecommendationRequestModel>>> GetTrainingRecommendationRequests()
-    {
-        var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
-        var response = await client.GetAsync($"{_endpointProvider.TrainingManagementServiceEndpoint}/RecommendationRequests");
-
-        return new()
-        {
-            StatusCode = response.StatusCode,
-            Content = await response.GetContentAs<IEnumerable<ReadTrainingRecommendationRequestModel>>()
-        };
-    }
-
     public async Task<Response<Guid>> DeleteTrainingAsync(Guid id)
     {
         var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");

@@ -15,7 +15,8 @@ public sealed class
 
     public async Task Consume(ConsumeContext<TrainingRecommendationRequestAcceptedEvent> context)
     {
-        var request = await _dbContext.RecommendationRequests.FirstOrDefaultAsync(x => x.Id == context.Message.RequestId);
+        var request =
+            await _dbContext.RecommendationRequests.FirstOrDefaultAsync(x => x.Id == context.Message.RequestId);
         if (request == null)
         {
             _logger.LogError("Ignored null event : <{event}>", nameof(TrainingRecommendationRequestAcceptedEvent));
@@ -54,23 +55,26 @@ public sealed class
             TrainingRecommendationResult recommendationResult = new()
             {
                 Skill = requiredSkill,
-                RecommendationRequest = request
+                RecommendationRequest = request,
             };
-            
-            foreach (var employee in project.Employees)
+
+            var employees = _dbContext.Employees
+                .Include(x=>x.Skills)
+                .Where(x => project.Employees.Contains(x));
+            foreach (var employee in employees)
             {
                 if (!employee.Skills.Contains(requiredSkill))
                 {
                     recommendationResult.Employees.Add(employee);
                 }
             }
-            
+
             if (recommendationResult.Employees.Count > 0)
             {
                 await _dbContext.AddAsync(recommendationResult);
+                await _dbContext.SaveChangesAsync();
             }
         }
-        await _dbContext.SaveChangesAsync();
     }
 
     private static async Task PublishRecommendationCompletedEvent(

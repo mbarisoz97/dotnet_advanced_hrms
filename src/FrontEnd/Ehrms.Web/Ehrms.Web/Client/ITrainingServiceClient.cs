@@ -9,6 +9,4 @@ public interface ITrainingServiceClient
 	Task<Response<TrainingModel>> UpdateTrainingAsync(TrainingModel training);
 	Task<Response<IEnumerable<TrainingModel>>> GetTrainings();
 	Task<Response<Guid>> CreateTrainingAsync(TrainingModel training);
-    Task<Response<Guid>> CreateTrainingRecommendationRequest(CreateTrainingRecommendationRequestModel createTrainingRecommendationRequest);
-    Task<Response<IEnumerable<ReadTrainingRecommendationRequestModel>>> GetTrainingRecommendationRequests();
 }

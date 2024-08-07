@@ -45,13 +45,13 @@ public class TrainingController : ControllerBase
         return Ok(readTrainingDto);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
         var command = new DeleteTrainingCommand { Id = id };
         await _mediator.Send(command);
 
-        return NoContent();
+        return Ok();
     }
 
     [HttpPost]
@@ -61,21 +61,5 @@ public class TrainingController : ControllerBase
         var readTrainingDto = _mapper.Map<ReadTrainingDto>(training);
 
         return Ok(readTrainingDto);
-    }
-
-    [HttpPost("Recommendation")]
-    public async Task<IActionResult> RecommendTraining([FromBody] CreateTrainingRecommendationRequestCommand command)
-    {
-        return Ok(await _mediator.Send(command));
-    }
-
-    [HttpGet("RecommendationRequests")]
-    public async Task<IActionResult> GetRecommendationRequests()
-    {
-            var query = new GetTrainingRecommendationsQuery();
-            var requestCollection = await _mediator.Send(query);
-            var requestDtoCollection = _mapper.ProjectTo<ReadTrainingRequestDto>(requestCollection);
-        
-            return Ok(requestDtoCollection);
     }
 }

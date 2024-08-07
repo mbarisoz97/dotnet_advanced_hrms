@@ -46,10 +46,7 @@ public class ProjectUpdatedEventConsumerTests
 			opts.Excluding(x => x.Employees)
 				.Excluding(x => x.RequiredSkills));
 
-		project?.Employees.Should()
-			.Contain(employees);
-
-		project?.RequiredSkills.Should()
-			.Contain(skills);
+		project?.Employees.Should().Contain(employees);
+		project?.RequiredSkills.Should().Contain(skills);
 	}
 }

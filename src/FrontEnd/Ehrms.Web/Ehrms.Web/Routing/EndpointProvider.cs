@@ -8,5 +8,7 @@ internal sealed class EndpointProvider : IEndpointProvider
 	public string EmployeeInfoServiceEndpoint => "/api/Employee";
 	public string? ProjectManagementApiEndpoint => "/api/Project";
 	public string? EmploymentApiEndpoint => "/api/Project/Employment";
+	
 	public string? TrainingManagementServiceEndpoint => "/api/Training";
+	public string? TrainingRecommendationServiceEndpoint => "/api/TrainingRecommendation";
 }

@@ -3,7 +3,7 @@
 
 @inject IToastService ToastService
 @inject IProjectServiceClient ProjectServiceClient
-@inject ITrainingServiceClient TrainingServiceClient
+@inject ITrainingRecommendationServiceClient TrainingRecommendationServiceClient
 
 @if (_projects == null)
 {
@@ -58,7 +58,7 @@
 
     private async Task ValidSubmit()
     {
-        var response = await TrainingServiceClient.CreateTrainingRecommendationRequest(RecommendationRequestModel);
+        var response = await TrainingRecommendationServiceClient.CreateTrainingRecommendationRequest(RecommendationRequestModel);
         if (response.StatusCode != HttpStatusCode.OK)
         {
             ToastService.ShowError($"Could create training recommendation request. Service returned {response.StatusCode}");

@@ -1,3 +1,5 @@
+using System.Collections;
+
 namespace Ehrms.TrainingManagement.API.Dtos.Training;
 
 public sealed class ReadTrainingRequestDto
