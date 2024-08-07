@@ -10,16 +10,16 @@
 @foreach (var result in _recommendationResults)
 {
     <p>Skill : @result.Skill</p>
-    @foreach(var employee in result.Employees)
+    @foreach (var employee in result.Employees)
     {
         <p>@employee.FullName</p>
     }
+
     <MudDivider></MudDivider>
 }
 
 @code {
-    [Parameter]
-    public Guid Id { get; set; }
+    [Parameter] public Guid Id { get; set; }
 
     private IEnumerable<ReadTrainingRecommendationResultModel>? _recommendationResults;
 
@@ -35,4 +35,5 @@
             ToastService.ShowError($"Could not load recommendation results. Service returned {response.StatusCode}");
         }
     }
+
 }
