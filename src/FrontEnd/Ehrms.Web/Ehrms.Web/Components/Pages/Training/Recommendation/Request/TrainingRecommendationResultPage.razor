@@ -7,16 +7,39 @@
     return;
 }
 
-@foreach (var result in _recommendationResults)
-{
-    <p>Skill : @result.Skill</p>
-    @foreach (var employee in result.Employees)
+<MudStack>
+    @foreach (var result in _recommendationResults)
     {
-        <p>@employee.FullName</p>
+        <MudExpansionPanel HideIcon="true">
+            <TitleContent>
+                <div class="d-flex">
+                    <MudText Class="mt-1">@result.Skill</MudText>
+                    <MudBadge Content="@result.Employees.Count" Overlap="true" Color="Color.Success" Overlap="true" Class="d-flex ml-auto">
+                        <MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Default"/>
+                    </MudBadge>
+                </div>
+            </TitleContent>
+            <ChildContent>
+                <MudTable Items="@result.Employees" Dense="false">
+                    <ToolBarContent>
+                        <div class="d-flex justify-content-end">
+                            <MudTooltip Text="Add Training">
+                                <MudIconButton Size="Size.Medium" Color="Color.Success" Icon="@Icons.Material.Filled.AddBox"/>
+                            </MudTooltip>
+                        </div>
+                    </ToolBarContent>
+                    <RowTemplate>
+                        <MudTd>
+                            <MudLink Href=@($"{EmployeeRouting.Details}/{@context.Id}")>
+                                @context.FullName
+                            </MudLink>
+                        </MudTd>
+                    </RowTemplate>
+                </MudTable>
+            </ChildContent>
+        </MudExpansionPanel>
     }
-
-    <MudDivider></MudDivider>
-}
+</MudStack>
 
 @code {
     [Parameter] public Guid Id { get; set; }
@@ -35,5 +58,4 @@
             ToastService.ShowError($"Could not load recommendation results. Service returned {response.StatusCode}");
         }
     }
-
 }

@@ -38,7 +38,7 @@
         <MudTd DataLabel="Title">@context.Title</MudTd>
         <MudTd DataLabel="Create Date">@context.CreatedAt</MudTd>
         <MudTd DataLabel="Last Update">@context.UpdatedAt</MudTd>
-        <MudTd DataLabel="" Class="d-flex justify-center flex-grow-1">
+        <MudTd>
             <MudTooltip Text="Delete">
                 <MudIconButton @onclick="@(() => ShowDeleteConfirmationPage(context.Id))" Size="Size.Small" Color="Color.Error" Icon="@Icons.Material.Filled.Delete"/>
             </MudTooltip>
@@ -106,4 +106,5 @@
             await LoadTrainingRecommendationRequests();
         }
     }
+
 }
