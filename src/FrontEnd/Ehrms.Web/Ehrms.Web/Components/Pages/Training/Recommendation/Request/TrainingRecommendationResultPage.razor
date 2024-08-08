@@ -1,4 +1,5 @@
 @inject IToastService ToastService
+@inject IModalService ModalService
 @inject ITrainingRecommendationServiceClient TrainingRecommendationService
 
 @if (_recommendationResults == null)
@@ -20,7 +21,7 @@
                     </div>
                 </TitleContent>
                 <ChildContent>
-                    <TrainingRecommendationResult RecommendationResult="@context"></TrainingRecommendationResult>
+                    <TrainingRecommendationResult OnCreateTrainingRequested="CreateTrainingSession" RecommendationResult="@context"></TrainingRecommendationResult>
                 </ChildContent>
             </MudExpansionPanel>
         </MudTd>
@@ -44,4 +45,16 @@
             ToastService.ShowError($"Could not load recommendation results. Service returned {response.StatusCode}");
         }
     }
+
+    private async Task CreateTrainingSession(ReadTrainingRecommendationResultModel recommendationResult)
+    {
+        var modalParameters = new ModalParameters()
+            .Add(nameof(TrainingCreatePage.Description), recommendationResult.Title)
+            .Add(nameof(TrainingCreatePage.SelectedEmployees), recommendationResult.Employees.Select(x => x.Id));
+        
+        var modalReference = ModalService.Show<TrainingCreatePage>("Create training for recommendations", modalParameters);
+
+        await modalReference.Result;
+    }
+
 }

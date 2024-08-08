@@ -1,20 +1,27 @@
-<MudTable Items="@RecommendationResult.Employees" Dense="false">
+@inject IModalService ModalService
+
+<MudTable Items="@RecommendationResult!.Employees" Dense="false">
     <ToolBarContent>
         <div class="d-flex justify-content-end">
             <MudTooltip Text="Add Training">
-                <MudIconButton Size="Size.Medium" Color="Color.Success" Icon="@Icons.Material.Filled.AddBox"/>
+                <MudIconButton Size="Size.Medium" Color="Color.Success" Icon="@Icons.Material.Filled.AddBox"
+                               @onclick="@(()=>CreateTraining(RecommendationResult))"/>
             </MudTooltip>
         </div>
     </ToolBarContent>
     <RowTemplate>
         <MudTd>
-            <MudLink Href=@($"{EmployeeRouting.Details}/{@context.Id}")>
-                @context.FullName
-            </MudLink>
+            <MudLink Href=@($"{EmployeeRouting.Details}/{@context.Id}")>@context.FullName</MudLink>
         </MudTd>
     </RowTemplate>
 </MudTable>
 
 @code {
-    [Parameter] public ReadTrainingRecommendationResultModel RecommendationResult { get; set; }
+    [Parameter] public ReadTrainingRecommendationResultModel? RecommendationResult { get; set; }
+    [Parameter] public EventCallback<ReadTrainingRecommendationResultModel> OnCreateTrainingRequested { get; set; }
+
+    private async Task CreateTraining(ReadTrainingRecommendationResultModel trainingRecommendationResult)
+    {
+        await OnCreateTrainingRequested.InvokeAsync(trainingRecommendationResult);
+    }
 }
