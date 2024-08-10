@@ -36,7 +36,7 @@
     </div>
     <div class="mt-3">
         <MudTooltip Text="Save">
-            <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save" ButtonType="ButtonType.Submit"/>
+            <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save" ButtonType="ButtonType.Submit" />
         </MudTooltip>
     </div>
 </EditForm>
@@ -58,13 +58,11 @@
         await FillEmployeeData();
         if (IsEditMode)
         {
-            await FillTrainingData();
+            await FillExistingTrainingData();
         }
         else
         {
-            Training ??= new TrainingModel();
-            Participants = Employees.Where(x => SelectedEmployees.Contains(x.Id));
-            Training.Description = Description;
+            await FillNewTrainingData();
         }
     }
 
@@ -83,7 +81,20 @@
         }
     }
 
-    private async Task FillTrainingData()
+    private Task FillNewTrainingData()
+    {
+        Training ??= new TrainingModel();
+        Training.Description = Description;
+
+        if (SelectedEmployees != null)
+        {
+            Participants = Employees.Where(x => SelectedEmployees.Contains(x.Id));
+        }
+        
+        return Task.CompletedTask;
+    }
+
+    private async Task FillExistingTrainingData()
     {
         var response = await TrainingServiceClient.GetTrainingAsync(Id);
         if (response.StatusCode == HttpStatusCode.OK)

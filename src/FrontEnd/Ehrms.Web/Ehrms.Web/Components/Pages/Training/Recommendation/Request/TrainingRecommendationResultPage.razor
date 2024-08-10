@@ -16,7 +16,7 @@
                     <div class="d-flex">
                         <MudText Class="mt-1">@context.Skill</MudText>
                         <MudBadge Content="@context.Employees.Count" Overlap="true" Color="Color.Success" Class="d-flex ml-auto">
-                            <MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Primary"/>
+                            <MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Primary" />
                         </MudBadge>
                     </div>
                 </TitleContent>
@@ -51,10 +51,8 @@
         var modalParameters = new ModalParameters()
             .Add(nameof(TrainingCreatePage.Description), recommendationResult.Title)
             .Add(nameof(TrainingCreatePage.SelectedEmployees), recommendationResult.Employees.Select(x => x.Id));
-        
+
         var modalReference = ModalService.Show<TrainingCreatePage>("Create training for recommendations", modalParameters);
-
-        await modalReference.Result;
+        var modalResult = await modalReference.Result;
     }
-
 }
