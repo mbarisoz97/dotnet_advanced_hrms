@@ -51,7 +51,7 @@ public class TrainingController : ControllerBase
         var command = new DeleteTrainingCommand { Id = id };
         await _mediator.Send(command);
 
-        return Ok();
+        return NoContent();
     }
 
     [HttpPost]

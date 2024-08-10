@@ -19,9 +19,6 @@ public class TrainingManagementWebApplicationFactory : WebApplicationFactory<Pro
     public TrainingManagementWebApplicationFactory()
     {
         _msSqlContainer = new MsSqlBuilder()
-            .WithImage("mcr.microsoft.com/mssql/server")
-            .WithEnvironment("MSSQL_SA_PASSWORD", "yourStrong(!)Password")
-            .WithEnvironment("ACCEPT_EULA", "Y")
             .WithPortBinding(Port, 1433)
             .Build();
     }
@@ -64,7 +61,14 @@ public class TrainingManagementWebApplicationFactory : WebApplicationFactory<Pro
 
     public async Task InitializeAsync()
     {
-        await _msSqlContainer.StartAsync();
+        try
+        {
+            await _msSqlContainer.StartAsync();
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
     }
 
     public async new Task DisposeAsync()
