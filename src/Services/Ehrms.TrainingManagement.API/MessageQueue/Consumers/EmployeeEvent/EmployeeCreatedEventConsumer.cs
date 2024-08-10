@@ -1,9 +1,6 @@
-﻿using MassTransit;
-using Ehrms.Contracts.Employee;
-using Ehrms.TrainingManagement.API.Database.Models;
-using Ehrms.TrainingManagement.API.Database.Context;
+﻿using Ehrms.Contracts.Employee;
 
-namespace Ehrms.TrainingManagement.API.Consumers.EmployeeEvent;
+namespace Ehrms.TrainingManagement.API.MessageQueue.Consumers.EmployeeEvent;
 
 public class EmployeeCreatedEventConsumer : IConsumer<EmployeeCreatedEvent>
 {
@@ -19,6 +16,11 @@ public class EmployeeCreatedEventConsumer : IConsumer<EmployeeCreatedEvent>
 	public async Task Consume(ConsumeContext<EmployeeCreatedEvent> context)
 	{
 		var employee = _mapper.Map<Employee>(context.Message);
+
+		await _dbContext.Skills
+			.Where(x => context.Message.Skills.Contains(x.Id))
+			.ForEachAsync(employee.Skills.Add);
+
 		await _dbContext.AddAsync(employee);
 		await _dbContext.SaveChangesAsync();
 	}

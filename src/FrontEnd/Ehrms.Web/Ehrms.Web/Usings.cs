@@ -1,1 +1,1 @@
-﻿
+﻿global using Ehrms.Web.Models;

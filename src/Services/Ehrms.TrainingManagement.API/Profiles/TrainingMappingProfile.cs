@@ -1,14 +1,10 @@
-﻿using Ehrms.Contracts.Employee;
-using Ehrms.TrainingManagement.API.Database.Models;
-
-namespace Ehrms.TrainingManagement.API.Profiles;
+﻿namespace Ehrms.TrainingManagement.API.Profiles;
 
 public class TrainingMappingProfile : Profile
 {
 	public TrainingMappingProfile()
 	{
 		AddModelToDtoMappings();
-		AddEventToModelMappings();
 		AddCommandToModelMappings();
 	}
 
@@ -26,11 +22,5 @@ public class TrainingMappingProfile : Profile
 		CreateMap<Training, ReadTrainingDto>()
 			.ForMember(dest => dest.Participants,
 				opt => opt.MapFrom(src => src.Participants.Select(x => x.Id)));
-	}
-
-	private void AddEventToModelMappings()
-	{
-		CreateMap<EmployeeCreatedEvent, Employee>();
-		CreateMap<EmployeeUpdatedEvent, Employee>();
 	}
 }

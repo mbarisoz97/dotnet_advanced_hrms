@@ -25,12 +25,14 @@ public class EmployeeMappingProfiles : Profile
         CreateMap<Employee, ReadEmployeeDto>()
             .ForMember(dest => dest.Skills,
                 opt => opt.MapFrom(
-                    src => src.Skills.Select(x=>x.Id)));
+                    src => src.Skills.Select(x => x.Id)));
     }
 
     private void AddModelToMessageQueueEventMappings()
     {
-        CreateMap<Employee, EmployeeCreatedEvent>();
-		CreateMap<Employee, EmployeeUpdatedEvent>();
-	}
+        CreateMap<Employee, EmployeeCreatedEvent>()
+            .ForMember(dest => dest.Skills, opt => opt.MapFrom(x => x.Skills.Select(y => y.Id).ToList()));
+        CreateMap<Employee, EmployeeUpdatedEvent>()
+             .ForMember(dest => dest.Skills, opt => opt.MapFrom(x => x.Skills.Select(y => y.Id).ToList()));
+    }
 }

@@ -12,6 +12,6 @@ public class CreateTrainingCommandValidator : AbstractValidator<CreateTrainingCo
             .MaximumLength(Consts.MaxTrainingNameLength);
 
         RuleFor(x => x.Description)
-             .NotEmpty();
-	}
+            .NotEmpty();
+    }
 }

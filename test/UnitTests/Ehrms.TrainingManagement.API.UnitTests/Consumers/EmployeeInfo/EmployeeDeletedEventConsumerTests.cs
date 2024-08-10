@@ -2,7 +2,7 @@
 using MassTransit;
 using Microsoft.Extensions.Logging;
 using Ehrms.Contracts.Employee;
-using Ehrms.TrainingManagement.API.Consumers.EmployeeEvent;
+using Ehrms.TrainingManagement.API.MessageQueue.Consumers.EmployeeEvent;
 using Ehrms.TrainingManagement.API.UnitTests.TestHelpers.Fakers.Events;
 
 namespace Ehrms.TrainingManagement.API.UnitTests.Consumers.EmployeeInfo;

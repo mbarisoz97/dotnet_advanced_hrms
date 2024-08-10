@@ -45,7 +45,7 @@ public class TrainingController : ControllerBase
         return Ok(readTrainingDto);
     }
 
-    [HttpDelete("{id}")]
+    [HttpDelete("{id:guid}")]
     public async Task<IActionResult> Delete(Guid id)
     {
         var command = new DeleteTrainingCommand { Id = id };

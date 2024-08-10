@@ -1,0 +1,110 @@
+﻿@attribute [Route($"{TrainingRouting.Recommendation}")]
+@attribute [Authorize]
+@attribute [StreamRendering]
+
+@inject IModalService ModalService
+@inject IToastService ToastService
+@inject ITrainingRecommendationServiceClient TrainingRecommendationServiceClient
+
+<MudTable Items="@_trainingRecommendationRequests" Dense="true" Hover="true" Loading="@_isLoading" Bordered="true" Striped="true">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Training Recommendation Requests</MudText>
+        <MudSpacer/>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Request Status</MudTh>
+        <MudTh>Title</MudTh>
+        <MudTh>Created At</MudTh>
+        <MudTh>Last Update</MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Request Status" Class="d-flex justify-center flex-grow-1">
+            <MudTooltip Text="@context.RequestStatus.ToString()">
+                @if (context.RequestStatus == RequestStatus.Pending)
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.Pending" Color="Color.Warning"/>
+                }
+                else if (context.RequestStatus == RequestStatus.Accepted)
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.Circle" Color="Color.Info"/>
+                }
+                else if (context.RequestStatus == RequestStatus.Completed)
+                {
+                    <MudIconButton Icon="@Icons.Material.Filled.DoneAll" Color="Color.Success"/>
+                }
+            </MudTooltip>
+        </MudTd>
+        <MudTd DataLabel="Title">@context.Title</MudTd>
+        <MudTd DataLabel="Create Date">@context.CreatedAt</MudTd>
+        <MudTd DataLabel="Last Update">@context.UpdatedAt</MudTd>
+        <MudTd>
+            <MudTooltip Text="Delete">
+                <MudIconButton @onclick="@(() => ShowDeleteConfirmationPage(context.Id))" Size="Size.Small" Color="Color.Error" Icon="@Icons.Material.Filled.Delete"/>
+            </MudTooltip>
+            @if (context.RequestStatus == RequestStatus.Completed)
+            {
+                <MudTooltip Text="Read More">
+                    <MudIconButton @onclick="@(() => ShowTrainingRecommendationResults(context.Id))" Size="Size.Small" Icon="@Icons.Material.Filled.ReadMore"/>
+                </MudTooltip>
+            }
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager/>
+    </PagerContent>
+</MudTable>
+
+@code {
+    private IEnumerable<ReadTrainingRecommendationRequestModel>? _trainingRecommendationRequests;
+    private bool _isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTrainingRecommendationRequests();
+    }
+
+    private async Task LoadTrainingRecommendationRequests()
+    {
+        ShowLoadingBar();
+
+        var response = await TrainingRecommendationServiceClient.GetTrainingRecommendationRequests();
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            _trainingRecommendationRequests = response.Content;
+        }
+        else
+        {
+            ToastService.ShowError($"Could not load training recommendation requests. Service returned : {response.StatusCode}");
+        }
+
+        HideLoadingBar();
+    }
+
+    private void ShowLoadingBar() => _isLoading = true;
+    private void HideLoadingBar() => _isLoading = false;
+
+    private async Task ShowTrainingRecommendationResults(Guid requestId)
+    {
+        var parameters = new ModalParameters()
+            .Add(nameof(TrainingRecommendationResultPage.Id), requestId);
+
+        var modalReference = ModalService.Show<TrainingRecommendationResultPage>("Training Recommendations", parameters);
+        await modalReference.Result;
+    }
+
+    private async Task ShowDeleteConfirmationPage(Guid id)
+    {
+        var parameters = new ModalParameters()
+            .Add(nameof(TrainingRecommendationDeletePage.Id), id);
+
+        var modalReference = ModalService.Show<TrainingRecommendationDeletePage>("Confirm", parameters);
+        var modalResult = await modalReference.Result;
+
+        if (modalResult.Confirmed)
+        {
+            await LoadTrainingRecommendationRequests();
+        }
+    }
+
+}

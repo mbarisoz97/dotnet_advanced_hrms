@@ -19,11 +19,7 @@ public class EmployeeInfoWebApplicationFactory : WebApplicationFactory<Program>,
     public EmployeeInfoWebApplicationFactory()
     {
         _msSqlContainer = new MsSqlBuilder()
-            .WithImage("mcr.microsoft.com/mssql/server")
-            .WithEnvironment("MSSQL_SA_PASSWORD", "yourStrong(!)Password")
-            .WithEnvironment("ACCEPT_EULA", "Y")
             .WithPortBinding(Port, 1433)
-
             .Build();
     }
 

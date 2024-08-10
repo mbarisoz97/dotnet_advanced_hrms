@@ -15,6 +15,14 @@ internal class UpdateProjectCommandFaker : Faker<UpdateProjectCommand>
 		RuleFor(x => x.Id, id);
 		return this;
 	}
+
+	public UpdateProjectCommandFaker WithEmployees(ICollection<Employee> employees)
+	{
+		var idCollection = employees.Select(x => x.Id).ToList();
+		RuleFor(x => x.Employees, idCollection);
+		return this;
+	}
+
 	public UpdateProjectCommandFaker WithRequiredSkills(ICollection<Skill> skills)
 	{
 		var idCollection = skills.Select(x => x.Id).ToList();

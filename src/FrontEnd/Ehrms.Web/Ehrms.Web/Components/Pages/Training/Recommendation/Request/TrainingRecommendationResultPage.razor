@@ -1,0 +1,58 @@
+@inject IToastService ToastService
+@inject IModalService ModalService
+@inject ITrainingRecommendationServiceClient TrainingRecommendationService
+
+@if (_recommendationResults == null)
+{
+    <Loading></Loading>
+    return;
+}
+
+<MudTable Items="_recommendationResults" Dense="false">
+    <RowTemplate>
+        <MudTd>
+            <MudExpansionPanel HideIcon="true">
+                <TitleContent>
+                    <div class="d-flex">
+                        <MudText Class="mt-1">@context.Skill</MudText>
+                        <MudBadge Content="@context.Employees.Count" Overlap="true" Color="Color.Success" Class="d-flex ml-auto">
+                            <MudIcon Icon="@Icons.Material.Filled.Info" Color="Color.Primary" />
+                        </MudBadge>
+                    </div>
+                </TitleContent>
+                <ChildContent>
+                    <TrainingRecommendationResult OnCreateTrainingRequested="CreateTrainingSession" RecommendationResult="@context"></TrainingRecommendationResult>
+                </ChildContent>
+            </MudExpansionPanel>
+        </MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+
+    private IEnumerable<ReadTrainingRecommendationResultModel>? _recommendationResults;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await TrainingRecommendationService.GetRecommendationResults(Id);
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            _recommendationResults = response.Content;
+        }
+        else
+        {
+            ToastService.ShowError($"Could not load recommendation results. Service returned {response.StatusCode}");
+        }
+    }
+
+    private async Task CreateTrainingSession(ReadTrainingRecommendationResultModel recommendationResult)
+    {
+        var modalParameters = new ModalParameters()
+            .Add(nameof(TrainingCreatePage.Description), recommendationResult.Title)
+            .Add(nameof(TrainingCreatePage.SelectedEmployees), recommendationResult.Employees.Select(x => x.Id));
+
+        var modalReference = ModalService.Show<TrainingCreatePage>("Create training for recommendations", modalParameters);
+        var modalResult = await modalReference.Result;
+    }
+}

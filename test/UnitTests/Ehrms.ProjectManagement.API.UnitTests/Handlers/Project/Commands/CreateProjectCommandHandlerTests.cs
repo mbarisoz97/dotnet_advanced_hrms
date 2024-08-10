@@ -1,9 +1,10 @@
-﻿using Ehrms.ProjectManagement.API.Database.Context;
+﻿using Ehrms.Contracts.Project;
 
 namespace Ehrms.ProjectManagement.API.UnitTests.Handlers.Project.Commands;
 
 public class CreateProjectCommandHandlerTests
 {
+	private readonly Mock<IPublishEndpoint> _publishEndpointMock = new();
 	private readonly CreateProjectCommandHandler _handler;
 	private readonly ProjectDbContext _projectDbContext;
 
@@ -18,7 +19,7 @@ public class CreateProjectCommandHandlerTests
 			.UseInMemoryDatabase(Guid.NewGuid().ToString())
 			.Options);
 
-		_handler = new(mapper, _projectDbContext);
+		_handler = new(mapper, _publishEndpointMock.Object, _projectDbContext);
 	}
 
 	[Fact]
@@ -79,5 +80,25 @@ public class CreateProjectCommandHandlerTests
 
 		project.Employments.Should().HaveCount(employees.Count);
 		project.RequiredProjectSkills.Should().HaveCount(skills.Count);
+	}
+
+	[Fact]
+	public async Task Handle_SuccessfullyCreatedProject_PublishedProjectCreatedEvent()
+	{
+		ProjectCreatedEvent? projectCreatedEvent = null;
+		_publishEndpointMock.Setup(x => x.Publish(It.IsAny<ProjectCreatedEvent>(), It.IsAny<CancellationToken>()))
+			.Callback((ProjectCreatedEvent @event, CancellationToken token) =>
+			{
+				projectCreatedEvent = @event;
+			});
+
+		CreateProjectCommand command = new CreateProjectCommandFaker().Generate();
+		var project = await _handler.Handle(command, default);
+
+		_publishEndpointMock.Verify(x => x.Publish(It.IsAny<ProjectCreatedEvent>(), It.IsAny<CancellationToken>()), Times.Once);
+
+		projectCreatedEvent.Should().NotBeNull();
+		projectCreatedEvent?.Id.Should().Be(project.Id);
+		projectCreatedEvent.Should().BeEquivalentTo(command, opts => opts.Excluding(x=>x.Description));
 	}
 }

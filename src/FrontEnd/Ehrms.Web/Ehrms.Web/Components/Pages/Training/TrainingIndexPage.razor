@@ -12,7 +12,10 @@
 		<MudSpacer />
 		<MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
 		<MudTooltip Text="Add Training">
-			<MudIconButton Size="Size.Large" Color="Color.Success" Icon="@Icons.Material.Filled.AddBox" @onclick="@(()=>ShowCreateTrainingDialog())" />
+			<MudIconButton Size="Size.Medium" Color="Color.Success" Icon="@Icons.Material.Filled.AddBox" @onclick="@(()=>ShowCreateTrainingDialog())" />
+		</MudTooltip>
+		<MudTooltip Text="Recommend Training">
+			<MudIconButton Class="justify-end" Size="Size.Medium" Color="Color.Error" Icon="@Icons.Material.Filled.ElectricBolt" @onclick="@(()=>ShowTrainingRecommendationDialog())" />
 		</MudTooltip>
 	</ToolBarContent>
 	<HeaderContent>
@@ -82,6 +85,17 @@
 		{
 			ToastService.ShowSuccess("Training deleted successfully.");
 			await UpdateTrainings();
+		}
+	}
+
+	private async Task ShowTrainingRecommendationDialog()
+	{
+		var modalReference = ModalService.Show<TrainingRecommendationCreatePage>("Recommend Training");
+		var modalResult = await modalReference.Result;
+
+		if (modalResult.Confirmed)
+		{
+			ToastService.ShowSuccess("Successfully created training recommendation request.");
 		}
 	}
 

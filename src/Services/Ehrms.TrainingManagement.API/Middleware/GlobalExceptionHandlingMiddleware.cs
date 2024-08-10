@@ -29,6 +29,7 @@ internal class GlobalExceptionHandlingMiddleware : IMiddleware
         catch(Exception ex)
         {
             _logger.LogError(ex, "An unhandled exception occured.");
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
         }
     }
 }

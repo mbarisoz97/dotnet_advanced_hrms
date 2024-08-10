@@ -1,0 +1,58 @@
+@inject IModalService ModalService
+
+<MudTable @ref="_table"
+          T="RecommendationResultEmployeeModel"
+          Items="@RecommendationResult!.Employees"
+          @bind-SelectedEmployees="SelectedEmployees"
+          OnRowClick="@OnRowClick"
+          Hover="true"
+          Dense="false"
+          MultiSelection="true"
+          SelectOnRowClick="true">
+    <HeaderContent>
+        <div class="d-flex justify-content-end">
+            <MudTooltip Text="Add Training">
+                <MudIconButton Size="Size.Medium" Color="Color.Success" Icon="@Icons.Material.Filled.AddBox" @onclick="@(()=>CreateTraining(RecommendationResult))" />
+            </MudTooltip>
+        </div>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.FullName</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    [Parameter] public ReadTrainingRecommendationResultModel? RecommendationResult { get; set; }
+    [Parameter] public EventCallback<ReadTrainingRecommendationResultModel> OnCreateTrainingRequested { get; set; }
+
+    private MudTable<RecommendationResultEmployeeModel> _table;
+    private HashSet<RecommendationResultEmployeeModel> SelectedEmployees = new();
+
+    private async Task CreateTraining(ReadTrainingRecommendationResultModel trainingRecommendationResult)
+    {
+        trainingRecommendationResult.Employees = SelectedEmployees;
+        await OnCreateTrainingRequested.InvokeAsync(new ReadTrainingRecommendationResultModel
+            {
+                Skill = trainingRecommendationResult.Skill,
+                Title = trainingRecommendationResult.Title,
+                Employees = SelectedEmployees
+            });
+    }
+
+    private void OnRowClick(TableRowClickEventArgs<RecommendationResultEmployeeModel> args)
+    {
+        if (args == null || args.Item == null)
+        {
+            return;
+        }
+
+        if (SelectedEmployees.Contains(args.Item))
+        {
+            SelectedEmployees.Remove(args.Item);
+        }
+        else
+        {
+            SelectedEmployees.Add(args.Item);
+        }
+    }
+}

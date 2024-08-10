@@ -1,0 +1,77 @@
+@attribute [Authorize]
+@attribute [StreamRendering]
+
+@inject NavigationManager NavigationManager
+@inject IToastService ToastService
+@inject ITrainingRecommendationServiceClient TrainingRecommendationServiceClient
+
+@if (TrainingRecommendationRequest == null)
+{
+    <Loading></Loading>
+}
+else
+{
+    <div class="form-group">
+        <table class="table">
+            <tbody>
+            <tr>
+                <td>Training Recommendation Request</td>
+                <td>@TrainingRecommendationRequest.Title</td>
+            </tr>
+            <tr>
+                <td>Created At</td>
+                <td>@TrainingRecommendationRequest.CreatedAt</td>
+            </tr>
+            <tr>
+                <td>Updated At</td>
+                <td>@TrainingRecommendationRequest.UpdatedAt</td>
+            </tr>
+            <tr>
+                <td>Request Status</td>
+                <td>@TrainingRecommendationRequest.RequestStatus</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div class="form-group">
+        <button @onclick="Remove" class="btn btn-danger">Delete</button>
+        <button @onclick="Cancel" class="btn btn-warning">Cancel</button>
+    </div>
+}
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+
+    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
+
+    private ReadTrainingRecommendationRequestModel? TrainingRecommendationRequest { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await TrainingRecommendationServiceClient.GetTrainingRecommendationRequest(Id);
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            TrainingRecommendationRequest = response.Content;
+        }
+    }
+
+    private async Task Remove()
+    {
+        var response = await TrainingRecommendationServiceClient.DeleteTrainingRecommendationRequest(Id);
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            await BlazoredModal.CloseAsync(ModalResult.Ok());
+            ToastService.ShowSuccess("Training recommendation request deleted successfully.");
+        }
+        else
+        {
+            ToastService.ShowError($"Service returned : {response.StatusCode}");
+        }
+    }
+
+    private async Task Cancel()
+    {
+        await BlazoredModal.CloseAsync(ModalResult.Cancel());
+    }
+
+}

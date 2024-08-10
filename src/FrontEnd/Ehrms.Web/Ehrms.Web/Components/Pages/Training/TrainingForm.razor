@@ -5,95 +5,105 @@
 
 @if (Training == null)
 {
-	<Loading></Loading>
-	return;
+    <Loading></Loading>
+    return;
 }
 
 <EditForm Model="@Training" OnValidSubmit="ValidSubmit" FormName="ProjectForm">
-	<DataAnnotationsValidator></DataAnnotationsValidator>
-	<div class="mt-3">
-		<label class="form-label">Name</label>
-		<InputText class="form-control" @bind-Value="@Training.Name"></InputText>
-		<ValidationMessage class="text-danger" For="(()=> Training.Name)"></ValidationMessage>
-	</div>
-	<div class="mt-3">
-		<label class="form-label">Description</label>
-		<InputTextArea class="form-control" @bind-Value="@Training.Description"></InputTextArea>
-		<ValidationMessage class="text-danger" For="(()=> Training.Description)"></ValidationMessage>
-	</div>
-	<div class="mt-3">
-		<label class="form-label">Planned Date</label>
-		<InputDate class="form-control" @bind-Value="@Training.PlannedAt"></InputDate>
-		<ValidationMessage class="text-danger" For="(()=> Training.PlannedAt)"></ValidationMessage>
-	</div>
-	<div class="mt-3">
-		<MudSelect T="EmployeeModel" Label="Select Participants" MultiSelection="true" @bind-SelectedValues="Participants" AdornmentIcon="@Icons.Material.Filled.Add" AnchorOrigin="Origin.BottomCenter">
-			@foreach (var employee in Employees)
-			{
-				<MudSelectItem T="EmployeeModel" Value="@employee">@($"{employee.FirstName} {employee.LastName}")</MudSelectItem>
-			}
-		</MudSelect>
-	</div>
-	<div class="mt-3">
-		<MudTooltip Text="Save">
-			<MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save" ButtonType="ButtonType.Submit" />
-		</MudTooltip>
-	</div>
+    <DataAnnotationsValidator></DataAnnotationsValidator>
+    <div class="mt-3">
+        <label class="form-label">Name</label>
+        <InputText class="form-control" @bind-Value="@Training.Name"></InputText>
+        <ValidationMessage class="text-danger" For="(() => Training.Name)"></ValidationMessage>
+    </div>
+    <div class="mt-3">
+        <label class="form-label">Description</label>
+        <InputTextArea class="form-control" @bind-Value="@Training.Description"></InputTextArea>
+        <ValidationMessage class="text-danger" For="(() => Training.Description)"></ValidationMessage>
+    </div>
+    <div class="mt-3">
+        <label class="form-label">Planned Date</label>
+        <InputDate class="form-control" @bind-Value="@Training.PlannedAt"></InputDate>
+        <ValidationMessage class="text-danger" For="(() => Training.PlannedAt)"></ValidationMessage>
+    </div>
+    <div class="mt-3">
+        <MudSelect T="EmployeeModel" Label="Select Participants" MultiSelection="true" @bind-SelectedValues="Participants" AdornmentIcon="@Icons.Material.Filled.Add" AnchorOrigin="Origin.BottomCenter">
+            @foreach (var employee in Employees)
+            {
+                <MudSelectItem T="EmployeeModel" Value="@employee">@($"{employee.FirstName} {employee.LastName}")</MudSelectItem>
+            }
+        </MudSelect>
+    </div>
+    <div class="mt-3">
+        <MudTooltip Text="Save">
+            <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save" ButtonType="ButtonType.Submit" />
+        </MudTooltip>
+    </div>
 </EditForm>
 
 @code {
-	[Parameter] public Guid Id { get; set; }
-	[Parameter] public bool IsEditMode { get; set; }
-	[Parameter] public EventCallback<TrainingModel> OnValidSubmit { get; set; }
+    [Parameter] public Guid Id { get; set; }
+    [Parameter] public bool IsEditMode { get; set; }
+    [Parameter] public string Description { get; set; } = string.Empty;
+    [Parameter] public IEnumerable<Guid> SelectedEmployees { get; set; } = [];
 
-	[SupplyParameterFromForm]
-	public TrainingModel? Training { get; set; }
+    [Parameter] public EventCallback<TrainingModel> OnValidSubmit { get; set; }
+    [SupplyParameterFromForm] public TrainingModel? Training { get; set; }
 
-	private IEnumerable<EmployeeModel> Employees { get; set; } = Enumerable.Empty<EmployeeModel>();
-	private IEnumerable<EmployeeModel> Participants { get; set; } = Enumerable.Empty<EmployeeModel>();
+    private IEnumerable<EmployeeModel> Employees { get; set; } = [];
+    private IEnumerable<EmployeeModel> Participants { get; set; } = [];
 
-	protected override async Task OnInitializedAsync()
-	{
-		await FillEmployeeData();
-		if (IsEditMode)
-		{
-			await FillTrainingData();
-		}
-		else
-		{
-			Training ??= new();
-		}
-	}
+    protected override async Task OnInitializedAsync()
+    {
+        await FillEmployeeData();
+        if (IsEditMode)
+        {
+            await FillExistingTrainingData();
+        }
+        else
+        {
+            await FillNewTrainingData();
+        }
+    }
 
-	protected async Task ValidSubmit()
-	{
-		Training.Participants = Participants.Select(x => x.Id).ToList();
-		await OnValidSubmit.InvokeAsync(Training);
-	}
+    protected async Task ValidSubmit()
+    {
+        Training.Participants = Participants.Select(x => x.Id).ToList();
+        await OnValidSubmit.InvokeAsync(Training);
+    }
 
-	private async Task FillEmployeeData()
-	{
-		var response = await EmployeeServiceClient.GetEmployeesAsync();
-		if (response.StatusCode == HttpStatusCode.OK)
-		{
-			Employees = response.Content ?? [];
-			return;
-		}
-	}
+    private async Task FillEmployeeData()
+    {
+        var response = await EmployeeServiceClient.GetEmployeesAsync();
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            Employees = response.Content ?? [];
+        }
+    }
 
-	private async Task FillTrainingData()
-	{
-		var response = await TrainingServiceClient.GetTrainingAsync(Id);
-		if (response.StatusCode == HttpStatusCode.OK)
-		{
-			Training = response.Content;
+    private Task FillNewTrainingData()
+    {
+        Training ??= new TrainingModel();
+        Training.Description = Description;
 
-			if (IsEditMode)
-			{
-				Participants = Employees.Where(x => Training.Participants.Contains(x.Id));
-			}
+        if (SelectedEmployees != null)
+        {
+            Participants = Employees.Where(x => SelectedEmployees.Contains(x.Id));
+        }
+        
+        return Task.CompletedTask;
+    }
 
-			return;
-		}
-	}
+    private async Task FillExistingTrainingData()
+    {
+        var response = await TrainingServiceClient.GetTrainingAsync(Id);
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            Training = response.Content;
+            if (Training != null)
+            {
+                Participants = Employees.Where(x => Training.Participants.Contains(x.Id));
+            }
+        }
+    }
 }

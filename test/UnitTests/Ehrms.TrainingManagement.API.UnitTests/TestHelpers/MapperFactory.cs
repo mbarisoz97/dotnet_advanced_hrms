@@ -8,7 +8,12 @@ internal static class MapperFactory
 	{
 		return new Mapper(new MapperConfiguration(cfg =>
 		{
-			cfg.AddProfile(new TrainingMappingProfile());
+			cfg.AddProfiles([
+				new TrainingMappingProfile(),
+				new SkillMappingProfile(),
+				new ProjectMappingProfile(),
+				new EmployeeMappingProfile()
+			]);
 		}));
 	}
 }
