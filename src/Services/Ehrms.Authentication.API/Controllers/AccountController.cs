@@ -32,6 +32,11 @@ public class AccountController : ControllerBase
 			return Unauthorized();
 		}
 
+		if (!user.IsActive)
+		{
+			return Unauthorized();
+		}
+
 		if (!await _userManager.CheckPasswordAsync(user, request.Password))
 		{
 			return Unauthorized();
