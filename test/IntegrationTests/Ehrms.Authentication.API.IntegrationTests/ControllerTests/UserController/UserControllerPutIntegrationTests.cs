@@ -3,9 +3,9 @@ using System.Net.Http.Json;
 
 namespace Ehrms.Authentication.API.IntegrationTests.ControllerTests.UserController;
 
-public class UserControllerPutTests : AuthenticatipnApiBaseIntegrationTest
+public class UserControllerPutIntegrationTests : AuthenticatipnApiBaseIntegrationTest
 {
-    public UserControllerPutTests(AuthenticationWebApplicationFactory factory) : base(factory)
+    public UserControllerPutIntegrationTests(AuthenticationWebApplicationFactory factory) : base(factory)
     {
     }
 

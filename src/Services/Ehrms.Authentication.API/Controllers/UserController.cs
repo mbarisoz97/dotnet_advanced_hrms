@@ -1,20 +1,21 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using Ehrms.Authentication.API.Handlers.User.Commands;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Ehrms.Authentication.API.Dto;
 
 namespace Ehrms.Authentication.API.Controllers;
 
-[Route("api/[controller]")]
-[ApiController]
 [Authorize]
+[ApiController]
+[Route("api/[controller]")]
 public class UserController : ControllerBase
 {
     private readonly IMediator _mediator;
+    private readonly IMapper _mapper;
 
-    public UserController(IMediator mediator)
+    public UserController(IMediator mediator, IMapper mapper)
     {
         _mediator = mediator;
+        _mapper = mapper;
     }
 
     [HttpPut("Register")]
@@ -26,5 +27,16 @@ public class UserController : ControllerBase
             err => BadRequest());
 
         return actionRes;
+    }
+
+    [HttpPost("Update")]
+    public async Task<IActionResult> Update([FromBody] UpdateUserCommand command)
+    {
+        var commandResult = await _mediator.Send(command);
+        var actionResult = commandResult.Match<IActionResult>(
+            user => Ok(_mapper.Map<ReadUserDto>(user)),
+            err => BadRequest());
+
+        return actionResult;
     }
 }

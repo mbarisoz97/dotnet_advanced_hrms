@@ -32,7 +32,7 @@ internal sealed class CreateUserCommandHandler : IRequestHandler<RegisterUserCom
             Email = request.Email,
             IsActive = false
         };
-        
+
         var identityResult = await _userManagerAdapter.CreateAsync(user, request.Password);
         if (identityResult == null || !identityResult.Succeeded)
         {

@@ -1,4 +1,8 @@
-﻿global using Ehrms.Authentication.API;
-global using LanguageExt.Common;
+﻿global using MediatR;
+global using AutoMapper;
 global using FluentValidation;
-global using MediatR;
+
+global using LanguageExt.Common;
+global using Ehrms.Authentication.API;
+global using Ehrms.Authentication.API.Database.Models;
+global using Ehrms.Authentication.API.Handlers.User.Commands;

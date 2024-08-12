@@ -2,7 +2,6 @@
 using Ehrms.Authentication.TestHelpers.Faker.Models;
 
 namespace Ehrms.Authentication.API.UnitTests.Handlers;
-
 public class CreateUserCommandHandlerTests
 {
     private readonly CreateUserCommandHandler _handler;
@@ -51,7 +50,7 @@ public class CreateUserCommandHandlerTests
             .Returns(new List<User> { user }.AsQueryable());
 
         _userManagerMock.Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>()))
-            .ReturnsAsync(IdentityResult.Failed()); 
+            .ReturnsAsync(IdentityResult.Failed());
 
         var createUserCommand = new RegisterUserCommandFaker().Generate();
         var result = await _handler.Handle(createUserCommand, default);

@@ -14,7 +14,7 @@ public class RegisterUserCommandFaker : Faker<RegisterUserCommand>
         RuleFor(x => x.Username, username);
         return this;
     }
-    
+
     public RegisterUserCommandFaker WithEmail(string email)
     {
         RuleFor(x => x.Email, email);
