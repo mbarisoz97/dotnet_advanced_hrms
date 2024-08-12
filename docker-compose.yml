@@ -38,6 +38,9 @@ services:
         - proxybackend
     depends_on:
        - ehrms.authentication.api.db
+    ports:
+        - "9888:8080"
+        - "9989:8081"
 
   ehrms.authentication.api.db:
     image: mcr.microsoft.com/mssql/server

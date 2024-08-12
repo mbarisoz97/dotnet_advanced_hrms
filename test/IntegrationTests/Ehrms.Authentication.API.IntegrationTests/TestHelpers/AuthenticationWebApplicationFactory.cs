@@ -1,20 +1,19 @@
-﻿using Ehrms.Administration.API.Context;
-using Microsoft.AspNetCore.Hosting;
+﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
+using Testcontainers.MsSql;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Testcontainers.MsSql;
 
 namespace Ehrms.Administration.API.IntegrationTests.TestHelpers.Configurations;
 
-public class AdministrationWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
+public class AuthenticationWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private readonly int Port = Random.Shared.Next(1024 , 49151);
+    private readonly int Port = Random.Shared.Next(1024, 49151);
     private readonly MsSqlContainer _msSqlContainer;
 
-    public AdministrationWebApplicationFactory()
+    public AuthenticationWebApplicationFactory()
     {
         _msSqlContainer = new MsSqlBuilder()
             .WithPortBinding(Port, 1433)
@@ -25,13 +24,11 @@ public class AdministrationWebApplicationFactory : WebApplicationFactory<Program
     {
         builder.ConfigureTestServices(services =>
         {
-            services.RemoveAll(typeof(DbContextOptions<AdministrationDbContext>));
-            services.AddAdministrationApi();
+            services.RemoveAll(typeof(DbContextOptions<ApplicationUserDbContext>));
 
-            services.AddDbContext<AdministrationDbContext>(options =>
+            services.AddDbContext<ApplicationUserDbContext>(options =>
             {
-                options.UseSqlServer(_msSqlContainer.GetConnectionString(),
-                    opt => opt.EnableRetryOnFailure());
+                options.UseSqlServer(_msSqlContainer.GetConnectionString(), options => options.EnableRetryOnFailure());
             });
 
             var dbContext = CreateDbContext(services);
@@ -39,11 +36,11 @@ public class AdministrationWebApplicationFactory : WebApplicationFactory<Program
         });
     }
 
-    private static AdministrationDbContext CreateDbContext(IServiceCollection services)
+    private static ApplicationUserDbContext CreateDbContext(IServiceCollection services)
     {
         var serviceProvider = services.BuildServiceProvider();
         var scope = serviceProvider.CreateScope();
-        var dbContext = scope.ServiceProvider.GetRequiredService<AdministrationDbContext>();
+        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationUserDbContext>();
 
         return dbContext ?? throw new NullReferenceException("DbContext is null");
     }

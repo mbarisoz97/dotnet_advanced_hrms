@@ -1,6 +1,8 @@
 using Ehrms.Authentication.API.Database.Context;
 using Ehrms.Authentication.API.Database.Models;
 using Microsoft.EntityFrameworkCore;
+using Ehrms.Shared;
+using Ehrms.Authentication.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +22,7 @@ builder.Services.AddDbContext<ApplicationUserDbContext>(options =>
 	var connectionString = builder.Configuration.GetConnectionString("AuthDb");
 	options.UseSqlServer(connectionString, options => options.EnableRetryOnFailure());
 });
+builder.Services.AddCustomJwtAuthentication();
 
 var app = builder.Build();
 
@@ -32,7 +35,11 @@ if (app.Environment.IsDevelopment())
 
 //app.UseHttpsRedirection();
 
+app.UseAuthentication();
+
 app.UseAuthorization();
+
+app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.MapControllers();
 
@@ -44,3 +51,7 @@ using (var scope = app.Services.CreateScope())
 }
 
 app.Run();
+
+//Do not remove following partial class definition.
+//It is required for integration tests.
+public partial class Program { }

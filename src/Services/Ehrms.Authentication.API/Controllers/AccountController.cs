@@ -8,6 +8,7 @@ using Ehrms.Authentication.API.Database.Models;
 using Ehrms.Authentication.API.Extension;
 
 namespace Ehrms.Authentication.API.Controllers;
+
 [Route("api/[controller]")]
 [ApiController]
 public class AccountController : ControllerBase

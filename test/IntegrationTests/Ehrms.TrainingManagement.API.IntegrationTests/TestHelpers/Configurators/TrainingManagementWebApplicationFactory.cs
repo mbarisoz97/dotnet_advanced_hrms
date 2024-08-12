@@ -1,19 +1,18 @@
-﻿using Microsoft.AspNetCore.Hosting;
+﻿using MassTransit;
+using Testcontainers.MsSql;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using Testcontainers.MsSql;
-using DotNet.Testcontainers.Builders;
-using MassTransit;
 using Ehrms.TrainingManagement.API.Database.Context;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Ehrms.TrainingManagement.API.IntegrationTests.TestHelpers.Configurators;
 
 public class TrainingManagementWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private int Port => Random.Shared.Next(1024 , 49151);
+    private int Port => Random.Shared.Next(1024, 49151);
     private readonly MsSqlContainer _msSqlContainer;
 
     public TrainingManagementWebApplicationFactory()
@@ -61,14 +60,7 @@ public class TrainingManagementWebApplicationFactory : WebApplicationFactory<Pro
 
     public async Task InitializeAsync()
     {
-        try
-        {
-            await _msSqlContainer.StartAsync();
-        }
-        catch(Exception ex)
-        {
-            Console.WriteLine(ex.Message);
-        }
+        await _msSqlContainer.StartAsync();
     }
 
     public async new Task DisposeAsync()
