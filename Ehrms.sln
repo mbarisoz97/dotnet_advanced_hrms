@@ -63,11 +63,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{BECD6B
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ehrms.ProjectManagemet.TestHelpers", "test\Shared\Ehrms.ProjectManagemet.TestHelpers\Ehrms.ProjectManagemet.TestHelpers.csproj", "{3398AF99-245C-418C-8C3B-F23BAC33986B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ehrms.Authentication.API.UnitTests", "test\UnitTests\Ehrms.Authentication.API.UnitTests\Ehrms.Authentication.API.UnitTests.csproj", "{EC1FA474-7097-4D52-B2E8-DE2F8F9B3582}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ehrms.Authentication.API.UnitTests", "test\UnitTests\Ehrms.Authentication.API.UnitTests\Ehrms.Authentication.API.UnitTests.csproj", "{EC1FA474-7097-4D52-B2E8-DE2F8F9B3582}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ehrms.Authentication.TestHelpers", "test\Shared\Ehrms.Authentication.TestHelpers\Ehrms.Authentication.TestHelpers.csproj", "{B6A5D4D8-EE0E-45C6-BA56-D94E00B66C23}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ehrms.Authentication.TestHelpers", "test\Shared\Ehrms.Authentication.TestHelpers\Ehrms.Authentication.TestHelpers.csproj", "{B6A5D4D8-EE0E-45C6-BA56-D94E00B66C23}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ehrms.Authentication.API.IntegrationTests", "test\IntegrationTests\Ehrms.Authentication.API.IntegrationTests\Ehrms.Authentication.API.IntegrationTests.csproj", "{0479E7BA-89EB-4E9F-85A6-0AC2EA89797C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ehrms.Authentication.API.IntegrationTests", "test\IntegrationTests\Ehrms.Authentication.API.IntegrationTests\Ehrms.Authentication.API.IntegrationTests.csproj", "{0479E7BA-89EB-4E9F-85A6-0AC2EA89797C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
