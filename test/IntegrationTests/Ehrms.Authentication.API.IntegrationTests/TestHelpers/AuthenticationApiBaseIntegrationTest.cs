@@ -4,12 +4,12 @@ using System.Net.Http.Headers;
 
 namespace Ehrms.Authentication.API.IntegrationTests.TestHelpers;
 
-public abstract class AuthenticatipnApiBaseIntegrationTest : IClassFixture<AuthenticationWebApplicationFactory>
+public abstract class AuthenticationApiBaseIntegrationTest : IClassFixture<AuthenticationWebApplicationFactory>
 {
     protected readonly HttpClient client;
     protected readonly ApplicationUserDbContext dbContext;
 
-    protected AuthenticatipnApiBaseIntegrationTest(AuthenticationWebApplicationFactory factory)
+    protected AuthenticationApiBaseIntegrationTest(AuthenticationWebApplicationFactory factory)
     {
         client = factory.CreateClient();
         var scope = factory.Services.CreateScope();

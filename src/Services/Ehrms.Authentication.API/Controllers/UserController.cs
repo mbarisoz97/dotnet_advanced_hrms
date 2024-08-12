@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Authorization;
 using Ehrms.Authentication.API.Dto;
+using Microsoft.AspNetCore.Authorization;
+using Ehrms.Authentication.API.Handlers.User.Queries;
 
 namespace Ehrms.Authentication.API.Controllers;
 
@@ -38,5 +39,15 @@ public class UserController : ControllerBase
             err => BadRequest());
 
         return actionResult;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetUsers()
+    {
+        var query = new GetUsersQuery();
+        var users = await _mediator.Send(query);
+        var readUserDtos = _mapper.ProjectTo<ReadUserDto>(users);
+
+        return Ok(readUserDtos);
     }
 }

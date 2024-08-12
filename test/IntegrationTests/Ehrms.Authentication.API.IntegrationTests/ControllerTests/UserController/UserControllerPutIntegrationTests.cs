@@ -3,7 +3,7 @@ using System.Net.Http.Json;
 
 namespace Ehrms.Authentication.API.IntegrationTests.ControllerTests.UserController;
 
-public class UserControllerPutIntegrationTests : AuthenticatipnApiBaseIntegrationTest
+public class UserControllerPutIntegrationTests : AuthenticationApiBaseIntegrationTest
 {
     public UserControllerPutIntegrationTests(AuthenticationWebApplicationFactory factory) : base(factory)
     {

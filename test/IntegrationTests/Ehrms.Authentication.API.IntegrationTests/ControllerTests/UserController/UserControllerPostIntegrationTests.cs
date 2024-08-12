@@ -1,11 +1,6 @@
-﻿using System.Net;
-using System.Net.Http.Json;
-using Ehrms.Authentication.API.Dto;
-using Ehrms.Authentication.TestHelpers.Faker.Models;
+﻿namespace Ehrms.Authentication.API.IntegrationTests.ControllerTests.UserController;
 
-namespace Ehrms.Authentication.API.IntegrationTests.ControllerTests.UserController;
-
-public class UserControllerPostIntegrationTests : AuthenticatipnApiBaseIntegrationTest
+public class UserControllerPostIntegrationTests : AuthenticationApiBaseIntegrationTest
 {
     public UserControllerPostIntegrationTests(AuthenticationWebApplicationFactory factory) : base(factory)
     {
