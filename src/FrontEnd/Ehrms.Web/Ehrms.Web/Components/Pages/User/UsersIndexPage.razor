@@ -9,21 +9,41 @@
     return;
 }
 
-<MudTable Items="@_users" Dense="true" Hover="true" Loading="@_loading" Bordered="true" Striped="true">
+<MudTable Items="@_users"
+          Dense="true"
+          Hover="true"
+          Bordered="true"
+          Striped="true"
+          Loading="@_loading"
+          Filter="new Func<ReadUserModel, bool>(SearchFilter)">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Users</MudText>
         <MudSpacer />
-        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudTextField @bind-Value="_searchString"
+                      Placeholder="Search"
+                      Adornment="Adornment.Start"
+                      AdornmentIcon="@Icons.Material.Filled.Search"
+                      IconSize="Size.Medium"
+                      Class="mt-0"></MudTextField>
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Username</MudTh>
         <MudTh>Email</MudTh>
         <MudTh>Status</MudTh>
+        <MudTh></MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Username">@context.Username</MudTd>
         <MudTd DataLabel="Email">@(context.Email ??= "-")</MudTd>
         <MudTd DataLabel="Is Active">@context.IsActive</MudTd>
+        <MudTh Class="d-flex justify-center flex-grow-1">
+            <MudTooltip Text="Delete User">
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error"></MudIconButton>
+            </MudTooltip>
+            <MudTooltip Text="Edit User">
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default"></MudIconButton>
+            </MudTooltip>
+        </MudTh>
     </RowTemplate>
     <PagerContent>
         <MudTablePager />
@@ -31,7 +51,7 @@
 </MudTable>
 
 @code {
-    private IEnumerable<ReadUserModel> _users;
+    private IEnumerable<ReadUserModel>? _users;
     private string _searchString = "";
     private bool _loading = false;
 
@@ -48,5 +68,18 @@
             ToastService.ShowError($"Could not load users. Service returned {response.StatusCode}");
         }
         _loading = false;
+    }
+
+    private bool SearchFilter(ReadUserModel element) => Search(element, _searchString);
+    private bool Search(ReadUserModel element, string searchString)
+    {
+        if (element == null)
+        {
+            return false;
+        }
+
+        return (string.IsNullOrWhiteSpace(searchString) ||
+            element.Email!.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+            element.Username!.Contains(searchString, StringComparison.OrdinalIgnoreCase));
     }
 }
