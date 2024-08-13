@@ -63,6 +63,7 @@
         if (response.StatusCode == HttpStatusCode.OK)
         {
             ToastService.ShowSuccess("Updated user successfully");
+            User = new();
         }
         else
         {

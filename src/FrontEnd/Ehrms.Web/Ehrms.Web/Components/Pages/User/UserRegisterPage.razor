@@ -1,7 +1,4 @@
-﻿@attribute [Authorize]
-@attribute [Route($"{UserRouting.Create}")]
-
-@inject IToastService ToastService
+﻿@inject IToastService ToastService
 @inject IUserServiceClient UserServiceClient
 
 <EditForm Model="@RegisterUserModel" OnValidSubmit="ValidSubmit" FormName="UserUpdateForm">
@@ -54,6 +51,7 @@
         if (response.StatusCode == HttpStatusCode.OK)
         {
             ToastService.ShowSuccess("Successfully created user.");
+            RegisterUserModel = new();
         }
         else
         {

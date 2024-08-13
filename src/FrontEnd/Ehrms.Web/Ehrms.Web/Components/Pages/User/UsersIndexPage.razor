@@ -27,6 +27,9 @@
                       AdornmentIcon="@Icons.Material.Filled.Search"
                       IconSize="Size.Medium"
                       Class="mt-0"></MudTextField>
+        <MudTooltip Text="Add Training">
+            <MudIconButton Size="Size.Medium" Color="Color.Success" Icon="@Icons.Material.Filled.AddBox" @onclick="@(()=>ShowCreateUserDialog())" />
+        </MudTooltip>
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Username</MudTh>
@@ -61,6 +64,11 @@
 
     protected override async Task OnInitializedAsync()
     {
+        await UpdateUsers();
+    }
+
+    private async Task UpdateUsers()
+    {
         _loading = true;
         var response = await UserServiceClient.GetUsersAsync();
         if (response.StatusCode == HttpStatusCode.OK)
@@ -79,8 +87,16 @@
         var modalParameters = new ModalParameters()
             .Add(nameof(UserForm.Id), user.Id);
 
-        var modalReference = ModalService.Show<UserForm>("Update User",  modalParameters);
-        await modalReference.Result;
+        var modalReference = ModalService.Show<UserForm>("Update User", modalParameters);
+        var result = await modalReference.Result;
+        await UpdateUsers();
+    }
+
+    private async Task ShowCreateUserDialog()
+    {
+        var modalReference = ModalService.Show<UserRegisterPage>("Create New User");
+        var result = await modalReference.Result;
+        await UpdateUsers();
     }
 
     private bool SearchFilter(ReadUserModel element) => Search(element, _searchString);
