@@ -1,8 +1,10 @@
 ﻿@page "/Users"
 @attribute [StreamRendering]
 @attribute [Authorize]
-@inject IUserServiceClient UserServiceClient
+
+@inject IModalService ModalService
 @inject IToastService ToastService
+@inject IUserServiceClient UserServiceClient
 
 @if (_users == null)
 {
@@ -12,8 +14,8 @@
 <MudTable Items="@_users"
           Dense="true"
           Hover="true"
-          Bordered="true"
           Striped="true"
+          Bordered="true"
           Loading="@_loading"
           Filter="new Func<ReadUserModel, bool>(SearchFilter)">
     <ToolBarContent>
@@ -41,7 +43,9 @@
                 <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error"></MudIconButton>
             </MudTooltip>
             <MudTooltip Text="Edit User">
-                <MudIconButton Icon="@Icons.Material.Filled.Edit" Color="Color.Default"></MudIconButton>
+                <MudIconButton @onclick="() => ShowUserUpdatePage(context)"
+                               Icon="@Icons.Material.Filled.Edit"
+                               Color="Color.Default"></MudIconButton>
             </MudTooltip>
         </MudTh>
     </RowTemplate>
@@ -68,6 +72,15 @@
             ToastService.ShowError($"Could not load users. Service returned {response.StatusCode}");
         }
         _loading = false;
+    }
+
+    private async Task ShowUserUpdatePage(ReadUserModel user)
+    {
+        var modalParameters = new ModalParameters()
+            .Add(nameof(UserForm.Id), user.Id);
+
+        var modalReference = ModalService.Show<UserForm>("Update User",  modalParameters);
+        await modalReference.Result;
     }
 
     private bool SearchFilter(ReadUserModel element) => Search(element, _searchString);

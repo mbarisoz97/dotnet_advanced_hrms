@@ -22,4 +22,28 @@ internal class UserServiceClient : IUserServiceClient
             Content = await response.GetContentAs<IEnumerable<ReadUserModel>>()
         };
     }
+
+    public async Task<Response<ReadUserModel>> GetUserByIdAsync(Guid id)
+    {
+        var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
+        var response = await client.GetAsync($"{_endpointProvider.UserEndpoint}/{id}");
+
+        return new()
+        {
+            StatusCode = response.StatusCode,
+            Content = await response.GetContentAs<ReadUserModel>()
+        };
+    }
+
+    public async Task<Response<ReadUserModel>> UpdateUserAsync(ReadUserModel model)
+    {
+        var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
+        var response = await client.PostAsJsonAsync(_endpointProvider.UserEndpoint + "/Update", model);
+
+        return new()
+        {
+            StatusCode = response.StatusCode,
+            Content = await response.GetContentAs<ReadUserModel>()
+        };
+    }
 }

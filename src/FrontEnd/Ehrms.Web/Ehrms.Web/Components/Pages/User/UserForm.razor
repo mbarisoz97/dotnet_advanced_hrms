@@ -1,0 +1,71 @@
+﻿@inject IToastService ToastService
+@inject IUserServiceClient UserServiceClient
+
+<EditForm Model="@User" OnValidSubmit="ValidSubmit" FormName="UserUpdateForm">
+    <DataAnnotationsValidator></DataAnnotationsValidator>
+    <div class="mt-3">
+        <MudTextField @bind-Value="@User.Username" Label="Username" ReadOnly="true" Variant="Variant.Filled" />
+    </div>
+    <div class="mt-3">
+        <MudTextField @bind-Value="@User.Email" Label="Email" ReadOnly="true" Variant="Variant.Filled" />
+    </div>
+    <div class="mt-3">
+        <MudCheckBox @bind-Value="User.IsActive" Label="Active" Color="Color.Secondary"></MudCheckBox>
+    </div>
+    <div class="mt-3">
+        <MudTooltip Text="Save">
+            <MudFab Color="Color.Primary"
+                    Disabled="@_isSaveButtonDisabled"
+                    StartIcon="@Icons.Material.Filled.Save"
+                    ButtonType="ButtonType.Submit" />
+        </MudTooltip>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    [SupplyParameterFromForm]
+    public ReadUserModel User { get; set; } = new();
+
+    private bool _isSaveButtonDisabled = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await UserServiceClient.GetUserByIdAsync(Id);
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            User = response.Content;
+        }
+        else
+        {
+            ToastService.ShowError($"Could not load user details. Service returned {response.StatusCode}");
+        }
+    }
+
+    protected async Task ValidSubmit()
+    {
+        if (User == null)
+        {
+            return;
+        }
+
+        _isSaveButtonDisabled = true;
+        await UpdateUser(User);
+        _isSaveButtonDisabled = false;
+    }
+
+    private async Task UpdateUser(ReadUserModel user)
+    {
+        var response = await UserServiceClient.UpdateUserAsync(user);
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            ToastService.ShowSuccess("Updated user successfully");
+        }
+        else
+        {
+            ToastService.ShowError($"Could not update user. Service returned {response.StatusCode}");
+        }
+    }
+}
