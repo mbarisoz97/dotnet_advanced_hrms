@@ -1,16 +1,17 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Mvc.Testing;
-using Microsoft.AspNetCore.TestHost;
-using Microsoft.EntityFrameworkCore;
-using Testcontainers.MsSql;
+﻿using Testcontainers.MsSql;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.TestHost;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc.Testing;
+using Ehrms.Shared.TestHepers;
 
 namespace Ehrms.Administration.API.IntegrationTests.TestHelpers.Configurations;
 
 public class AuthenticationWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private readonly int Port = Random.Shared.Next(1024, 49151);
+    private readonly int Port = PortNumberProvider.GetPortNumber();
     private readonly MsSqlContainer _msSqlContainer;
 
     public AuthenticationWebApplicationFactory()
@@ -53,5 +54,6 @@ public class AuthenticationWebApplicationFactory : WebApplicationFactory<Program
     public async new Task DisposeAsync()
     {
         await _msSqlContainer.StopAsync();
+        PortNumberProvider.ReleasePortNumber(Port);
     }
 }

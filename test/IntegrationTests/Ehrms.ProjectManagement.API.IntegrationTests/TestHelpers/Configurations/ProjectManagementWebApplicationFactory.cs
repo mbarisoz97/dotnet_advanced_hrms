@@ -1,5 +1,6 @@
 ﻿using DotNet.Testcontainers.Builders;
 using Ehrms.ProjectManagement.API.Database.Context;
+using Ehrms.Shared.TestHepers;
 using MassTransit;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -13,7 +14,7 @@ namespace Ehrms.ProjectManagement.API.IntegrationTests.TestHelpers.Configuration
 
 public class ProjectManagementWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private int Port => Random.Shared.Next(1024, 49151);
+    private readonly int Port = PortNumberProvider.GetPortNumber();
     private readonly MsSqlContainer _msSqlContainer;
 
     public ProjectManagementWebApplicationFactory()
@@ -59,5 +60,6 @@ public class ProjectManagementWebApplicationFactory : WebApplicationFactory<Prog
     public async new Task DisposeAsync()
     {
         await _msSqlContainer.StopAsync();
+        PortNumberProvider.ReleasePortNumber(Port);
     }
 }

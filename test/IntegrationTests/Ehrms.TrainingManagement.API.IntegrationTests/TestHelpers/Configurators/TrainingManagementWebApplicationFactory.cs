@@ -7,12 +7,13 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.DependencyInjection;
 using Ehrms.TrainingManagement.API.Database.Context;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Ehrms.Shared.TestHepers;
 
 namespace Ehrms.TrainingManagement.API.IntegrationTests.TestHelpers.Configurators;
 
 public class TrainingManagementWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private int Port => Random.Shared.Next(1024, 49151);
+    private int Port = PortNumberProvider.GetPortNumber();
     private readonly MsSqlContainer _msSqlContainer;
 
     public TrainingManagementWebApplicationFactory()
@@ -66,5 +67,6 @@ public class TrainingManagementWebApplicationFactory : WebApplicationFactory<Pro
     public async new Task DisposeAsync()
     {
         await _msSqlContainer.StopAsync();
+        PortNumberProvider.ReleasePortNumber(Port);
     }
 }

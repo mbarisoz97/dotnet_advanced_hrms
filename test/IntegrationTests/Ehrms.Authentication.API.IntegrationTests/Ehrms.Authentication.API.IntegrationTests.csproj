@@ -26,6 +26,7 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\..\..\src\Services\Ehrms.Authentication.API\Ehrms.Authentication.API.csproj" />
 	  <ProjectReference Include="..\..\Shared\Ehrms.Authentication.TestHelpers\Ehrms.Authentication.TestHelpers.csproj" />
+	  <ProjectReference Include="..\..\Shared\Ehrms.Shared.TestHepers\Ehrms.Shared.TestHepers.csproj" />
 	</ItemGroup>
 
 </Project>
