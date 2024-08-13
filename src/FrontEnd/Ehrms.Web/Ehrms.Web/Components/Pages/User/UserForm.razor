@@ -1,5 +1,6 @@
 ﻿@inject IToastService ToastService
 @inject IUserServiceClient UserServiceClient
+@attribute [StreamRendering]
 
 <EditForm Model="@User" OnValidSubmit="ValidSubmit" FormName="UserUpdateForm">
     <DataAnnotationsValidator></DataAnnotationsValidator>

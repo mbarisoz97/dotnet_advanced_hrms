@@ -21,6 +21,7 @@ internal static class UserRouting
 {
     internal const string Index = "/User";
 	internal const string Edit = $"{Index}/Edit";
+	internal const string Create = $"{Index}/Create";
     internal const string Login = "/Login";
 	internal const string Logout = "/Logout";
 }

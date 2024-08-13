@@ -46,4 +46,16 @@ internal class UserServiceClient : IUserServiceClient
             Content = await response.GetContentAs<ReadUserModel>()
         };
     }
+
+    public async Task<Response<ReadUserModel>> RegisterUserAsync(RegisterUserModel model)
+    {
+        var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
+        var response = await client.PutAsJsonAsync(_endpointProvider.UserEndpoint + "/Register", model);
+
+        return new()
+        {
+            StatusCode = response.StatusCode,
+            Content = await response.GetContentAs<ReadUserModel>()
+        };
+    }
 }
