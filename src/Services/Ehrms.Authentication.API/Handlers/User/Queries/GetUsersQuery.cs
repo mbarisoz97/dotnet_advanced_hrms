@@ -3,7 +3,6 @@
 namespace Ehrms.Authentication.API.Handlers.User.Queries;
 
 public record GetUsersQuery : IRequest<IQueryable<Database.Models.User>>;
-
 public class GetUsersQueryHandler : IRequestHandler<GetUsersQuery, IQueryable<Database.Models.User>>
 {
     private readonly ApplicationUserDbContext _dbContext;

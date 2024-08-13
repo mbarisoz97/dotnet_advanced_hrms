@@ -50,4 +50,17 @@ public class UserController : ControllerBase
 
         return Ok(readUserDtos);
     }
+
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetUserById(Guid id)
+    {
+        var query = new GetUserByIdQuery() { Id = id };
+        var queryResult = await _mediator.Send(query);
+
+        var actionResult = queryResult.Match<IActionResult>(
+            user => Ok(_mapper.Map<ReadUserDto>(user)),
+            err => BadRequest());
+
+        return actionResult;
+    }
 }
