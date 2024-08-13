@@ -22,7 +22,7 @@ namespace Ehrms.Authentication.API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Ehrms.Authentication.API.Controllers.Role", b =>
+            modelBuilder.Entity("Ehrms.Authentication.API.Database.Models.Role", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -50,7 +50,7 @@ namespace Ehrms.Authentication.API.Migrations
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Ehrms.Authentication.API.Controllers.User", b =>
+            modelBuilder.Entity("Ehrms.Authentication.API.Database.Models.User", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -68,6 +68,9 @@ namespace Ehrms.Authentication.API.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<bool>("LockoutEnabled")
@@ -228,7 +231,7 @@ namespace Ehrms.Authentication.API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Ehrms.Authentication.API.Controllers.Role", null)
+                    b.HasOne("Ehrms.Authentication.API.Database.Models.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -237,7 +240,7 @@ namespace Ehrms.Authentication.API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<System.Guid>", b =>
                 {
-                    b.HasOne("Ehrms.Authentication.API.Controllers.User", null)
+                    b.HasOne("Ehrms.Authentication.API.Database.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -246,7 +249,7 @@ namespace Ehrms.Authentication.API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<System.Guid>", b =>
                 {
-                    b.HasOne("Ehrms.Authentication.API.Controllers.User", null)
+                    b.HasOne("Ehrms.Authentication.API.Database.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -255,13 +258,13 @@ namespace Ehrms.Authentication.API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<System.Guid>", b =>
                 {
-                    b.HasOne("Ehrms.Authentication.API.Controllers.Role", null)
+                    b.HasOne("Ehrms.Authentication.API.Database.Models.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Ehrms.Authentication.API.Controllers.User", null)
+                    b.HasOne("Ehrms.Authentication.API.Database.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -270,7 +273,7 @@ namespace Ehrms.Authentication.API.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<System.Guid>", b =>
                 {
-                    b.HasOne("Ehrms.Authentication.API.Controllers.User", null)
+                    b.HasOne("Ehrms.Authentication.API.Database.Models.User", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

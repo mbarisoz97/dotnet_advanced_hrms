@@ -8,6 +8,7 @@ using Ehrms.Authentication.API.Database.Models;
 using Ehrms.Authentication.API.Extension;
 
 namespace Ehrms.Authentication.API.Controllers;
+
 [Route("api/[controller]")]
 [ApiController]
 public class AccountController : ControllerBase
@@ -28,6 +29,11 @@ public class AccountController : ControllerBase
 	{
 		var user = await _userManager.FindByNameAsync(request.Username);
 		if (user == null)
+		{
+			return Unauthorized();
+		}
+
+		if (!user.IsActive)
 		{
 			return Unauthorized();
 		}

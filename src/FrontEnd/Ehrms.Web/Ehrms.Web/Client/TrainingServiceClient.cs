@@ -1,6 +1,4 @@
-﻿using Ehrms.Web.Models;
-
-namespace Ehrms.Web.Client;
+﻿namespace Ehrms.Web.Client;
 
 internal sealed class TrainingServiceClient : ITrainingServiceClient
 {

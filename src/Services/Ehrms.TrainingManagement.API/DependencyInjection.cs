@@ -4,7 +4,6 @@ using Ehrms.TrainingManagement.API.MessageQueue.Consumers.EmployeeEvent;
 using Ehrms.TrainingManagement.API.MessageQueue.Consumers.ProjectEvent;
 using Ehrms.TrainingManagement.API.MessageQueue.Consumers.SkillEvent;
 using Ehrms.TrainingManagement.API.MessageQueue.Consumers.TrainingEvents;
-using Ehrms.TrainingManagement.API.MessageQueue.StateMachine;
 using Ehrms.TrainingManagement.API.Middleware;
 using Ehrms.TrainingManagement.API.PipelineBehaviors;
 

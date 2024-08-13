@@ -1,0 +1,61 @@
+﻿@inject IToastService ToastService
+@inject IUserServiceClient UserServiceClient
+
+<EditForm Model="@RegisterUserModel" OnValidSubmit="ValidSubmit" FormName="UserUpdateForm">
+    <DataAnnotationsValidator></DataAnnotationsValidator>
+    <div class="mt-3">
+        <MudTextField @bind-Value="@RegisterUserModel.Username" Label="Username" Variant="Variant.Filled" />
+        <ValidationMessage class="text-danger" For="(() => RegisterUserModel.Username)"></ValidationMessage>
+    </div>
+    <div class="mt-3">
+        <MudTextField @bind-Value="@RegisterUserModel.Email" Label="Email" Variant="Variant.Filled" />
+        <ValidationMessage class="text-danger" For="(() => RegisterUserModel.Email)"></ValidationMessage>
+    </div>
+    <div class="mt-3">
+        <MudTextField @bind-Value="@RegisterUserModel.Password"
+                      Label="Password"
+                      InputType="InputType.Password"
+                      Variant="Variant.Filled" />
+        <ValidationMessage class="text-danger" For="(() => RegisterUserModel.Password)"></ValidationMessage>
+    </div>
+    <div class="mt-3">
+        <MudTextField @bind-Value="@RegisterUserModel.PasswordConfirmation"
+                      InputType="InputType.Password"
+                      Label="Confirm Password"
+                      Variant="Variant.Filled" />
+        <ValidationMessage class="text-danger" For="(() => RegisterUserModel.PasswordConfirmation)"></ValidationMessage>
+    </div>
+    <div class="mt-3">
+        <MudCheckBox Label="Activate User Account" @bind-Value="@RegisterUserModel.IsActive" Color="Color.Secondary"></MudCheckBox>
+        <ValidationMessage class="text-danger" For="(() => RegisterUserModel.IsActive)"></ValidationMessage>
+    </div>
+    <div class="mt-3">
+        <MudTooltip Text="Save">
+            <MudFab Color="Color.Primary"
+                    Disabled="@_isSaveButtonDisabled"
+                    StartIcon="@Icons.Material.Filled.Save"
+                    ButtonType="ButtonType.Submit" />
+        </MudTooltip>
+    </div>
+</EditForm>
+
+@code {
+    [SupplyParameterFromForm]
+    public RegisterUserModel RegisterUserModel { get; set; } = new();
+
+    private bool _isSaveButtonDisabled = false;
+
+    private async Task ValidSubmit()
+    {
+        var response = await UserServiceClient.RegisterUserAsync(RegisterUserModel);
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            ToastService.ShowSuccess("Successfully created user.");
+            RegisterUserModel = new();
+        }
+        else
+        {
+            ToastService.ShowError($"Could not register user. Service returned {response.StatusCode}");
+        }
+    }
+}
