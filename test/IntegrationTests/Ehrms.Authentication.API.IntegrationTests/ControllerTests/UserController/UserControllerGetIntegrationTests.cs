@@ -32,7 +32,10 @@ public class UserControllerGetIntegrationTests : AuthenticationApiBaseIntegratio
     [Fact]
     public async Task GetUserById_ExistingUserId_ReturnsOkWithUserDetails()
     {
-        var user = new UserFaker().Generate();
+        var roles = dbContext.Roles;
+        var user = new UserFaker()
+            .WithRoles([.. roles])
+            .Generate();
         await dbContext.AddAsync(user);
         await dbContext.SaveChangesAsync();
 
