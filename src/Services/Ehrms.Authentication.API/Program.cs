@@ -1,5 +1,4 @@
 using Ehrms.Authentication.API.Database.Context;
-using Ehrms.Authentication.API.Database.Models;
 using Microsoft.EntityFrameworkCore;
 using Ehrms.Shared;
 using Ehrms.Authentication.API.Middleware;
@@ -15,12 +14,12 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddAuthenticationApi();
 builder.Services.AddIdentity<User, Role>()
-	.AddEntityFrameworkStores<ApplicationUserDbContext>();
+    .AddEntityFrameworkStores<ApplicationUserDbContext>();
 
 builder.Services.AddDbContext<ApplicationUserDbContext>(options =>
 {
-	var connectionString = builder.Configuration.GetConnectionString("AuthDb");
-	options.UseSqlServer(connectionString, options => options.EnableRetryOnFailure());
+    var connectionString = builder.Configuration.GetConnectionString("AuthDb");
+    options.UseSqlServer(connectionString, options => options.EnableRetryOnFailure());
 });
 builder.Services.AddCustomJwtAuthentication();
 
@@ -29,8 +28,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-	app.UseSwagger();
-	app.UseSwaggerUI();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 //app.UseHttpsRedirection();
@@ -43,12 +42,10 @@ app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.MapControllers();
 
-using (var scope = app.Services.CreateScope())
-{
-	var services = scope.ServiceProvider;
-	var dbInitializer = services.GetRequiredService<ApplicationUserDbSeed>();
-	await dbInitializer.SeedAsync();
-}
+
+await app.CheckDatabase();
+await app.AddUserRoles();
+await app.SeedDatabase();
 
 app.Run();
 

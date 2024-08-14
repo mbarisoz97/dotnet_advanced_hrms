@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-using Ehrms.Authentication.API.Database.Models;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 
 namespace Ehrms.Authentication.API.Database.Context;
 
@@ -19,21 +17,50 @@ public class ApplicationUserDbSeed
 
     public async Task SeedAsync()
     {
-        try
+        var user = new User
         {
-            if (_context.Database.GetPendingMigrations().Any())
+            UserName = "testUser",
+            Email = "adminTestAccount@test.com",
+            IsActive = true,
+            SecurityStamp = Guid.NewGuid().ToString(),
+        };
+
+        await CreateAdminTestUser(user, "Passw0rd!");
+        await AddAdminUserRole(user);
+    }
+
+    private async Task AddAdminUserRole(User user)
+    {
+        var assignRoleResult = await _userManager.AddToRoleAsync(user, UserRole.Admin.ToString());
+        if (!assignRoleResult.Succeeded)
+        {
+            foreach (var error in assignRoleResult.Errors)
             {
-                await _context.Database.MigrateAsync();
+                _logger.LogError(error.Description);
             }
-            await _userManager.CreateAsync(new User
-            {
-                UserName = "testUser",
-                IsActive = true
-            }, "Passw0rd!");
         }
-        catch (Exception e)
+    }
+
+    private async Task CreateAdminTestUser(User user, string password)
+    {
+        if (user == null)
         {
-            _logger.LogError(e, "Could not seed data");
+            _logger.LogError("Could not add null user");
+        }
+
+        var existingUser = await _userManager.FindByNameAsync(user.UserName);
+        if (existingUser != null)
+        {
+            return;
+        }
+
+        var identityResult = await _userManager.CreateAsync(user, password);
+        if (!identityResult.Succeeded)
+        {
+            foreach (var error in identityResult.Errors)
+            {
+                _logger.LogError(error.Description);
+            }
         }
     }
 }

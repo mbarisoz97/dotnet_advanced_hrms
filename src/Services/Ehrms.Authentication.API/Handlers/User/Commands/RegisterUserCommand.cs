@@ -3,6 +3,13 @@ using Ehrms.Authentication.API.Exceptions;
 
 namespace Ehrms.Authentication.API.Handlers.User.Commands;
 
+public enum UserRole
+{
+    User = 0,
+    Manager,
+    Admin,
+}
+
 public sealed class RegisterUserCommand : IRequest<Result<Database.Models.User>>
 {
     public string Username { get; set; } = string.Empty;
