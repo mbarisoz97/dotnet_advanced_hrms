@@ -1,4 +1,4 @@
-﻿namespace Ehrms.Authentication.API.Dto;
+﻿namespace Ehrms.Authentication.API.Dto.User;
 
 public class ReadUserDto
 {

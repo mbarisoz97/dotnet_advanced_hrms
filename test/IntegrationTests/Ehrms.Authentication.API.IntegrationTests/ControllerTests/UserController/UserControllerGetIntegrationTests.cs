@@ -1,4 +1,5 @@
 ﻿using LanguageExt;
+using Ehrms.Authentication.API.Dto.User;
 
 namespace Ehrms.Authentication.API.IntegrationTests.ControllerTests.UserController;
 

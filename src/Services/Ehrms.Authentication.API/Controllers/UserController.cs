@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Ehrms.Authentication.API.Dto;
+using Ehrms.Authentication.API.Dto.User;
 using Microsoft.AspNetCore.Authorization;
 using Ehrms.Authentication.API.Handlers.User.Queries;
 

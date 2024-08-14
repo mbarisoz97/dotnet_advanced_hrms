@@ -1,4 +1,5 @@
-﻿using Ehrms.Authentication.API.Handlers.User.Commands;
+﻿using Ehrms.Authentication.API.Dto.User;
+using Ehrms.Authentication.API.Handlers.User.Commands;
 using System.Net;
 using System.Net.Http.Json;
 

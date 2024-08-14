@@ -1,6 +1,6 @@
-﻿namespace Ehrms.Authentication.API.Dto;
+﻿namespace Ehrms.Authentication.API.Dto.User;
 
-public class RegisterUserResponseDto
+public class UserUpdateResponseDto
 {
     public Guid Id { get; set; }
     public string Username { get; set; } = string.Empty;

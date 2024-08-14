@@ -1,4 +1,4 @@
-﻿using Ehrms.Authentication.API.Dto;
+﻿using Ehrms.Authentication.API.Dto.User;
 
 namespace Ehrms.Authentication.API.Profiles;
 
@@ -23,7 +23,7 @@ public class UserMappingProfile : Profile
     {
         CreateMap<UpdateUserCommand, User>()
             .ForMember(dest => dest.Roles, opt => opt.Ignore());
-        
+
         CreateMap<RegisterUserCommand, User>()
              .ForMember(dest => dest.Roles, opt => opt.Ignore());
     }

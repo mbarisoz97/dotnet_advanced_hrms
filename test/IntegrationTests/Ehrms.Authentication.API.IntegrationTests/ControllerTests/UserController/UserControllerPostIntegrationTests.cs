@@ -1,4 +1,5 @@
-﻿using Ehrms.Authentication.API.Handlers.User.Commands;
+﻿using Ehrms.Authentication.API.Dto.User;
+using Ehrms.Authentication.API.Handlers.User.Commands;
 
 namespace Ehrms.Authentication.API.IntegrationTests.ControllerTests.UserController;
 
