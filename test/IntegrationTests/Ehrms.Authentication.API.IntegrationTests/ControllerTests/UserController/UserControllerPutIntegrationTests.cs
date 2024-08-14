@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using Ehrms.Authentication.API.Handlers.User.Commands;
+using System.Net;
 using System.Net.Http.Json;
 
 namespace Ehrms.Authentication.API.IntegrationTests.ControllerTests.UserController;
@@ -65,11 +66,28 @@ public class UserControllerPutIntegrationTests : AuthenticationApiBaseIntegratio
     }
 
     [Fact]
+    public async Task Register_NoUserRoles_ReturnsBadRequest()
+    {
+        var command = new RegisterUserCommandFaker()
+            .WithRoles([])
+            .Generate();
+
+        var response = await client.PutAsJsonAsync(UserControllerEndpoints.Register, command);
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
     public async Task Register_ValidUserRegisteryDetails_ReturnsOk()
     {
-        var command = new RegisterUserCommandFaker().Generate();
+        var command = new RegisterUserCommandFaker()
+            .WithRoles([UserRole.Admin, UserRole.User])
+            .Generate();
         var response = await client.PutAsJsonAsync(UserControllerEndpoints.Register, command);
-        
+
         response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var readUserDto = await response.Content.ReadFromJsonAsync<RegisterUserResponseDto>();
+        readUserDto.Should().BeEquivalentTo(command, opt =>
+            opt.Excluding(p => p.Roles)
+               .Excluding(p => p.Password));
     }
 }

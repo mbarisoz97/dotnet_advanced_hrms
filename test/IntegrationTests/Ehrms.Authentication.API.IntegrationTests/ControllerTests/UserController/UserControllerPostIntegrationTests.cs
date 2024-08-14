@@ -1,4 +1,6 @@
-﻿namespace Ehrms.Authentication.API.IntegrationTests.ControllerTests.UserController;
+﻿using Ehrms.Authentication.API.Handlers.User.Commands;
+
+namespace Ehrms.Authentication.API.IntegrationTests.ControllerTests.UserController;
 
 public class UserControllerPostIntegrationTests : AuthenticationApiBaseIntegrationTest
 {
@@ -16,7 +18,18 @@ public class UserControllerPostIntegrationTests : AuthenticationApiBaseIntegrati
     }
 
     [Fact]
-    public async Task Update_ExistringUserId_ReturnsOk()
+    public async Task Update_NoUserRoles_ReturnsBadRequest()
+    {
+        var command = new UpdateUserCommandFaker()
+            .WithRoles(Enumerable.Empty<UserRole>())
+            .Generate();
+        var response = await client.PostAsJsonAsync(UserControllerEndpoints.Update, command);
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task Update_ExistingUserId_ReturnsOk()
     {
         var user = new UserFaker()
             .WithAccountStatus(false)
@@ -25,13 +38,15 @@ public class UserControllerPostIntegrationTests : AuthenticationApiBaseIntegrati
         await dbContext.SaveChangesAsync();
 
         var command = new UpdateUserCommandFaker()
+            .WithRoles([UserRole.Admin, UserRole.User])
             .WithId(user.Id)
             .Generate();
 
         var response = await client.PostAsJsonAsync(UserControllerEndpoints.Update, command);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var readUserDto = await response.Content.ReadFromJsonAsync<ReadUserDto>();
+        var readUserDto = await response.Content.ReadFromJsonAsync<UserUpdateResponseDto>();
 
-        readUserDto.Should().BeEquivalentTo(command);
+        readUserDto.Should().BeEquivalentTo(command, opt =>
+            opt.Excluding(p => p.Roles));
     }
 }

@@ -16,9 +16,16 @@ public class MigrationManager
 
     public async Task Init()
     {
-        if (_context.Database.GetPendingMigrations().Any())
+        try
         {
-            await _context.Database.MigrateAsync();
+            if (_context.Database.GetPendingMigrations().Any())
+            {
+                await _context.Database.MigrateAsync();
+            }
+        }
+        catch(Exception e)
+        {
+            _logger.LogError(e.Message);
         }
     }
 }

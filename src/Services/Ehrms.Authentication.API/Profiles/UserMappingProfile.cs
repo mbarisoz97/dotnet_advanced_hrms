@@ -6,7 +6,25 @@ public class UserMappingProfile : Profile
 {
     public UserMappingProfile()
     {
-        CreateMap<UpdateUserCommand, User>();
-        CreateMap<User, ReadUserDto>();
+        AddCommandToModelMappings();
+        AddModelToDtoMappings();
+    }
+
+    private void AddModelToDtoMappings()
+    {
+        CreateMap<User, UserUpdateResponseDto>();
+        CreateMap<User, RegisterUserResponseDto>();
+        CreateMap<User, ReadUserDto>()
+            .ForMember(dest => dest.Roles, opt =>
+                opt.MapFrom(src => src.Roles.Select(r => r.Name)));
+    }
+
+    private void AddCommandToModelMappings()
+    {
+        CreateMap<UpdateUserCommand, User>()
+            .ForMember(dest => dest.Roles, opt => opt.Ignore());
+        
+        CreateMap<RegisterUserCommand, User>()
+             .ForMember(dest => dest.Roles, opt => opt.Ignore());
     }
 }

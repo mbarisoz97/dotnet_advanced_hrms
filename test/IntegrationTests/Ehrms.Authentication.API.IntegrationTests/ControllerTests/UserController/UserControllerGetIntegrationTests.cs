@@ -1,4 +1,6 @@
-﻿namespace Ehrms.Authentication.API.IntegrationTests.ControllerTests.UserController;
+﻿using LanguageExt;
+
+namespace Ehrms.Authentication.API.IntegrationTests.ControllerTests.UserController;
 
 public class UserControllerGetIntegrationTests : AuthenticationApiBaseIntegrationTest
 {
@@ -41,5 +43,7 @@ public class UserControllerGetIntegrationTests : AuthenticationApiBaseIntegratio
         readUserDto?.Username.Should().Be(user.UserName);
         readUserDto?.Email.Should().Be(user.Email);
         readUserDto?.IsActive.Should().Be(user.IsActive);
+        readUserDto?.Roles.Should().BeEquivalentTo(
+            user.Roles.Select(x=>x.Name));
     }
 }

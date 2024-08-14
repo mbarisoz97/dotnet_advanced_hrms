@@ -1,7 +1,7 @@
-﻿using Ehrms.Authentication.API.Adapter;
-using Ehrms.Authentication.API.Database.Context;
+﻿using Ehrms.Authentication.API.Database.Context;
 using Ehrms.Authentication.TestHelpers.Faker.Models;
 using Ehrms.Authentication.API.UnitTests.TestHelpers;
+using Ehrms.Authentication.API.UnitTests.TestHelpers.Mock;
 
 namespace Ehrms.Authentication.API.UnitTests.Handlers;
 
@@ -9,13 +9,14 @@ public class UpdateUserCommandHandlerTests
 {
     private readonly UpdateUserCommandHandler _handler;
     private readonly ApplicationUserDbContext _userDbContext;
-    private readonly Mock<IUserManagerAdapter> _userManagerMock = new();
+    private readonly MockUserManager _mockUserManager;
 
     public UpdateUserCommandHandlerTests()
     {
-        _userDbContext = TestDbContextFactory.CreateDbContext(nameof(UpdateUserCommandHandlerTests));
         var _mapper = MapperFactory.CreateWithExistingProfiles();
-        _handler = new(_userManagerMock.Object, _mapper, _userDbContext);
+        _userDbContext = TestDbContextFactory.CreateDbContext(nameof(UpdateUserCommandHandlerTests));
+        _mockUserManager = new(_userDbContext);
+        _handler = new(_mockUserManager.Object, _mapper, _userDbContext);
     }
 
     [Fact]
@@ -30,14 +31,18 @@ public class UpdateUserCommandHandlerTests
     [Fact]
     public async Task Handle_FailedUserUpdate_ReturnsWithUserUpdateFailedException()
     {
-        User user = await AddRandomUser();
+        var user = new UserFaker()
+            .WithAccountStatus(false)
+            .Generate();
+        await _userDbContext.AddAsync(user);
+        await _userDbContext.SaveChangesAsync();
+
+        _mockUserManager.SetupUpdateAsync(IdentityResult.Failed());
+
         var command = new UpdateUserCommandFaker()
             .WithId(user.Id)
             .WithAccountStatus(true)
             .Generate();
-
-        _userManagerMock.Setup(x => x.UpdateAsync(It.IsAny<User>()))
-            .ReturnsAsync(IdentityResult.Failed());
 
         var result = await _handler.Handle(command, default);
         result.IsFaulted.Should().BeTrue();
@@ -46,31 +51,28 @@ public class UpdateUserCommandHandlerTests
     [Fact]
     public async Task Handle_UserUpdatedSucceded_ReturnsUserWithNoExceptions()
     {
-        User user = await AddRandomUser();
-        var command = new UpdateUserCommandFaker()
-            .WithId(user.Id)
-            .WithAccountStatus(true)
-            .Generate();
-
-        _userManagerMock.Setup(x => x.UpdateAsync(It.IsAny<User>()))
-            .ReturnsAsync(IdentityResult.Success);
-
-        var handleResult = await _handler.Handle(command, default);
-
-        handleResult.IsSuccess.Should().BeTrue();
-        var readUserDto = handleResult.Match(s => s, f => null);
-
-        readUserDto.Should().BeEquivalentTo(command);
-    }
-
-    private async Task<User> AddRandomUser()
-    {
+        IEnumerable<UserRole> userRoles = [UserRole.Admin, UserRole.Manager];
         var user = new UserFaker()
             .WithAccountStatus(false)
             .Generate();
-
         await _userDbContext.AddAsync(user);
         await _userDbContext.SaveChangesAsync();
-        return user;
+
+        _mockUserManager.SetupUpdateAsync(IdentityResult.Success);
+        _mockUserManager.SetupAddToRolesAsync(IdentityResult.Success);
+        _mockUserManager.SetupRemoveFromRolesAsync(IdentityResult.Success);
+
+        var command = new UpdateUserCommandFaker()
+            .WithId(user.Id)
+            .WithRoles(userRoles)
+            .WithAccountStatus(true)
+            .Generate();
+
+        var handleResult = await _handler.Handle(command, default);
+        handleResult.IsSuccess.Should().BeTrue();
+
+        var updatedUser = handleResult.Match<User?>(s => s, f => null);
+        updatedUser.Should().BeEquivalentTo(command, opt => opt.Excluding(u => u.Roles));
+        updatedUser?.Roles.Select(r => r.Name).Should().BeEquivalentTo(command.Roles);
     }
 }

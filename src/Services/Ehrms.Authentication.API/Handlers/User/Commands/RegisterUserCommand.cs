@@ -15,15 +15,18 @@ public sealed class RegisterUserCommand : IRequest<Result<Database.Models.User>>
     public string Username { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
+    public IEnumerable<string> Roles { get; set; } = [];
 }
 
 internal sealed class CreateUserCommandHandler : IRequestHandler<RegisterUserCommand, Result<Database.Models.User>>
 {
-    private IUserManagerAdapter _userManagerAdapter;
+    private readonly IMapper _mapper;
+    private readonly IUserManagerAdapter _userManagerAdapter;
 
-    public CreateUserCommandHandler(IUserManagerAdapter userManagerAdapter)
+    public CreateUserCommandHandler(IUserManagerAdapter userManagerAdapter, IMapper mapper)
     {
         _userManagerAdapter = userManagerAdapter;
+        _mapper = mapper;
     }
 
     public async Task<Result<Database.Models.User>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
@@ -33,20 +36,21 @@ internal sealed class CreateUserCommandHandler : IRequestHandler<RegisterUserCom
             return new Result<Database.Models.User>(new UserDetailsInUseException());
         }
 
-        var user = new Database.Models.User
-        {
-            UserName = request.Username,
-            Email = request.Email,
-            IsActive = false
-        };
-
-        var identityResult = await _userManagerAdapter.CreateAsync(user, request.Password);
+        var createdUser = _mapper.Map<Database.Models.User>(request);
+        var identityResult = await _userManagerAdapter.CreateAsync(createdUser, request.Password);
         if (identityResult == null || !identityResult.Succeeded)
         {
             return new Result<Database.Models.User>(new CouldNotCreateUserException());
         }
 
-        return new Result<Database.Models.User>(user);
+        var userRoles = request.Roles.Select(x => x.ToString());
+        var addRolesIdentityResult = await _userManagerAdapter.AddToRolesAsync(createdUser, userRoles);
+        if (addRolesIdentityResult == null || !addRolesIdentityResult.Succeeded)
+        {
+            return new Result<Database.Models.User>(new CouldNotCreateUserException());
+        }
+
+        return new Result<Database.Models.User>(createdUser);
     }
 
     private bool IsUserInformationInUse(RegisterUserCommand request)

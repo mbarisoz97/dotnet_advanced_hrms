@@ -42,10 +42,12 @@ app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
 app.MapControllers();
 
-
 await app.CheckDatabase();
 await app.AddUserRoles();
-await app.SeedDatabase();
+if (app.Environment.IsDevelopment())
+{
+    await app.SeedDatabase();
+}
 
 app.Run();
 

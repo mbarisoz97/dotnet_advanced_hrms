@@ -12,6 +12,12 @@ public class UserFaker : Faker<User>
         RuleFor(x => x.SecurityStamp, f => f.Random.Guid().ToString());
     }
 
+    public UserFaker WithRoles(ICollection<Role> roles)
+    {
+        RuleFor(x => x.Roles, roles);
+        return this;
+    }
+
     public UserFaker WithAccountStatus(bool isActive)
     {
         RuleFor(x => x.IsActive, isActive);

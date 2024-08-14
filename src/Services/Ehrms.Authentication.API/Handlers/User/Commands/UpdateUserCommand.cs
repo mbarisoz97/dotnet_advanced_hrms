@@ -9,6 +9,7 @@ public sealed class UpdateUserCommand : IRequest<Result<Database.Models.User>>
 {
     public Guid Id { get; set; }
     public bool IsActive { get; set; }
+    public IEnumerable<string> Roles { get; set; } = [];
 }
 
 internal sealed class UpdateUserCommandHandler : IRequestHandler<UpdateUserCommand, Result<Database.Models.User>>
@@ -26,7 +27,10 @@ internal sealed class UpdateUserCommandHandler : IRequestHandler<UpdateUserComma
 
     public async Task<Result<Database.Models.User>> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
-        var user = await _dbContext.Users.FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+        var user = await _dbContext.Users
+            .Include(x=>x.Roles)
+            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
+
         if (user == null)
         {
             return new Result<Database.Models.User>(new UserNotFoundException($"Could not find user with id : <{request.Id}>"));
@@ -34,8 +38,25 @@ internal sealed class UpdateUserCommandHandler : IRequestHandler<UpdateUserComma
 
         _mapper.Map(request, user);
 
-        var result = await _userManagerAdapter.UpdateAsync(user);
-        if (!result.Succeeded)
+        var updateUserIdentityResult = await _userManagerAdapter.UpdateAsync(user);
+        if (!updateUserIdentityResult.Succeeded)
+        {
+            return new Result<Database.Models.User>(new UserUpdateFailedException());
+        }
+
+        var existingUserRoles = user.Roles.Select(x => x.Name);
+        if (existingUserRoles != null)
+        {
+            var removeUserRolesIdentityResult = await _userManagerAdapter.RemoveFromRolesAsync(user, existingUserRoles!);
+            if (!removeUserRolesIdentityResult.Succeeded)
+            {
+                return new Result<Database.Models.User>(new UserUpdateFailedException());
+            }
+        }
+
+        var updatedUserRoles = request.Roles.Select(x => x.ToString());
+        var updateUserRolesIdentityResult = await _userManagerAdapter.AddToRolesAsync(user, updatedUserRoles);
+        if (!updateUserRolesIdentityResult.Succeeded)
         {
             return new Result<Database.Models.User>(new UserUpdateFailedException());
         }
