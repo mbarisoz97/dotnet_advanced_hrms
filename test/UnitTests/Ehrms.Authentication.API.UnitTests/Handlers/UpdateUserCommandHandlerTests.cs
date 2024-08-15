@@ -51,7 +51,9 @@ public class UpdateUserCommandHandlerTests
     [Fact]
     public async Task Handle_UserUpdatedSucceded_ReturnsUserWithNoExceptions()
     {
-        IEnumerable<UserRole> userRoles = [UserRole.Admin, UserRole.Manager];
+        var roles = new RoleFaker().Generate(3);
+        await _userDbContext.AddRangeAsync(roles);
+        
         var user = new UserFaker()
             .WithAccountStatus(false)
             .Generate();
@@ -59,12 +61,10 @@ public class UpdateUserCommandHandlerTests
         await _userDbContext.SaveChangesAsync();
 
         _mockUserManager.SetupUpdateAsync(IdentityResult.Success);
-        _mockUserManager.SetupAddToRolesAsync(IdentityResult.Success);
-        _mockUserManager.SetupRemoveFromRolesAsync(IdentityResult.Success);
 
         var command = new UpdateUserCommandFaker()
             .WithId(user.Id)
-            .WithRoles(userRoles)
+            .WithRoles(roles)
             .WithAccountStatus(true)
             .Generate();
 
@@ -72,7 +72,9 @@ public class UpdateUserCommandHandlerTests
         handleResult.IsSuccess.Should().BeTrue();
 
         var updatedUser = handleResult.Match<User?>(s => s, f => null);
+        
         updatedUser.Should().BeEquivalentTo(command, opt => opt.Excluding(u => u.Roles));
-        updatedUser?.Roles.Select(r => r.Name).Should().BeEquivalentTo(command.Roles);
+        updatedUser?.UserRoles.Select(r => r.Role!.Name)
+            .Should().BeEquivalentTo(command.Roles);
     }
 }

@@ -22,7 +22,7 @@ public class UserControllerPostIntegrationTests : AuthenticationApiBaseIntegrati
     public async Task Update_NoUserRoles_ReturnsBadRequest()
     {
         var command = new UpdateUserCommandFaker()
-            .WithRoles(Enumerable.Empty<UserRole>())
+            .WithRoles(Enumerable.Empty<UserRoles>())
             .Generate();
         var response = await client.PostAsJsonAsync(UserControllerEndpoints.Update, command);
 
@@ -39,7 +39,7 @@ public class UserControllerPostIntegrationTests : AuthenticationApiBaseIntegrati
         await dbContext.SaveChangesAsync();
 
         var command = new UpdateUserCommandFaker()
-            .WithRoles([UserRole.Admin, UserRole.User])
+            .WithRoles([UserRoles.Admin, UserRoles.User])
             .WithId(user.Id)
             .Generate();
 

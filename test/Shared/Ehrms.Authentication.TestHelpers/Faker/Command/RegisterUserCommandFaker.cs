@@ -27,7 +27,7 @@ public class RegisterUserCommandFaker : Faker<RegisterUserCommand>
         return this;
     }
 
-    public RegisterUserCommandFaker WithRoles(IEnumerable<UserRole> roles)
+    public RegisterUserCommandFaker WithRoles(IEnumerable<UserRoles> roles)
     {
         RuleFor(x => x.Roles, roles.Select(x=>x.ToString()));
         return this;

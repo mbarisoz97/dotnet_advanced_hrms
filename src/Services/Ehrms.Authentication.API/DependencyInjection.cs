@@ -61,12 +61,18 @@ internal static class DependencyInjection
         var logger = services.GetRequiredService<ILogger<Program>>();
         var roleManager = services.GetRequiredService<RoleManager<Role>>();
 
-        var roleNames = Enum.GetValues(typeof(UserRole))
-            .Cast<UserRole>()
+        var roleNames = Enum.GetValues(typeof(UserRoles))
+            .Cast<UserRoles>()
             .Select(x=>x.ToString());
 
-        foreach (var roleName in roleNames)
+        foreach (string? roleName in roleNames)
         {
+            if (string.IsNullOrEmpty(roleName))
+            {
+                logger.LogInformation("Skipped null or empty role name");
+                continue;
+            }
+
             if (await roleManager.RoleExistsAsync(roleName))
             {
                 logger.LogInformation("Skipped existing identity role : <{roleName}>", roleName);

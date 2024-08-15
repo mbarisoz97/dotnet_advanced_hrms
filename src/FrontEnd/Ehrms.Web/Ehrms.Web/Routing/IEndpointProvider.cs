@@ -11,4 +11,5 @@ internal interface IEndpointProvider
 	string? TrainingRecommendationServiceEndpoint { get; }
 	string EmployeeInfoServiceEndpoint { get; }
     string UserEndpoint { get; }
+    string? UserRoleEndpoint { get; }
 }

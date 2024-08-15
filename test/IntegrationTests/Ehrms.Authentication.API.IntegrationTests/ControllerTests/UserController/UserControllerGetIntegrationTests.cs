@@ -33,11 +33,18 @@ public class UserControllerGetIntegrationTests : AuthenticationApiBaseIntegratio
     [Fact]
     public async Task GetUserById_ExistingUserId_ReturnsOkWithUserDetails()
     {
-        var roles = dbContext.Roles;
-        var user = new UserFaker()
-            .WithRoles([.. roles])
-            .Generate();
+        var role = new RoleFaker().Generate();
+        await dbContext.AddAsync(role);
+        
+        var user = new UserFaker().Generate();
         await dbContext.AddAsync(user);
+        
+        var userRole = new UserRoleFaker() 
+            .WithUser(user)
+            .WithRole(role)
+            .Generate();
+
+        await dbContext.AddAsync(userRole);
         await dbContext.SaveChangesAsync();
 
         var response = await client.GetAsync($"{UserControllerEndpoints.Base}/{user.Id}");
@@ -48,6 +55,6 @@ public class UserControllerGetIntegrationTests : AuthenticationApiBaseIntegratio
         readUserDto?.Email.Should().Be(user.Email);
         readUserDto?.IsActive.Should().Be(user.IsActive);
         readUserDto?.Roles.Should().BeEquivalentTo(
-            user.Roles.Select(x=>x.Name));
+            user.UserRoles.Select(x=>x.Role!.Name));
     }
 }

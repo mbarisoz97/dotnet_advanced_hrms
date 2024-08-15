@@ -23,7 +23,7 @@ public class UpdateUserCommandFaker : Faker<UpdateUserCommand>
         return this;
     }
 
-    public UpdateUserCommandFaker WithRoles(IEnumerable<UserRole> userRoles)
+    public UpdateUserCommandFaker WithRoles(IEnumerable<UserRoles> userRoles)
     {
         RuleFor(x => x.Roles, userRoles.Select(x=>x.ToString()));
         return this;

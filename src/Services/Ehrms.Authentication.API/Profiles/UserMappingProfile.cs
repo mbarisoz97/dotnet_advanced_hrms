@@ -16,15 +16,15 @@ public class UserMappingProfile : Profile
         CreateMap<User, RegisterUserResponseDto>();
         CreateMap<User, ReadUserDto>()
             .ForMember(dest => dest.Roles, opt =>
-                opt.MapFrom(src => src.Roles.Select(r => r.Name)));
+                opt.MapFrom(src => src.UserRoles.Select(r => r.Role!.Name)));
     }
 
     private void AddCommandToModelMappings()
     {
         CreateMap<UpdateUserCommand, User>()
-            .ForMember(dest => dest.Roles, opt => opt.Ignore());
+            .ForMember(dest => dest.UserRoles, opt => opt.Ignore());
 
         CreateMap<RegisterUserCommand, User>()
-             .ForMember(dest => dest.Roles, opt => opt.Ignore());
+             .ForMember(dest => dest.UserRoles, opt => opt.Ignore());
     }
 }

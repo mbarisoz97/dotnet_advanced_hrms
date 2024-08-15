@@ -46,8 +46,14 @@ public sealed class MockUserManager : Mock<IUserManagerAdapter>
             var role = new RoleFaker()
                 .WithName(roleName)
                 .Generate();
-            await _dbContext.Roles.AddAsync(role);
-            user.Roles.Add(role);
+            await _dbContext.AddAsync(role);
+
+            var userRole = new UserRoleFaker()
+                .WithUser(user)
+                .WithRole(role)
+                .Generate();
+
+            await _dbContext.AddAsync(userRole);
         }
         await _dbContext.SaveChangesAsync();
     }
@@ -55,10 +61,16 @@ public sealed class MockUserManager : Mock<IUserManagerAdapter>
     {
         foreach (var roleName in roleNameCollection)
         {
-            var role = _dbContext.Roles.FirstOrDefault(r => r.Name == roleName);
-            if (role != null)
+            var role = _dbContext.Roles!.FirstOrDefault(r => r.Name == roleName);
+            if (role == null)
             {
-                user.Roles.Remove(role);
+                continue;
+            }
+
+            var userRole = _dbContext.UserRoles.FirstOrDefault(x=>x.UserId == user.Id && x.RoleId == role.Id);
+            if (userRole != null)
+            {
+                user.UserRoles.Remove(userRole);
             }
         }
         await _dbContext.SaveChangesAsync();

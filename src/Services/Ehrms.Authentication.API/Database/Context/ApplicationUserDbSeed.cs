@@ -7,12 +7,17 @@ public class ApplicationUserDbSeed
     private readonly ILogger<ApplicationUserDbSeed> _logger;
     private readonly ApplicationUserDbContext _context;
     private readonly UserManager<User> _userManager;
+    private readonly RoleManager<Role> _roleManager;
 
-    public ApplicationUserDbSeed(ILogger<ApplicationUserDbSeed> logger, ApplicationUserDbContext context, UserManager<User> userManager)
+    public ApplicationUserDbSeed(ILogger<ApplicationUserDbSeed> logger,
+        ApplicationUserDbContext context,
+        UserManager<User> userManager,
+        RoleManager<Role> roleManager)
     {
         _logger = logger;
         _context = context;
         _userManager = userManager;
+        _roleManager = roleManager;
     }
 
     public async Task SeedAsync()
@@ -25,20 +30,33 @@ public class ApplicationUserDbSeed
             SecurityStamp = Guid.NewGuid().ToString(),
         };
 
+        var existingUser = await _userManager.FindByNameAsync(user.UserName);
+        if (existingUser != null)
+        {
+            return;
+        }
+
         await CreateAdminTestUser(user, "Passw0rd!");
         await AddAdminUserRole(user);
     }
 
     private async Task AddAdminUserRole(User user)
     {
-        var assignRoleResult = await _userManager.AddToRoleAsync(user, UserRole.Admin.ToString());
-        if (!assignRoleResult.Succeeded)
+        var adminRole = await _roleManager.FindByNameAsync(UserRoles.Admin.ToString());
+        if (adminRole == null)
         {
-            foreach (var error in assignRoleResult.Errors)
-            {
-                _logger.LogError(error.Description);
-            }
+            _logger.LogError("Could not find admin role for test user.");
+            return;
         }
+
+        var userRole = new UserRole
+        {
+            User = user,
+            Role = adminRole
+        };
+
+        await _context.AddAsync(userRole);
+        await _context.SaveChangesAsync();
     }
 
     private async Task CreateAdminTestUser(User user, string password)
@@ -46,11 +64,6 @@ public class ApplicationUserDbSeed
         if (user == null)
         {
             _logger.LogError("Could not add null user");
-        }
-
-        var existingUser = await _userManager.FindByNameAsync(user.UserName);
-        if (existingUser != null)
-        {
             return;
         }
 

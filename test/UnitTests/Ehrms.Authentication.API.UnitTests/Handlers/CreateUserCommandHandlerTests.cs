@@ -75,7 +75,7 @@ public class CreateUserCommandHandlerTests
             .ReturnsAsync(IdentityResult.Success);
 
         var createUserCommand = new RegisterUserCommandFaker()
-            .WithRoles([UserRole.Manager])
+            .WithRoles([UserRoles.Manager])
             .Generate();
 
         var result = await _handler.Handle(createUserCommand, default);

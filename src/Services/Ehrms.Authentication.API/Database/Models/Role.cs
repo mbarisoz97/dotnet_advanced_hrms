@@ -2,9 +2,9 @@
 
 namespace Ehrms.Authentication.API.Database.Models;
 
-public sealed class Role : IdentityRole<Guid>
+public class Role : IdentityRole<Guid>
 {
-    public Role()
+    public Role() : this("")
     {
     }
 
@@ -12,5 +12,5 @@ public sealed class Role : IdentityRole<Guid>
     {
     }
 
-    public ICollection<User> Users { get; set; } = [];
+    public ICollection<UserRole> UserRoles { get; set; } = [];
 }

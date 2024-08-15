@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Ehrms.Web.Models;
+namespace Ehrms.Web.Models.User;
 
 public sealed class RegisterUserModel
 {
@@ -10,10 +10,10 @@ public sealed class RegisterUserModel
 
     [Required]
     [EmailAddress]
-    public string Email {  set; get; } = string.Empty;
+    public string Email { set; get; } = string.Empty;
 
     [Required]
-    public string Password { get; set; } = string.Empty;   
+    public string Password { get; set; } = string.Empty;
 
     [Required]
     [Compare(nameof(Password))]

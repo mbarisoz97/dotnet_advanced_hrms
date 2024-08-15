@@ -1,6 +1,4 @@
-﻿using Ehrms.Web.Models;
-
-namespace Ehrms.Web.Client;
+﻿namespace Ehrms.Web.Client;
 
 public interface IEmploymentServiceClient
 {

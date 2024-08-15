@@ -1,14 +1,33 @@
-﻿@inject IToastService ToastService
+﻿@attribute [StreamRendering]
+
+@inject IToastService ToastService
 @inject IUserServiceClient UserServiceClient
-@attribute [StreamRendering]
+@inject IUserRoleServiceClient UserRoleServiceClient
+
+@if (User == null || UserRoles == null)
+{
+    <Loading></Loading>
+    return;
+}
 
 <EditForm Model="@User" OnValidSubmit="ValidSubmit" FormName="UserUpdateForm">
     <DataAnnotationsValidator></DataAnnotationsValidator>
     <div class="mt-3">
-        <MudTextField @bind-Value="@User.Username" Label="Username" ReadOnly="true" Variant="Variant.Filled" />
+        <MudTextField @bind-Value="@User.Username" Label="Username" ReadOnly="true" Variant="Variant.Filled"/>
+        <ValidationMessage class="text-danger" For="(() => User.Username)"></ValidationMessage>
     </div>
     <div class="mt-3">
-        <MudTextField @bind-Value="@User.Email" Label="Email" ReadOnly="true" Variant="Variant.Filled" />
+        <MudTextField @bind-Value="@User.Email" Label="Email" ReadOnly="true" Variant="Variant.Filled"/>
+        <ValidationMessage class="text-danger" For="(() => User.Email)"></ValidationMessage>
+    </div>
+    <div class="mt-3">
+        <MudSelect T="UserRoleModel" Label="User Roles" MultiSelection="true" @bind-SelectedValues="@SelectedUserRoles" AdornmentIcon="@Icons.Material.Filled.Add" AnchorOrigin="Origin.BottomCenter">
+            @foreach (var role in UserRoles)
+            {
+                <MudSelectItem T="UserRoleModel" Value="@role">@(role)</MudSelectItem>
+            }
+        </MudSelect>
+        <ValidationMessage class="text-danger" For="(() => User.Roles)"></ValidationMessage>
     </div>
     <div class="mt-3">
         <MudCheckBox @bind-Value="User.IsActive" Label="Active" Color="Color.Secondary"></MudCheckBox>
@@ -18,31 +37,26 @@
             <MudFab Color="Color.Primary"
                     Disabled="@_isSaveButtonDisabled"
                     StartIcon="@Icons.Material.Filled.Save"
-                    ButtonType="ButtonType.Submit" />
+                    ButtonType="ButtonType.Submit"/>
         </MudTooltip>
     </div>
 </EditForm>
 
 @code {
-    [Parameter]
-    public Guid Id { get; set; }
+    [Parameter] public Guid Id { get; set; }
 
-    [SupplyParameterFromForm]
-    public ReadUserModel User { get; set; } = new();
+    [SupplyParameterFromForm] public ReadUserModel? User { get; set; }
+    [CascadingParameter] public BlazoredModalInstance? BlazoredModalInstance { get; set; }
+
+    private IEnumerable<UserRoleModel>? UserRoles { get; set; }
+    private IEnumerable<UserRoleModel>? SelectedUserRoles { get; set; } = [];
 
     private bool _isSaveButtonDisabled = false;
 
     protected override async Task OnInitializedAsync()
     {
-        var response = await UserServiceClient.GetUserByIdAsync(Id);
-        if (response.StatusCode == HttpStatusCode.OK)
-        {
-            User = response.Content;
-        }
-        else
-        {
-            ToastService.ShowError($"Could not load user details. Service returned {response.StatusCode}");
-        }
+        await LoadUserData();
+        await LoadUserRoles();
     }
 
     protected async Task ValidSubmit()
@@ -57,17 +71,53 @@
         _isSaveButtonDisabled = false;
     }
 
-    private async Task UpdateUser(ReadUserModel user)
+    private async Task LoadUserRoles()
     {
-        var response = await UserServiceClient.UpdateUserAsync(user);
+        var response = await UserRoleServiceClient.GetAllUserRoles();
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            ToastService.ShowError($"Could not load user role details. Service returned {response.StatusCode}");
+            return;
+        }
+
+        UserRoles = response.Content;
+        if (UserRoles != null && User != null)
+        {
+            SelectedUserRoles = UserRoles.Where(x => User.Roles.Contains(x.Name));
+        }
+    }
+
+    private async Task LoadUserData()
+    {
+        var response = await UserServiceClient.GetUserByIdAsync(Id);
         if (response.StatusCode == HttpStatusCode.OK)
         {
-            ToastService.ShowSuccess("Updated user successfully");
-            User = new();
+            User = response.Content;
         }
         else
         {
+            ToastService.ShowError($"Could not load user details. Service returned {response.StatusCode}");
+        }
+    }
+
+    private async Task UpdateUser(ReadUserModel user)
+    {
+        if (SelectedUserRoles != null)
+        {
+            user.Roles = SelectedUserRoles.Select(x => x.Name);
+        }
+
+        var response = await UserServiceClient.UpdateUserAsync(user);
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
             ToastService.ShowError($"Could not update user. Service returned {response.StatusCode}");
+            return;
+        }
+
+        ToastService.ShowSuccess("Updated user successfully");
+        if (BlazoredModalInstance != null)
+        {
+            await BlazoredModalInstance.CloseAsync(ModalResult.Ok());
         }
     }
 }

@@ -81,7 +81,7 @@ public class UserControllerPutIntegrationTests : AuthenticationApiBaseIntegratio
     public async Task Register_ValidUserRegisteryDetails_ReturnsOk()
     {
         var command = new RegisterUserCommandFaker()
-            .WithRoles([UserRole.Admin, UserRole.User])
+            .WithRoles([UserRoles.Admin, UserRoles.User])
             .Generate();
         var response = await client.PutAsJsonAsync(UserControllerEndpoints.Register, command);
 

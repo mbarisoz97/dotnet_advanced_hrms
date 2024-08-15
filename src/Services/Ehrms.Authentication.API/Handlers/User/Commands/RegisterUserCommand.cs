@@ -3,7 +3,7 @@ using Ehrms.Authentication.API.Exceptions;
 
 namespace Ehrms.Authentication.API.Handlers.User.Commands;
 
-public enum UserRole
+public enum UserRoles
 {
     User = 0,
     Manager,

@@ -21,8 +21,9 @@ internal sealed class GetUserByIdQueryHandler : IRequestHandler<GetUserByIdQuery
     public async Task<Result<Database.Models.User>> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
         var user = await _dbContext.Users
-            .Include(x=>x.Roles)
-            .FirstOrDefaultAsync(x=>x.Id == request.Id, cancellationToken);
+            .Include(x => x.UserRoles)
+            .ThenInclude(x => x.Role)
+            .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
         if (user == null)
         {

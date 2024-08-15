@@ -1,17 +1,20 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Ehrms.Authentication.API.Database.Models;
 
 namespace Ehrms.Authentication.TestHelpers.Faker.Models;
 
-public class UserRoleFaker : Faker<IdentityUserRole<Guid>>
+public class UserRoleFaker : Faker<UserRole>
 {
-    public UserRoleFaker WithUserId(Guid id)
+    public UserRoleFaker WithUser(User user)
     {
-        RuleFor(x => x.UserId, id);
+        RuleFor(p => p.UserId, user.Id);
+        RuleFor(p => p.User, user);
         return this;
     }
-    public UserRoleFaker WithRoleId(Guid id)
+
+    public UserRoleFaker WithRole(Role role)
     {
-        RuleFor(x => x.RoleId, id);
+        RuleFor(p => p.RoleId, role.Id);
+        RuleFor(p => p.Role, role);
         return this;
     }
 }
