@@ -21,4 +21,7 @@ public sealed class RegisterUserModel
 
     [Required]
     public bool IsActive { get; set; }
+    
+    [Required]
+    public IEnumerable<string>? Roles { get; set; }
 }

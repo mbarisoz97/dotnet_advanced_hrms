@@ -1,4 +1,5 @@
 ﻿using Ehrms.Authentication.API.Adapter;
+using Ehrms.Authentication.API.Database.Context;
 using Ehrms.Authentication.TestHelpers.Faker.Models;
 using Ehrms.Authentication.API.UnitTests.TestHelpers;
 
@@ -8,11 +9,12 @@ public class CreateUserCommandHandlerTests
 {
     private readonly CreateUserCommandHandler _handler;
     private readonly Mock<IUserManagerAdapter> _userManagerMock = new();
-
+    private readonly ApplicationUserDbContext _dbContext = TestDbContextFactory.CreateDbContext(nameof(CreateUserCommandHandler));
+    
     public CreateUserCommandHandlerTests()
     {
         var mapper = MapperFactory.CreateWithExistingProfiles();
-        _handler = new(_userManagerMock.Object, mapper);
+        _handler = new(_dbContext, _userManagerMock.Object, mapper);
     }
 
     [Fact]
