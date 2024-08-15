@@ -1,25 +1,24 @@
 ﻿using Ehrms.Shared;
-using System.Security.Cryptography;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Identity;
+using System.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
 using Ehrms.Authentication.API.Models;
-using Ehrms.Authentication.API.Database.Models;
+using Ehrms.Authentication.API.Adapter;
 using Ehrms.Authentication.API.Extension;
 
 namespace Ehrms.Authentication.API.Controllers;
 
-[Route("api/[controller]")]
 [ApiController]
+[Route("api/[controller]")]
 public class AccountController : ControllerBase
 {
 	private readonly ITokenHandler _tokenHandler;
-	private readonly UserManager<User> _userManager;
+    private readonly IUserManagerAdapter _userManagerWrapper;
 
-	public AccountController(ITokenHandler tokenHandler, UserManager<User> userManager)
+	public AccountController(ITokenHandler tokenHandler, IUserManagerAdapter userManagerAdapter)
 	{
 		_tokenHandler = tokenHandler;
-		_userManager = userManager;
+        _userManagerWrapper = userManagerAdapter;
 	}
 
 	[HttpPost("Login")]
@@ -27,7 +26,7 @@ public class AccountController : ControllerBase
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
 	public async Task<IActionResult> Authenticate([FromBody] AuthenticationRequest request)
 	{
-		var user = await _userManager.FindByNameAsync(request.Username);
+		var user = await _userManagerWrapper.FindByNameAsync(request.Username);
 		if (user == null)
 		{
 			return Unauthorized();
@@ -38,7 +37,7 @@ public class AccountController : ControllerBase
 			return Unauthorized();
 		}
 
-		if (!await _userManager.CheckPasswordAsync(user, request.Password))
+		if (!await _userManagerWrapper.CheckPasswordAsync(user, request.Password))
 		{
 			return Unauthorized();
 		}
@@ -52,7 +51,7 @@ public class AccountController : ControllerBase
 		user.RefreshToken = GenerateRefreshToken();
 		user.RefreshTokenExpiry = DateTime.UtcNow.AddMinutes(10);
 
-		await _userManager.UpdateAsync(user);
+		await _userManagerWrapper.UpdateAsync(user);
 		authenticationResponse.Username = request.Username;
 		authenticationResponse.RefreshToken = user.RefreshToken;
 
@@ -71,7 +70,7 @@ public class AccountController : ControllerBase
 			return Unauthorized();
 		}
 
-		var user = await _userManager.FindByNameAsync(userName);
+		var user = await _userManagerWrapper.FindByNameAsync(userName);
 		if (!refreshTokenRequest.HasValidRefreshToken(user!))
 		{
 			return Unauthorized();

@@ -20,40 +20,63 @@
           Filter="new Func<ReadUserModel, bool>(SearchFilter)">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Users</MudText>
-        <MudSpacer />
+        <MudSpacer/>
         <MudTextField @bind-Value="_searchString"
                       Placeholder="Search"
                       Adornment="Adornment.Start"
                       AdornmentIcon="@Icons.Material.Filled.Search"
                       IconSize="Size.Medium"
-                      Class="mt-0"></MudTextField>
-        <MudTooltip Text="Add Training">
-            <MudIconButton Size="Size.Medium" Color="Color.Success" Icon="@Icons.Material.Filled.AddBox" @onclick="@(()=>ShowCreateUserDialog())" />
+                      Class="mt-0">
+        </MudTextField>
+        <MudTooltip Text="Add User">
+            <MudIconButton Size="Size.Medium" Color="Color.Success" Icon="@Icons.Material.Filled.AddBox" @onclick="ShowCreateUserDialog"/>
         </MudTooltip>
     </ToolBarContent>
     <HeaderContent>
+        <MudTh>Status</MudTh>
         <MudTh>Username</MudTh>
         <MudTh>Email</MudTh>
-        <MudTh>Status</MudTh>
+        <MudTh>Roles</MudTh>
         <MudTh></MudTh>
     </HeaderContent>
     <RowTemplate>
+        <MudTd DataLabel="Status">
+            @if (context.IsActive)
+            {
+                <MudTooltip Text="Active">
+                    <MudIcon Color="Color.Success" Icon="@Icons.Material.Filled.CheckCircle" Size="Size.Small"/>
+                </MudTooltip>
+            }
+            else
+            {
+                <MudTooltip Text="Blocked">
+                    <MudIcon Color="Color.Error" Icon="@Icons.Material.Filled.Block" Size="Size.Small"/>
+                </MudTooltip>
+            }
+        </MudTd>
         <MudTd DataLabel="Username">@context.Username</MudTd>
         <MudTd DataLabel="Email">@(context.Email ??= "-")</MudTd>
-        <MudTd DataLabel="Is Active">@context.IsActive</MudTd>
-        <MudTh Class="d-flex justify-center flex-grow-1">
+        <MudTd>
+            <MudText>@string.Join(", ", context.Roles)</MudText>
+        </MudTd>
+        <MudTd>
             <MudTooltip Text="Delete User">
-                <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Error"></MudIconButton>
+                <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                               
+                               Color="Color.Error">
+                </MudIconButton>
             </MudTooltip>
             <MudTooltip Text="Edit User">
                 <MudIconButton @onclick="() => ShowUserUpdatePage(context)"
                                Icon="@Icons.Material.Filled.Edit"
-                               Color="Color.Default"></MudIconButton>
+                               Size="Size.Small"
+                               Color="Color.Default">
+                </MudIconButton>
             </MudTooltip>
-        </MudTh>
+        </MudTd>
     </RowTemplate>
     <PagerContent>
-        <MudTablePager />
+        <MudTablePager/>
     </PagerContent>
 </MudTable>
 
@@ -79,6 +102,7 @@
         {
             ToastService.ShowError($"Could not load users. Service returned {response.StatusCode}");
         }
+
         _loading = false;
     }
 
@@ -100,6 +124,7 @@
     }
 
     private bool SearchFilter(ReadUserModel element) => Search(element, _searchString);
+
     private bool Search(ReadUserModel element, string searchString)
     {
         if (element == null)
@@ -108,7 +133,8 @@
         }
 
         return (string.IsNullOrWhiteSpace(searchString) ||
-            element.Email!.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
-            element.Username!.Contains(searchString, StringComparison.OrdinalIgnoreCase));
+                element.Email!.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                element.Username!.Contains(searchString, StringComparison.OrdinalIgnoreCase));
     }
+
 }

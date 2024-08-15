@@ -1,5 +1,4 @@
-﻿using Ehrms.TrainingManagement.API.Database.Context;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace Ehrms.TrainingManagement.API.UnitTests.TestHelpers;
 

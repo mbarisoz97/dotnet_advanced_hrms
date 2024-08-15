@@ -1,4 +1,7 @@
-﻿namespace Ehrms.Authentication.API.IntegrationTests.ControllerTests.UserController;
+﻿using LanguageExt;
+using Ehrms.Authentication.API.Dto.User;
+
+namespace Ehrms.Authentication.API.IntegrationTests.ControllerTests.UserController;
 
 public class UserControllerGetIntegrationTests : AuthenticationApiBaseIntegrationTest
 {
@@ -30,8 +33,18 @@ public class UserControllerGetIntegrationTests : AuthenticationApiBaseIntegratio
     [Fact]
     public async Task GetUserById_ExistingUserId_ReturnsOkWithUserDetails()
     {
+        var role = new RoleFaker().Generate();
+        await dbContext.AddAsync(role);
+        
         var user = new UserFaker().Generate();
         await dbContext.AddAsync(user);
+        
+        var userRole = new UserRoleFaker() 
+            .WithUser(user)
+            .WithRole(role)
+            .Generate();
+
+        await dbContext.AddAsync(userRole);
         await dbContext.SaveChangesAsync();
 
         var response = await client.GetAsync($"{UserControllerEndpoints.Base}/{user.Id}");
@@ -41,5 +54,7 @@ public class UserControllerGetIntegrationTests : AuthenticationApiBaseIntegratio
         readUserDto?.Username.Should().Be(user.UserName);
         readUserDto?.Email.Should().Be(user.Email);
         readUserDto?.IsActive.Should().Be(user.IsActive);
+        readUserDto?.Roles.Should().BeEquivalentTo(
+            user.UserRoles.Select(x=>x.Role!.Name));
     }
 }

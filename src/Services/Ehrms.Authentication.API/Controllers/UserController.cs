@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Ehrms.Authentication.API.Dto;
+using Ehrms.Authentication.API.Dto.User;
 using Microsoft.AspNetCore.Authorization;
 using Ehrms.Authentication.API.Handlers.User.Queries;
 
@@ -24,7 +24,7 @@ public class UserController : ControllerBase
     {
         var result = await _mediator.Send(command);
         var actionRes = result.Match<IActionResult>(
-            m => Ok(),
+            user => Ok(_mapper.Map<RegisterUserResponseDto>(user)),
             err => BadRequest());
 
         return actionRes;
@@ -35,7 +35,7 @@ public class UserController : ControllerBase
     {
         var commandResult = await _mediator.Send(command);
         var actionResult = commandResult.Match<IActionResult>(
-            user => Ok(_mapper.Map<ReadUserDto>(user)),
+            user => Ok(_mapper.Map<UserUpdateResponseDto>(user)),
             err => BadRequest());
 
         return actionResult;

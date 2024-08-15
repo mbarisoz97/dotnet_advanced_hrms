@@ -1,4 +1,6 @@
-﻿namespace Ehrms.Web.Client;
+﻿using Ehrms.Web.Models.User;
+
+namespace Ehrms.Web.Client.AuthService;
 
 internal interface IUserServiceClient
 {

@@ -1,6 +1,6 @@
-﻿namespace Ehrms.Web.Models;
+﻿namespace Ehrms.Authentication.API.Dto.User;
 
-public sealed class ReadUserModel
+public class RegisterUserResponseDto
 {
     public Guid Id { get; set; }
     public string Username { get; set; } = string.Empty;

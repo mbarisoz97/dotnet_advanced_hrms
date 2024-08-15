@@ -1,6 +1,4 @@
-﻿using Ehrms.Authentication.API.Handlers.User.Commands;
-
-namespace Ehrms.Authentication.API.Validation.User.Commands;
+﻿namespace Ehrms.Authentication.API.Validation.User.Commands;
 
 public class RegisterUserCommandValidator : AbstractValidator<RegisterUserCommand>
 {
@@ -16,5 +14,8 @@ public class RegisterUserCommandValidator : AbstractValidator<RegisterUserComman
         RuleFor(x=>x.Password)
             .MinimumLength(8)
             .MaximumLength(50);
+
+        RuleFor(x=>x.Roles)
+            .NotEmpty();
     }
 }

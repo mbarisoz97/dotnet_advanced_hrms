@@ -1,15 +1,20 @@
 ﻿using Ehrms.Authentication.API.Adapter;
+using Ehrms.Authentication.API.Database.Context;
 using Ehrms.Authentication.TestHelpers.Faker.Models;
+using Ehrms.Authentication.API.UnitTests.TestHelpers;
 
 namespace Ehrms.Authentication.API.UnitTests.Handlers;
+
 public class CreateUserCommandHandlerTests
 {
     private readonly CreateUserCommandHandler _handler;
     private readonly Mock<IUserManagerAdapter> _userManagerMock = new();
-
+    private readonly ApplicationUserDbContext _dbContext = TestDbContextFactory.CreateDbContext(nameof(CreateUserCommandHandler));
+    
     public CreateUserCommandHandlerTests()
     {
-        _handler = new(_userManagerMock.Object);
+        var mapper = MapperFactory.CreateWithExistingProfiles();
+        _handler = new(_dbContext, _userManagerMock.Object, mapper);
     }
 
     [Fact]
@@ -68,9 +73,14 @@ public class CreateUserCommandHandlerTests
         _userManagerMock.Setup(x => x.CreateAsync(It.IsAny<User>(), It.IsAny<string>()))
             .ReturnsAsync(IdentityResult.Success);
 
-        var createUserCommand = new RegisterUserCommandFaker().Generate();
-        var result = await _handler.Handle(createUserCommand, default);
+        _userManagerMock.Setup(x => x.AddToRolesAsync(It.IsAny<User>(), It.IsAny<IEnumerable<string>>()))
+            .ReturnsAsync(IdentityResult.Success);
 
+        var createUserCommand = new RegisterUserCommandFaker()
+            .WithRoles([UserRoles.Manager])
+            .Generate();
+
+        var result = await _handler.Handle(createUserCommand, default);
         result.IsSuccess.Should().BeTrue();
     }
 }
