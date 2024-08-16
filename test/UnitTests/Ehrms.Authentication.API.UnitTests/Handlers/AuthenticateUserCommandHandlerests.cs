@@ -7,7 +7,6 @@ using Ehrms.Authentication.API.Handlers.Auth.Commands;
 using Ehrms.Authentication.API.UnitTests.TestHelpers.Mock;
 
 namespace Ehrms.Authentication.API.UnitTests.Handlers;
-
 public class AuthenticateUserCommandHandlerests
 {
     private readonly MockUserManager _mockUserManager;

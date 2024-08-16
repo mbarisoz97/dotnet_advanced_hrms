@@ -41,6 +41,25 @@ public sealed class MockUserManager : Mock<IUserManagerAdapter>
              .ReturnsAsync(identityResult);
     }
 
+    private async Task MockRemoveRolesAsync(User user, IEnumerable<string> roleNameCollection)
+    {
+        foreach (var roleName in roleNameCollection)
+        {
+            var role = _dbContext.Roles!.FirstOrDefault(r => r.Name == roleName);
+            if (role == null)
+            {
+                continue;
+            }
+
+            var userRole = _dbContext.UserRoles.FirstOrDefault(x => x.UserId == user.Id && x.RoleId == role.Id);
+            if (userRole != null)
+            {
+                user.UserRoles.Remove(userRole);
+            }
+        }
+        await _dbContext.SaveChangesAsync();
+    }
+
     public void SetupAddToRolesAsync(IdentityResult identityResult)
     {
         Setup(x => x.AddToRolesAsync(It.IsAny<User>(), It.IsAny<IEnumerable<string>>()))
@@ -66,24 +85,6 @@ public sealed class MockUserManager : Mock<IUserManagerAdapter>
                 .Generate();
 
             await _dbContext.AddAsync(userRole);
-        }
-        await _dbContext.SaveChangesAsync();
-    }
-    private async Task MockRemoveRolesAsync(User user, IEnumerable<string> roleNameCollection)
-    {
-        foreach (var roleName in roleNameCollection)
-        {
-            var role = _dbContext.Roles!.FirstOrDefault(r => r.Name == roleName);
-            if (role == null)
-            {
-                continue;
-            }
-
-            var userRole = _dbContext.UserRoles.FirstOrDefault(x=>x.UserId == user.Id && x.RoleId == role.Id);
-            if (userRole != null)
-            {
-                user.UserRoles.Remove(userRole);
-            }
         }
         await _dbContext.SaveChangesAsync();
     }
