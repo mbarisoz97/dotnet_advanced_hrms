@@ -4,7 +4,6 @@ using Ehrms.Authentication.TestHelpers.Faker.Models;
 using Ehrms.Authentication.API.UnitTests.TestHelpers;
 
 namespace Ehrms.Authentication.API.UnitTests.Handlers;
-
 public class CreateUserCommandHandlerTests
 {
     private readonly CreateUserCommandHandler _handler;

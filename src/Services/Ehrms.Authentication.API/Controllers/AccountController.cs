@@ -5,6 +5,7 @@ using Microsoft.IdentityModel.Tokens;
 using Ehrms.Authentication.API.Models;
 using Ehrms.Authentication.API.Adapter;
 using Ehrms.Authentication.API.Extension;
+using Ehrms.Authentication.API.Handlers.Auth.Commands;
 
 namespace Ehrms.Authentication.API.Controllers;
 
@@ -12,51 +13,29 @@ namespace Ehrms.Authentication.API.Controllers;
 [Route("api/[controller]")]
 public class AccountController : ControllerBase
 {
-	private readonly ITokenHandler _tokenHandler;
+    private readonly IMediator _mediator;
+    private readonly ITokenHandler _tokenHandler;
     private readonly IUserManagerAdapter _userManagerWrapper;
 
-	public AccountController(ITokenHandler tokenHandler, IUserManagerAdapter userManagerAdapter)
+	public AccountController(IMediator mediator, ITokenHandler tokenHandler, IUserManagerAdapter userManagerAdapter)
 	{
-		_tokenHandler = tokenHandler;
+        _mediator = mediator;
+        _tokenHandler = tokenHandler;
         _userManagerWrapper = userManagerAdapter;
 	}
 
 	[HttpPost("Login")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
-	public async Task<IActionResult> Authenticate([FromBody] AuthenticationRequest request)
+	public async Task<IActionResult> Authenticate([FromBody] AuthenticateUserCommand command)
 	{
-		var user = await _userManagerWrapper.FindByNameAsync(request.Username);
-		if (user == null)
-		{
-			return Unauthorized();
-		}
+        var result = await _mediator.Send(command);
 
-		if (!user.IsActive)
-		{
-			return Unauthorized();
-		}
-
-		if (!await _userManagerWrapper.CheckPasswordAsync(user, request.Password))
-		{
-			return Unauthorized();
-		}
-
-		var authenticationResponse = _tokenHandler.Generate(request);
-		if (authenticationResponse == null)
-		{
-			return Unauthorized();
-		}
-
-		user.RefreshToken = GenerateRefreshToken();
-		user.RefreshTokenExpiry = DateTime.UtcNow.AddMinutes(10);
-
-		await _userManagerWrapper.UpdateAsync(user);
-		authenticationResponse.Username = request.Username;
-		authenticationResponse.RefreshToken = user.RefreshToken;
-
-		return Ok(authenticationResponse);
-	}
+        return result.Match<IActionResult>(
+            success => Ok(success),
+            failure => Unauthorized(failure.Message)
+        );
+    }
 
 	[HttpPost("Refresh")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
