@@ -14,13 +14,13 @@ public sealed class MockTokenHandler : Mock<ITokenHandler>
 
         var claimsIdentity = new ClaimsIdentity(
         [
-            new(ClaimTypes.Name, user.UserName!),
+            new Claim(ClaimTypes.Name, user.UserName!),
         ]);
         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
         SetupGetPrincipalFromExpiredToken(claimsPrincipal);
     }
 
-    public void SetupGetPrincipalFromExpiredToken(ClaimsPrincipal claimsPrincipal)
+    private void SetupGetPrincipalFromExpiredToken(ClaimsPrincipal claimsPrincipal)
     {
         Setup(x => x.GetPrincipalFromExpiredToken(It.IsAny<string>()))
             .Returns(claimsPrincipal);

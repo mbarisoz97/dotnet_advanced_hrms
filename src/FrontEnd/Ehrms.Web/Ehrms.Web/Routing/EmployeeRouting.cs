@@ -38,3 +38,8 @@ internal static class TrainingRouting
 	internal const string Index = "/Training";
 	internal const string Recommendation = $"{Index}/Recommendation";
 }
+
+internal static class ErrorRouting
+{
+	internal const string AccessError = "/AccessError" ;
+}

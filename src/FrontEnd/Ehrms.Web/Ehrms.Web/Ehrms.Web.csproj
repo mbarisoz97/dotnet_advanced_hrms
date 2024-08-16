@@ -9,6 +9,7 @@
 		<DockerfileContext>..\..\..\..</DockerfileContext>
 		<DockerComposeProjectPath>..\..\..\..\docker-compose.dcproj</DockerComposeProjectPath>
 	</PropertyGroup>
+
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\Shared\Ehrms.Shared\Ehrms.Shared.csproj" />
 		<ProjectReference Include="..\Ehrms.Web.Client\Ehrms.Web.Client.csproj" />
@@ -23,4 +24,5 @@
 		<PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
 		<PackageReference Include="MudBlazor" Version="7.1.1" />
 	</ItemGroup>
+
 </Project>
