@@ -104,7 +104,7 @@
     {
         if (SelectedUserRoles != null)
         {
-            user.Roles = SelectedUserRoles.Select(x => x.Name);
+            user.Roles = SelectedUserRoles.Select(x => x.Name).ToList();
         }
 
         var response = await UserServiceClient.UpdateUserAsync(user);
