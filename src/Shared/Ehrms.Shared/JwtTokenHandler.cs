@@ -20,11 +20,22 @@ public class JwtTokenHandler : ITokenHandler
     {
         var tokenExpiryTimeStamp = DateTime.Now.AddMinutes(JWT_TOKEN_VALIDITY_MINS);
         var tokenKey = Encoding.ASCII.GetBytes(JWT_SECURITY_KEY);
-        var claimsIdentity = new ClaimsIdentity(
-        [
+
+        var claims = new List<Claim>()
+        {
             new(ClaimTypes.Name, request.Username),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-        ]);
+            new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+        };
+
+        foreach (var role in request.Roles)
+        {
+            if (role != null)
+            {
+                claims.Add(new(ClaimTypes.Role, role));
+            }
+        }
+
+        var claimsIdentity = new ClaimsIdentity(claims);
 
         SymmetricSecurityKey securityKey = new SymmetricSecurityKey(tokenKey);
         SigningCredentials signingCredentials = new(securityKey, SecurityAlgorithms.HmacSha256Signature);
