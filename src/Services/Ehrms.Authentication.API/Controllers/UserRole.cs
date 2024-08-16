@@ -5,9 +5,9 @@ using Ehrms.Authentication.API.Handlers.Role.Queries;
 
 namespace Ehrms.Authentication.API.Controllers;
 
-[Authorize]
 [ApiController]
 [Route("api/[controller]")]
+[Authorize(Roles = "Admin")]
 public class UserRole : ControllerBase
 {
     private readonly IMediator _mediator;
