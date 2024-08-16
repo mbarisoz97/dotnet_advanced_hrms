@@ -19,7 +19,7 @@ public class AuthenticateUserCommandHandlerests
         _dbContext = TestDbContextFactory.CreateDbContext(nameof(AuthenticateUserCommandHandlerests));
         _mockUserManager = new(_dbContext);
         var mapper = MapperFactory.CreateWithExistingProfiles();
-        _handler = new(_mockUserManager.Object, _mockTokenHandler.Object, mapper);
+        _handler = new(_dbContext, _mockUserManager.Object, _mockTokenHandler.Object, mapper);
     }
 
     [Fact]

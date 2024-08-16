@@ -1,4 +1,6 @@
-﻿@inject IToastService ToastService
+﻿@attribute [Authorize(Roles = "Admin")]
+
+@inject IToastService ToastService
 @inject IUserServiceClient UserServiceClient
 @inject IUserRoleServiceClient UserRoleServiceClient
 

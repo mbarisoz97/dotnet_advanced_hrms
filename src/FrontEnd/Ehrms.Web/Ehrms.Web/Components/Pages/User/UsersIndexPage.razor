@@ -1,6 +1,6 @@
 ﻿@attribute [Route(UserRouting.Index)]
 @attribute [StreamRendering]
-@attribute [Authorize]
+@attribute [Authorize(Roles = "Admin")]
 
 @inject IModalService ModalService
 @inject IToastService ToastService
@@ -20,7 +20,7 @@
           Filter="new Func<ReadUserModel, bool>(SearchFilter)">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Users</MudText>
-        <MudSpacer/>
+        <MudSpacer />
         <MudTextField @bind-Value="_searchString"
                       Placeholder="Search"
                       Adornment="Adornment.Start"
@@ -29,7 +29,7 @@
                       Class="mt-0">
         </MudTextField>
         <MudTooltip Text="Add User">
-            <MudIconButton Size="Size.Medium" Color="Color.Success" Icon="@Icons.Material.Filled.AddBox" @onclick="ShowCreateUserDialog"/>
+            <MudIconButton Size="Size.Medium" Color="Color.Success" Icon="@Icons.Material.Filled.AddBox" @onclick="ShowCreateUserDialog" />
         </MudTooltip>
     </ToolBarContent>
     <HeaderContent>
@@ -44,13 +44,13 @@
             @if (context.IsActive)
             {
                 <MudTooltip Text="Active">
-                    <MudIcon Color="Color.Success" Icon="@Icons.Material.Filled.CheckCircle" Size="Size.Small"/>
+                    <MudIcon Color="Color.Success" Icon="@Icons.Material.Filled.CheckCircle" Size="Size.Small" />
                 </MudTooltip>
             }
             else
             {
                 <MudTooltip Text="Blocked">
-                    <MudIcon Color="Color.Error" Icon="@Icons.Material.Filled.Block" Size="Size.Small"/>
+                    <MudIcon Color="Color.Error" Icon="@Icons.Material.Filled.Block" Size="Size.Small" />
                 </MudTooltip>
             }
         </MudTd>
@@ -62,7 +62,6 @@
         <MudTd>
             <MudTooltip Text="Delete User">
                 <MudIconButton Icon="@Icons.Material.Filled.Delete"
-                               
                                Color="Color.Error">
                 </MudIconButton>
             </MudTooltip>
@@ -76,7 +75,7 @@
         </MudTd>
     </RowTemplate>
     <PagerContent>
-        <MudTablePager/>
+        <MudTablePager />
     </PagerContent>
 </MudTable>
 
