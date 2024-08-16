@@ -1,10 +1,6 @@
 ﻿using Ehrms.Shared;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Cryptography;
-using Microsoft.IdentityModel.Tokens;
-using Ehrms.Authentication.API.Models;
 using Ehrms.Authentication.API.Adapter;
-using Ehrms.Authentication.API.Extension;
 using Ehrms.Authentication.API.Handlers.Auth.Commands;
 
 namespace Ehrms.Authentication.API.Controllers;
@@ -40,39 +36,12 @@ public class AccountController : ControllerBase
 	[HttpPost("Refresh")]
 	[ProducesResponseType(StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status401Unauthorized)]
-	public async Task<IActionResult> Refresh([FromBody] RefreshModel refreshTokenRequest)
+	public async Task<IActionResult> Refresh([FromBody] RefreshAuthenticationCommand command)
 	{
-		var principal = _tokenHandler.GetPrincipalFromExpiredToken(refreshTokenRequest.AccessToken);
-		var userName = principal?.Identity?.Name ?? string.Empty;
-		if (userName.IsNullOrEmpty())
-		{
-			return Unauthorized();
-		}
+		var result = await _mediator.Send(command);
 
-		var user = await _userManagerWrapper.FindByNameAsync(userName);
-		if (!refreshTokenRequest.HasValidRefreshToken(user!))
-		{
-			return Unauthorized();
-		}
-
-		var newToken = _tokenHandler.Generate(new AuthenticationRequest
-		{
-			Username = userName
-		});
-
-		if (newToken != null)
-		{
-			newToken.RefreshToken = refreshTokenRequest.RefreshToken;
-		}
-
-		return Ok(newToken);
-	}
-
-	private static string GenerateRefreshToken()
-	{
-		var randomNumber = new byte[64];
-		using var generator = RandomNumberGenerator.Create();
-		generator.GetBytes(randomNumber);
-		return Convert.ToBase64String(randomNumber);
-	}
+		return result.Match<IActionResult>(
+			accessToken => Ok(accessToken),
+			exception => Unauthorized(exception.Message));
+    }
 }

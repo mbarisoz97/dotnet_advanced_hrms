@@ -8,5 +8,6 @@ public class AuthMappingProfile : Profile
     public AuthMappingProfile()
     {
         CreateMap<AuthenticateUserCommand, AuthenticationRequest>();
+        CreateMap<RefreshAuthenticationCommand, AuthenticationRequest>();
     }
 }

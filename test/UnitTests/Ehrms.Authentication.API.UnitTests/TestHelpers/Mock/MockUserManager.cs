@@ -3,7 +3,6 @@ using Ehrms.Authentication.API.Database.Context;
 using Ehrms.Authentication.TestHelpers.Faker.Models;
 
 namespace Ehrms.Authentication.API.UnitTests.TestHelpers.Mock;
-
 public sealed class MockUserManager : Mock<IUserManagerAdapter>
 {
     private readonly ApplicationUserDbContext _dbContext;
@@ -58,7 +57,6 @@ public sealed class MockUserManager : Mock<IUserManagerAdapter>
         }
         await _dbContext.SaveChangesAsync();
     }
-
 
     public void SetupAddToRolesAsync(IdentityResult identityResult)
     {
