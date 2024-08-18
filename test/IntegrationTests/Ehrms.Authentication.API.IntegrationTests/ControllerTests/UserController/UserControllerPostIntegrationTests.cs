@@ -50,4 +50,14 @@ public class UserControllerPostIntegrationTests : AuthenticationApiBaseIntegrati
         readUserDto.Should().BeEquivalentTo(command, opt =>
             opt.Excluding(p => p.Roles));
     }
+
+    [Fact]
+    public async Task? Update_NonAdminUser_ReturnsForbidden()
+    {
+        SetClientForUserWithRoles([UserRoles.User]);
+        var command = new UpdateUserCommandFaker().Generate();
+
+        var response = await client.PostAsJsonAsync(UserControllerEndpoints.Update, command);
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+    }
 }

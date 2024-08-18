@@ -30,4 +30,14 @@ public abstract class AuthenticationApiBaseIntegrationTest : IClassFixture<Authe
         var jwt = new JwtTokenHandler().Generate(request);
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.AccessToken);
     }
+
+    protected void SetClientForUserWithRoles(ICollection<UserRoles> userRoles)
+    {
+        var request = new AuthenticationRequestFaker()
+            .WithRoles(userRoles.Select(x=>x.ToString()).ToList())
+            .Generate();
+
+        var jwt = new JwtTokenHandler().Generate(request);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.AccessToken);
+    }
 }

@@ -1,5 +1,6 @@
 ﻿using LanguageExt;
 using Ehrms.Authentication.API.Dto.User;
+using Ehrms.Authentication.API.Handlers.User.Commands;
 
 namespace Ehrms.Authentication.API.IntegrationTests.ControllerTests.UserController;
 
@@ -56,5 +57,23 @@ public class UserControllerGetIntegrationTests : AuthenticationApiBaseIntegratio
         readUserDto?.IsActive.Should().Be(user.IsActive);
         readUserDto?.Roles.Should().BeEquivalentTo(
             user.UserRoles.Select(x=>x.Role!.Name));
+    }
+    
+    [Fact]
+    public async Task GetUserById_UserWithNonAdminRole_ReturnsForbidden()
+    {
+        SetClientForUserWithRoles([UserRoles.User]);
+        
+        var response = await client.GetAsync($"{UserControllerEndpoints.Base}/{Guid.Empty}");
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+    }
+    
+    [Fact]
+    public async Task GetUsers_UserWithNonAdminRole_ReturnsForbidden()
+    {
+        SetClientForUserWithRoles([UserRoles.User]);
+        
+        var response = await client.GetAsync(UserControllerEndpoints.Base);
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
     }
 }
