@@ -35,8 +35,8 @@ public class UserController : ControllerBase
     {
         var commandResult = await _mediator.Send(command);
         var actionResult = commandResult.Match<IActionResult>(
-            user => Ok(_mapper.Map<UserUpdateResponseDto>(user)),
-            err => BadRequest());
+            Succ: user => Ok(_mapper.Map<UserUpdateResponseDto>(user)),
+            Fail: this.MapUserUpdateFailureResult);
 
         return actionResult;
     }
@@ -47,7 +47,7 @@ public class UserController : ControllerBase
         var query = new GetUsersQuery();
         var users = await _mediator.Send(query);
         var readUserDtos = _mapper.ProjectTo<ReadUserDto>(users);
-
+        
         return Ok(readUserDtos);
     }
 

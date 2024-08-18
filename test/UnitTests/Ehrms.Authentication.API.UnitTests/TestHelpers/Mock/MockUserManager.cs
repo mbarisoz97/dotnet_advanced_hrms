@@ -13,6 +13,12 @@ public sealed class MockUserManager : Mock<IUserManagerAdapter>
         _dbContext = dbContext;
     }
 
+    public void SetupFindByNameAsync(User user)
+    {
+        Setup(x => x.FindByNameAsync(It.IsAny<string>()))
+            .ReturnsAsync(user);
+    }
+    
     public void SetupUpdateAsync(IdentityResult identityResult)
     {
         Setup(x => x.UpdateAsync(It.IsAny<User>()))

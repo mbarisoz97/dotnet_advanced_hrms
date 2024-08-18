@@ -16,42 +16,64 @@ internal sealed class UpdateUserCommandHandler : IRequestHandler<UpdateUserComma
 {
     private readonly IMapper _mapper;
     private readonly IUserManagerAdapter _userManagerAdapter;
+    private readonly IHttpContextAccessor _httpContextAccessor;
     private readonly ApplicationUserDbContext _dbContext;
 
-    public UpdateUserCommandHandler(IUserManagerAdapter userManagerAdapter, IMapper mapper, ApplicationUserDbContext dbContext)
+    public UpdateUserCommandHandler(IUserManagerAdapter userManagerAdapter, IHttpContextAccessor httpContextAccessor,
+        IMapper mapper, ApplicationUserDbContext dbContext)
     {
         _userManagerAdapter = userManagerAdapter;
+        _httpContextAccessor = httpContextAccessor;
         _mapper = mapper;
         _dbContext = dbContext;
     }
 
-    public async Task<Result<Database.Models.User>> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Database.Models.User>> Handle(UpdateUserCommand request,
+        CancellationToken cancellationToken)
     {
-        var user = await _dbContext.Users
+        var requestOwnerUsername = IdentifyRequestingUser();
+        if (string.IsNullOrEmpty(requestOwnerUsername))
+        {
+            return new Result<Database.Models.User>(
+                new UserUpdateNotAllowedException("Could not identity requesting user"));
+        }
+
+        var userToUpdate = await _dbContext.Users
             .Include(x => x.UserRoles)
             .ThenInclude(x => x.Role)
             .FirstOrDefaultAsync(x => x.Id == request.Id, cancellationToken);
 
-        if (user == null)
+        if (userToUpdate == null)
         {
             return new Result<Database.Models.User>(
                 new UserNotFoundException($"Could not find user with id : <{request.Id}>"));
         }
 
-        _mapper.Map(request, user);
- 
-        var updateUserIdentityResult = await _userManagerAdapter.UpdateAsync(user);
+        if (requestOwnerUsername == userToUpdate.UserName)
+        {
+            return new Result<Database.Models.User>(
+                new UserUpdateNotAllowedException("Users cannot update their own accounts."));
+        }
+
+        _mapper.Map(request, userToUpdate);
+
+        var updateUserIdentityResult = await _userManagerAdapter.UpdateAsync(userToUpdate);
         if (!updateUserIdentityResult.Succeeded)
         {
             return new Result<Database.Models.User>(new UserUpdateFailedException());
         }
 
-        await RemoveExistingRoles(user, cancellationToken);
-        await AddRequestedRoles(request, user, cancellationToken);
+        await RemoveExistingRoles(userToUpdate, cancellationToken);
+        await AddRequestedRoles(request, userToUpdate, cancellationToken);
 
-        return new Result<Database.Models.User>(user);
+        return new Result<Database.Models.User>(userToUpdate);
     }
-     
+
+    private string? IdentifyRequestingUser()
+    {
+        return _httpContextAccessor.HttpContext?.User?.Identity?.Name ?? string.Empty;
+    }
+
     private async Task RemoveExistingRoles(Database.Models.User user, CancellationToken cancellationToken)
     {
         var existingUserRoles = _dbContext.UserRoles.Where(x => x.UserId == user.Id);
@@ -59,9 +81,12 @@ internal sealed class UpdateUserCommandHandler : IRequestHandler<UpdateUserComma
         {
             user.UserRoles.Remove(userRole);
         }
+
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
-    private async Task AddRequestedRoles(UpdateUserCommand request, Database.Models.User user, CancellationToken cancellationToken)
+
+    private async Task AddRequestedRoles(UpdateUserCommand request, Database.Models.User user,
+        CancellationToken cancellationToken)
     {
         var updatedRoles = _dbContext.Roles.Where(x => request.Roles.Contains(x.Name));
         foreach (var role in updatedRoles)
@@ -72,6 +97,7 @@ internal sealed class UpdateUserCommandHandler : IRequestHandler<UpdateUserComma
                 Role = role,
             });
         }
+
         await _dbContext.SaveChangesAsync(cancellationToken);
     }
 }
