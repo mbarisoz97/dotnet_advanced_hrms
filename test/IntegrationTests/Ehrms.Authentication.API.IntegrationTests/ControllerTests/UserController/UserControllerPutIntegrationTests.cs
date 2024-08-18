@@ -91,4 +91,15 @@ public class UserControllerPutIntegrationTests : AuthenticationApiBaseIntegratio
             opt.Excluding(p => p.Roles)
                .Excluding(p => p.Password));
     }
+    
+    [Fact]
+    public async Task Register_NonAdminUser_ReturnsForbidden()
+    {
+        SetClientForUserWithRoles([UserRoles.User]);
+        
+        var command = new RegisterUserCommandFaker().Generate();
+        var response = await client.PutAsJsonAsync(UserControllerEndpoints.Register, command);
+
+        response.StatusCode.Should().Be(HttpStatusCode.Forbidden);
+    }
 }
