@@ -10,7 +10,9 @@ internal static class MapperFactory
         return new Mapper(new MapperConfiguration(cfg =>
         {
             cfg.AddProfiles([
-                new UserMappingProfile()
+                new UserMappingProfile(),
+                new AuthMappingProfile(),
+                new UserRoleMappingProfile()
                 ]);
         }));
     }

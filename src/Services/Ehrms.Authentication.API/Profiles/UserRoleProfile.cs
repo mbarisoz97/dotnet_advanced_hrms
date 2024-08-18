@@ -2,9 +2,9 @@
 
 namespace Ehrms.Authentication.API.Profiles;
 
-public class UserRoleProfile : Profile
+public class UserRoleMappingProfile : Profile
 {
-    public UserRoleProfile()
+    public UserRoleMappingProfile()
     {
         CreateMap<Role, ReadUserRoleDto>();
     }

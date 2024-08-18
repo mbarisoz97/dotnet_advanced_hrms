@@ -69,7 +69,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ehrms.Authentication.TestHe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ehrms.Authentication.API.IntegrationTests", "test\IntegrationTests\Ehrms.Authentication.API.IntegrationTests\Ehrms.Authentication.API.IntegrationTests.csproj", "{0479E7BA-89EB-4E9F-85A6-0AC2EA89797C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ehrms.Shared.TestHepers", "test\Shared\Ehrms.Shared.TestHepers\Ehrms.Shared.TestHepers.csproj", "{63DA2673-56E4-4C9E-8CE1-3A4D16B41624}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ehrms.Shared.TestHepers", "test\Shared\Ehrms.Shared.TestHepers\Ehrms.Shared.TestHepers.csproj", "{63DA2673-56E4-4C9E-8CE1-3A4D16B41624}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

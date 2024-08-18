@@ -1,6 +1,7 @@
 ﻿using Ehrms.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Headers;
+using Ehrms.Authentication.API.Handlers.User.Commands;
 
 namespace Ehrms.Authentication.API.IntegrationTests.TestHelpers;
 
@@ -15,11 +16,27 @@ public abstract class AuthenticationApiBaseIntegrationTest : IClassFixture<Authe
         var scope = factory.Services.CreateScope();
         dbContext = scope.ServiceProvider.GetRequiredService<ApplicationUserDbContext>();
 
-        var request = new AuthenticationRequest
-        {
-            Username = "TestUser",
-            Password = "TestPassword"
-        };
+        SetDefaultClientForAuthorizedAndAuthenticatedUser();
+    }
+
+    private void SetDefaultClientForAuthorizedAndAuthenticatedUser()
+    {
+        var request = new AuthenticationRequestFaker()
+            .WithUserName("TestUser")
+            .WithPassword("TestPassword")
+            .WithRoles(["Admin"])
+            .Generate();
+
+        var jwt = new JwtTokenHandler().Generate(request);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.AccessToken);
+    }
+
+    protected void SetClientForUserWithRoles(ICollection<UserRoles> userRoles)
+    {
+        var request = new AuthenticationRequestFaker()
+            .WithRoles(userRoles.Select(x=>x.ToString()).ToList())
+            .Generate();
+
         var jwt = new JwtTokenHandler().Generate(request);
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.AccessToken);
     }
