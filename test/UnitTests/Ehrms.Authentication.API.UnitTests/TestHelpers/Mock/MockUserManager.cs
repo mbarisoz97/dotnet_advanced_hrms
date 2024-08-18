@@ -3,7 +3,6 @@ using Ehrms.Authentication.API.Database.Context;
 using Ehrms.Authentication.TestHelpers.Faker.Models;
 
 namespace Ehrms.Authentication.API.UnitTests.TestHelpers.Mock;
-
 public sealed class MockUserManager : Mock<IUserManagerAdapter>
 {
     private readonly ApplicationUserDbContext _dbContext;
@@ -40,6 +39,24 @@ public sealed class MockUserManager : Mock<IUserManagerAdapter>
               })
              .ReturnsAsync(identityResult);
     }
+    private async Task MockRemoveRolesAsync(User user, IEnumerable<string> roleNameCollection)
+    {
+        foreach (var roleName in roleNameCollection)
+        {
+            var role = _dbContext.Roles!.FirstOrDefault(r => r.Name == roleName);
+            if (role == null)
+            {
+                continue;
+            }
+
+            var userRole = _dbContext.UserRoles.FirstOrDefault(x => x.UserId == user.Id && x.RoleId == role.Id);
+            if (userRole != null)
+            {
+                user.UserRoles.Remove(userRole);
+            }
+        }
+        await _dbContext.SaveChangesAsync();
+    }
 
     private async Task MockRemoveRolesAsync(User user, IEnumerable<string> roleNameCollection)
     {
@@ -69,7 +86,6 @@ public sealed class MockUserManager : Mock<IUserManagerAdapter>
             })
             .ReturnsAsync(IdentityResult.Success);
     }
-
     private async Task MockAddRolesToUser(User user, IEnumerable<string> roleNameCollection)
     {
         foreach (var roleName in roleNameCollection)
