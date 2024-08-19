@@ -12,11 +12,16 @@ public sealed class MockTokenHandler : Mock<ITokenHandler>
             throw new Exception("Null user is not allowed");
         }
 
-        var claimsIdentity = new ClaimsIdentity(
-        [
-            new Claim(ClaimTypes.Name, user.UserName!),
-        ]);
+        var claims = new List<Claim>
+        {
+            new(ClaimTypes.Name, user.UserName!),
+        };
+
+        claims.AddRange(user.UserRoles.Select(x => new Claim(ClaimTypes.Role, x.Role!.Name)));
+
+        var claimsIdentity = new ClaimsIdentity(claims);
         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
+
         SetupGetPrincipalFromExpiredToken(claimsPrincipal);
     }
 
@@ -28,7 +33,7 @@ public sealed class MockTokenHandler : Mock<ITokenHandler>
 
     public void SetupGenerate(GenerateTokenResponse? response = null)
     {
-        Setup(x => x.Generate(It.IsAny<AuthenticationRequest>()))
+        Setup(x => x.Generate(It.IsAny<GenerateJwtRequest>()))
             .Returns(response);
     }
 }

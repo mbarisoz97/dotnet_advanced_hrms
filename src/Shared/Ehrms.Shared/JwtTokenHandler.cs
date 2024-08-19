@@ -7,7 +7,7 @@ namespace Ehrms.Shared;
 
 public interface ITokenHandler
 {
-    GenerateTokenResponse? Generate(AuthenticationRequest request);
+    GenerateTokenResponse? Generate(GenerateJwtRequest request);
     ClaimsPrincipal? GetPrincipalFromExpiredToken(string token);
 }
 
@@ -16,7 +16,7 @@ public class JwtTokenHandler : ITokenHandler
     internal const string JWT_SECURITY_KEY = "d4iNJCVb1o14QaHlHKP5Isw/2VFa5OT3mLQeSb0WHLM=";
     internal const uint JWT_TOKEN_VALIDITY_MINS = 20;
 
-    public GenerateTokenResponse? Generate(AuthenticationRequest request)
+    public GenerateTokenResponse? Generate(GenerateJwtRequest request)
     {
         var tokenExpiryTimeStamp = DateTime.Now.AddMinutes(JWT_TOKEN_VALIDITY_MINS);
         var tokenKey = Encoding.ASCII.GetBytes(JWT_SECURITY_KEY);

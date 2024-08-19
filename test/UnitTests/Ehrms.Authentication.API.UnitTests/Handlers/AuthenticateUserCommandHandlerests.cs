@@ -59,10 +59,9 @@ public class AuthenticateUserCommandHandlerests
         _mockUserManager.SetupCheckPasswordAsync(isPasswordTrue: true);
 
         var mockTokenResponse = new GenerateTokenResponseFaker()
-            .WithUserName(user.UserName!)
             .Generate();
 
-        _mockTokenHandler.Setup(x => x.Generate(It.IsAny<AuthenticationRequest>()))
+        _mockTokenHandler.Setup(x => x.Generate(It.IsAny<GenerateJwtRequest>()))
             .Returns(mockTokenResponse);
 
         var command = new AuthenticateUserCommandFaker().Generate();
@@ -83,7 +82,7 @@ public class AuthenticateUserCommandHandlerests
         _mockUserManager.SetupCheckPasswordAsync(isPasswordTrue: true);
 
         var mockTokenResponse = new GenerateTokenResponseFaker().Generate();
-        _mockTokenHandler.Setup(x => x.Generate(It.IsAny<AuthenticationRequest>()))
+        _mockTokenHandler.Setup(x => x.Generate(It.IsAny<GenerateJwtRequest>()))
             .Returns(mockTokenResponse);
 
         var command = new AuthenticateUserCommandFaker().Generate();

@@ -18,10 +18,9 @@ public abstract class ProjectManagementApiBaseIntegrationTests : IClassFixture<P
 		var scope = factory.Services.CreateScope();
 		dbContext = scope.ServiceProvider.GetRequiredService<ProjectDbContext>();
 
-		var request = new AuthenticationRequest
+		var request = new GenerateJwtRequest
         {
             Username = "TestUser",
-            Password = "TestPassword"
         };
         var jwt = new JwtTokenHandler().Generate(request);
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.AccessToken);
