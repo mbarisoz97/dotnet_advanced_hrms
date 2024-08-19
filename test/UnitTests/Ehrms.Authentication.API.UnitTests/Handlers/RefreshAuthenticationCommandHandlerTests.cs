@@ -20,13 +20,11 @@ public class RefreshAuthenticationCommandHandlerTests
 
     public RefreshAuthenticationCommandHandlerTests()
     {
-        var _mapper = MapperFactory.CreateWithExistingProfiles();
         _dbContext = TestDbContextFactory.CreateDbContext(nameof(RefreshAuthenticationCommandHandlerTests));
-
         _mockTokenHandler = new();
         _mockUserManager = new(_dbContext);
 
-        _handler = new(_mockTokenHandler.Object, _mockUserManager.Object, _mapper);
+        _handler = new(_mockTokenHandler.Object, _mockUserManager.Object);
     }
 
     [Fact]
@@ -90,7 +88,14 @@ public class RefreshAuthenticationCommandHandlerTests
     [Fact]
     public async Task Handle_TokenGenerationSuccessfull_ReturnsResultWithGeneratedToken()
     {
+        var role = new RoleFaker().Generate();
         var user = new UserFaker().Generate();
+        var userRole = new UserRoleFaker()
+            .WithRole(role)
+            .WithUser(user)
+            .Generate();
+        user.UserRoles.Add(userRole);
+        
         _mockTokenHandler.SetupGetPrincipalFromExpiredToken(user);
         _mockUserManager.SetupFindByNameAsync(user);
         _mockTokenHandler.SetupGenerate(new());

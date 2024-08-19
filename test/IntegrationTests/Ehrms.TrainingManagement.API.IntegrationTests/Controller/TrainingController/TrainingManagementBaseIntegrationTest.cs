@@ -14,10 +14,9 @@ public abstract class TrainingManagementBaseIntegrationTest : IClassFixture<Trai
 		_factory = factory;
 		client = this._factory.CreateClient();
 
-		var request = new AuthenticationRequest
+		var request = new GenerateJwtRequest
 		{
 			Username = "TestUser",
-			Password = "TestPassword"
 		};
 		var jwt = new JwtTokenHandler().Generate(request);
 		client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.AccessToken);

@@ -23,7 +23,6 @@ public abstract class AuthenticationApiBaseIntegrationTest : IClassFixture<Authe
     {
         var request = new AuthenticationRequestFaker()
             .WithUserName("TestUser")
-            .WithPassword("TestPassword")
             .WithRoles(["Admin"])
             .Generate();
 

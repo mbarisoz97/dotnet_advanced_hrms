@@ -7,7 +7,7 @@ public class AuthMappingProfile : Profile
 {
     public AuthMappingProfile()
     {
-        CreateMap<AuthenticateUserCommand, AuthenticationRequest>();
-        CreateMap<RefreshAuthenticationCommand, AuthenticationRequest>();
+        CreateMap<AuthenticateUserCommand, GenerateJwtRequest>();
+        CreateMap<RefreshAuthenticationCommand, GenerateJwtRequest>();
     }
 }

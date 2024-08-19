@@ -13,10 +13,9 @@ public abstract class BaseEmployeeInfoIntegrationTest : IClassFixture<EmployeeIn
 		this.factory = factory;
 		client = this.factory.CreateClient();
 
-		var request = new AuthenticationRequest
+		var request = new GenerateJwtRequest
 		{
-			Username = "TestUser",
-			Password = "TestPassword"
+			Username = "TestUser"
 		};
 		var jwt = new JwtTokenHandler().Generate(request);
 		client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.AccessToken);

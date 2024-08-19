@@ -43,7 +43,7 @@ internal sealed class AuthenticateUserCommandHandler : IRequestHandler<Authentic
             return new Result<GenerateTokenResponse?>(new UserCredentialsInvalidException($"User password is not correct."));
         }
 
-        var authenticationRequest = _mapper.Map<AuthenticationRequest>(request);
+        var authenticationRequest = _mapper.Map<GenerateJwtRequest>(request);
         authenticationRequest.Roles = GetUserRoles(user.Id);
 
         var generateTokenResponse = _tokenHandler.Generate(authenticationRequest);
