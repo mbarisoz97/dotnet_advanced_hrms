@@ -69,8 +69,7 @@
     private async Task ShowCreateTrainingDialog()
     {
         var modalReference = ModalService.Show<TrainingCreatePage>("Create new training");
-        var modalResult = await modalReference.Result;
-
+        await modalReference.Result;
         await UpdateTrainings();
     }
 
@@ -80,7 +79,7 @@
             .Add(nameof(ProjectModel.Id), training.Id);
 
         var modalReference = ModalService.Show<TrainingUpdatePage>("Update training", modalParameters);
-        var result = await modalReference.Result;
+        await modalReference.Result;
 
         await UpdateTrainings();
     }

@@ -6,10 +6,17 @@
 @inject IToastService ToastService
 @inject ITrainingRecommendationServiceClient TrainingRecommendationServiceClient
 
-<MudTable Items="@_trainingRecommendationRequests" Dense="true" Hover="true" Loading="@_isLoading" Bordered="true" Striped="true">
+<MudTable Dense="true" Hover="true" Bordered="true" Striped="true"
+          Loading="@_isLoading"
+          Items="@_trainingRecommendationRequests"
+          Filter="new Func<ReadTrainingRecommendationRequestModel, bool>(SearchFilter)">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Training Recommendation Requests</MudText>
         <MudSpacer/>
+        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudTooltip Text="Add Training Recommendation">
+            <MudIconButton Size="Size.Medium" Color="Color.Success" Icon="@Icons.Material.Filled.AddBox" @onclick="@(ShowTrainingRecommendationDialog)"/>
+        </MudTooltip>
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Request Status</MudTh>
@@ -57,7 +64,9 @@
 
 @code {
     private IEnumerable<ReadTrainingRecommendationRequestModel>? _trainingRecommendationRequests;
+    
     private bool _isLoading = true;
+    private string _searchString = "";
 
     protected override async Task OnInitializedAsync()
     {
@@ -106,5 +115,23 @@
             await LoadTrainingRecommendationRequests();
         }
     }
+    
+    private async Task ShowTrainingRecommendationDialog()
+    {
+        var modalReference = ModalService.Show<TrainingRecommendationCreatePage>("Recommend Training");
+        var modalResult = await modalReference.Result;
 
+        if (modalResult.Confirmed)
+        {
+            await LoadTrainingRecommendationRequests();
+        }
+    }
+    
+    private bool SearchFilter(ReadTrainingRecommendationRequestModel element) => Search(element, _searchString);
+    private static bool Search(ReadTrainingRecommendationRequestModel element, string searchString)
+    {
+        return (string.IsNullOrWhiteSpace(searchString) ||
+                element.Title!.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+                element.RequestStatus!.ToString().Contains(searchString, StringComparison.OrdinalIgnoreCase));
+    }
 }
