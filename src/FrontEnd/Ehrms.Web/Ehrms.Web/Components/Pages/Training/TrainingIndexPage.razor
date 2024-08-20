@@ -7,113 +7,125 @@
 @inject ITrainingServiceClient TrainingServiceClient
 
 <MudTable Items="@TrainingModels" Dense="true" Hover="true" Loading="@_loading" Bordered="true" Striped="true">
-	<ToolBarContent>
-		<MudText Typo="Typo.h6">Trainings</MudText>
-		<MudSpacer />
-		<MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-		<MudTooltip Text="Add Training">
-			<MudIconButton Size="Size.Medium" Color="Color.Success" Icon="@Icons.Material.Filled.AddBox" @onclick="@(()=>ShowCreateTrainingDialog())" />
-		</MudTooltip>
-		<MudTooltip Text="Recommend Training">
-			<MudIconButton Class="justify-end" Size="Size.Medium" Color="Color.Error" Icon="@Icons.Material.Filled.ElectricBolt" @onclick="@(()=>ShowTrainingRecommendationDialog())" />
-		</MudTooltip>
-	</ToolBarContent>
-	<HeaderContent>
-		<MudTh>Name</MudTh>
-		<MudTh>Planned Date</MudTh>
-		<MudTh></MudTh>
-	</HeaderContent>
-	<RowTemplate>
-		<MudTd DataLabel="Name">@context.Name</MudTd>
-		<MudTd DataLabel="Date">@context.PlannedAt</MudTd>
-		<MudTd>
-			<MudTooltip Text="Edit">
-				<MudIconButton @onclick="@(()=>ShowUpdateTrainingDialog(context))"  Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
-			</MudTooltip>
-			<MudTooltip Text="Delete">
-				<MudIconButton @onclick="@(()=>ShowDeleteTrainingDialog(context))" Color=" Color.Error" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />
-			</MudTooltip>
-			<MudTooltip Text="More">
-				<MudIconButton Icon="@Icons.Material.Filled.ReadMore" Size="Size.Small" />
-			</MudTooltip>
-		</MudTd>
-	</RowTemplate>
-	<PagerContent>
-		<MudTablePager />
-	</PagerContent>
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Trainings</MudText>
+        <MudSpacer/>
+        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudTooltip Text="Add Training">
+            <MudIconButton Size="Size.Medium" Color="Color.Success" Icon="@Icons.Material.Filled.AddBox" @onclick="@(ShowCreateTrainingDialog)"/>
+        </MudTooltip>
+        <MudMenu ActivationEvent="@MouseEvent.MouseOver" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
+            <ActivatorContent>
+                <MudTooltip Text="Training Recommendation" Placement="Placement.Left">
+                    <MudIconButton Size="Size.Small" Color="Color.Error" Icon="@Icons.Material.Filled.ElectricBolt" @onclick="@(ShowTrainingRecommendationDialog)"></MudIconButton>
+                </MudTooltip>
+            </ActivatorContent>
+            <ChildContent>
+                <MudMenuItem @onclick="@(ShowTrainingRecommendationDialog)">
+                    Create
+                </MudMenuItem>
+                <MudMenuItem Href="@(TrainingRouting.Recommendation)">
+                    Show
+                </MudMenuItem>
+            </ChildContent>
+        </MudMenu>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh>Planned Date</MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd DataLabel="Date">@context.PlannedAt</MudTd>
+        <MudTd>
+            <MudTooltip Text="Edit">
+                <MudIconButton @onclick="@(() => ShowUpdateTrainingDialog(context))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small"/>
+            </MudTooltip>
+            <MudTooltip Text="Delete">
+                <MudIconButton @onclick="@(() => ShowDeleteTrainingDialog(context))" Color=" Color.Error" Icon="@Icons.Material.Filled.Delete" Size="Size.Small"/>
+            </MudTooltip>
+            <MudTooltip Text="More">
+                <MudIconButton Icon="@Icons.Material.Filled.ReadMore" Size="Size.Small"/>
+            </MudTooltip>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager/>
+    </PagerContent>
 </MudTable>
 
 @code {
-	private IEnumerable<TrainingModel>? TrainingModels { get; set; } = [];
+    private IEnumerable<TrainingModel>? TrainingModels { get; set; } = [];
 
-	private bool _loading = true;
-	private string _searchString = "";
+    private bool _loading = true;
+    private string _searchString = "";
 
-	protected override async Task OnInitializedAsync()
-	{
-		await UpdateTrainings();
-	}
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdateTrainings();
+    }
 
-	private async Task ShowCreateTrainingDialog()
-	{
-		var modalReference = ModalService.Show<TrainingCreatePage>("Create new training");
-		var modalResult = await modalReference.Result;
+    private async Task ShowCreateTrainingDialog()
+    {
+        var modalReference = ModalService.Show<TrainingCreatePage>("Create new training");
+        await modalReference.Result;
+        await UpdateTrainings();
+    }
 
-		await UpdateTrainings();
-	}
+    private async Task ShowUpdateTrainingDialog(TrainingModel training)
+    {
+        var modalParameters = new ModalParameters()
+            .Add(nameof(ProjectModel.Id), training.Id);
 
-	private async Task ShowUpdateTrainingDialog(TrainingModel training)
-	{
-		var modalParameters = new ModalParameters()
-			.Add(nameof(ProjectModel.Id), training.Id);
+        var modalReference = ModalService.Show<TrainingUpdatePage>("Update training", modalParameters);
+        await modalReference.Result;
 
-		var modalReference = ModalService.Show<TrainingUpdatePage>("Update training", modalParameters);
-		var result = await modalReference.Result;
+        await UpdateTrainings();
+    }
 
-		await UpdateTrainings();
-	}
+    private async Task ShowDeleteTrainingDialog(TrainingModel trainingModel)
+    {
+        var modalParameters = new ModalParameters()
+            .Add(nameof(trainingModel.Id), trainingModel.Id);
 
-	private async Task ShowDeleteTrainingDialog(TrainingModel trainingModel)
-	{
-		var modalParameters = new ModalParameters()
-			.Add(nameof(trainingModel.Id), trainingModel.Id);
+        var modalReference = ModalService.Show<TrainingDeletePage>("Delete a training", modalParameters);
+        var modalResult = await modalReference.Result;
 
-		var modalReference = ModalService.Show<TrainingDeletePage>("Delete a training", modalParameters);
-		var modalResult = await modalReference.Result;
+        if (modalResult.Confirmed)
+        {
+            ToastService.ShowSuccess("Training deleted successfully.");
+            await UpdateTrainings();
+        }
+    }
 
-		if (modalResult.Confirmed)
-		{
-			ToastService.ShowSuccess("Training deleted successfully.");
-			await UpdateTrainings();
-		}
-	}
+    private async Task ShowTrainingRecommendationDialog()
+    {
+        var modalReference = ModalService.Show<TrainingRecommendationCreatePage>("Recommend Training");
+        var modalResult = await modalReference.Result;
 
-	private async Task ShowTrainingRecommendationDialog()
-	{
-		var modalReference = ModalService.Show<TrainingRecommendationCreatePage>("Recommend Training");
-		var modalResult = await modalReference.Result;
+        if (modalResult.Confirmed)
+        {
+            ToastService.ShowSuccess("Successfully created training recommendation request.");
+        }
+    }
 
-		if (modalResult.Confirmed)
-		{
-			ToastService.ShowSuccess("Successfully created training recommendation request.");
-		}
-	}
+    private async Task UpdateTrainings()
+    {
+        _loading = true;
 
-	private async Task UpdateTrainings()
-	{
-		_loading = true;
+        var response = await TrainingServiceClient.GetTrainings();
 
-		var response = await TrainingServiceClient.GetTrainings();
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            TrainingModels = response.Content;
+        }
+        else
+        {
+            ToastService.ShowError($"Could not load trainings. Service returned {response.StatusCode}");
+        }
 
-		if (response.StatusCode == HttpStatusCode.OK)
-		{
-			TrainingModels = response.Content;
-		}
-		else
-		{
-			ToastService.ShowError($"Could not load trainings. Service returned {response.StatusCode}");
-		}
+        _loading = false;
+    }
 
-		_loading = false;
-	}
 }

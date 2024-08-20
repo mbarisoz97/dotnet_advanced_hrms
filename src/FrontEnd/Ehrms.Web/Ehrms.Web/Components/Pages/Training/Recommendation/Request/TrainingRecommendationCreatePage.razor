@@ -15,7 +15,7 @@
     <DataAnnotationsValidator></DataAnnotationsValidator>
     <div class="mt-3">
         <MudTextField @bind-Value="RecommendationRequestModel.Title" Label="Title" Variant="Variant.Filled"></MudTextField>
-        <ValidationMessage class="text-danger" For="(()=> RecommendationRequestModel.Title)"></ValidationMessage>
+        <ValidationMessage class="text-danger" For="(() => RecommendationRequestModel.Title)"></ValidationMessage>
     </div>
     <div class="mt-3">
         <MudSelect T="Guid" @bind-Value="RecommendationRequestModel.ProjectId" Label="Select a project" OpenIcon="@Icons.Material.Filled.Folder" AdornmentColor="Color.Secondary">
@@ -36,12 +36,9 @@
 
 @code {
     private IEnumerable<ProjectModel>? _projects;
-    
-    [SupplyParameterFromForm]
-    private CreateTrainingRecommendationRequestModel RecommendationRequestModel { get; set; } = new();
-    
-    [CascadingParameter] 
-    BlazoredModalInstance ModalInstance { get; set; } = default!;
+
+    [SupplyParameterFromForm] private CreateTrainingRecommendationRequestModel RecommendationRequestModel { get; set; } = new();
+    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -59,13 +56,14 @@
     private async Task ValidSubmit()
     {
         var response = await TrainingRecommendationServiceClient.CreateTrainingRecommendationRequest(RecommendationRequestModel);
-        if (response.StatusCode != HttpStatusCode.OK)
+        if (response.StatusCode == HttpStatusCode.OK)
         {
-            ToastService.ShowError($"Could create training recommendation request. Service returned {response.StatusCode}");
+            ToastService.ShowSuccess("Successfully created training recommendation request.");
+            await ModalInstance.CloseAsync(ModalResult.Ok());
         }
         else
         {
-            await ModalInstance.CloseAsync(ModalResult.Ok());
+            ToastService.ShowError($"Could create training recommendation request. Service returned {response.StatusCode}");
         }
     }
 }
