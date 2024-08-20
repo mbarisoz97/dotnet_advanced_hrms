@@ -1,6 +1,4 @@
-﻿using Ehrms.Contracts.Skill;
-
-namespace Ehrms.TrainingManagement.API.UnitTests.TestHelpers.Fakers.Events;
+﻿namespace Ehrms.Training.TestHelpers.Fakers.Events;
 
 internal class SkillCreatedEventFaker : Faker<SkillCreatedEvent>
 {

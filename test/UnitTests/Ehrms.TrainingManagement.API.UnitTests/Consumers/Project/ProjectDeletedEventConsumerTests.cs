@@ -1,10 +1,8 @@
 ﻿using Moq;
-using Microsoft.Extensions.Logging;
-using Ehrms.TrainingManagement.API.Database.Context;
-using Ehrms.TrainingManagement.API.UnitTests.TestHelpers.Fakers.Events;
-using Ehrms.Contracts.Project;
-using Ehrms.TrainingManagement.API.MessageQueue.Consumers.ProjectEvent;
 using MassTransit;
+using Ehrms.Contracts.Project;
+using Microsoft.Extensions.Logging;
+using Ehrms.TrainingManagement.API.MessageQueue.Consumers.ProjectEvent;
 
 namespace Ehrms.TrainingManagement.API.UnitTests.Consumers.Project;
 
@@ -68,7 +66,7 @@ public class ProjectDeletedEventConsumerTests : IAsyncLifetime
 		ProjectDeletedEvent projectDeletedEvent = null!;
 		Mock<ConsumeContext<ProjectDeletedEvent>> contextMock = new();
 		contextMock.Setup(x => x.Message)
-			.Returns(projectDeletedEvent!);
+			.Returns(projectDeletedEvent);
 
 		await _consumer.Consume(contextMock.Object);
 

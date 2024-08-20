@@ -1,6 +1,6 @@
-﻿namespace Ehrms.TrainingManagement.API.UnitTests.TestHelpers.Fakers.Commands;
+﻿namespace Ehrms.Training.TestHelpers.Fakers.Commands;
 
-internal class UpdateTrainingCommandFaker : Faker<UpdateTrainingCommand>
+public sealed class UpdateTrainingCommandFaker : Faker<UpdateTrainingCommand>
 {
     public UpdateTrainingCommandFaker()
     {

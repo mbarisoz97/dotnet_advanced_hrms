@@ -1,12 +1,12 @@
-﻿using Ehrms.TrainingManagement.API.Database.Context;
-
-namespace Ehrms.TrainingManagement.API.Handlers.Training.Commands;
+﻿namespace Ehrms.TrainingManagement.API.Handlers.Training.Commands;
 
 public sealed class CreateTrainingCommand : IRequest<Database.Models.Training>
 {
 	public string Name { get; set; } = string.Empty;
 	public string Description { get; set; } = string.Empty;
 	public DateTime PlannedAt { get; set; }
+	public DateTime StartsAt { get; set; }
+	public DateTime EndsAt { get; set; }
 	public ICollection<Guid> Participants { get; set; } = [];
 }
 
@@ -29,7 +29,7 @@ public sealed class CreateTrainingCommandHandler : IRequestHandler<CreateTrainin
 		var participants = _dbContext.Employees
 				.Where(x => request.Participants.Contains(x.Id));
 
-		await participants.ForEachAsync(training.Participants.Add);
+		await participants.ForEachAsync(training.Participants.Add, cancellationToken: cancellationToken);
 
 		await _dbContext.AddAsync(training, cancellationToken);
 		await _dbContext.SaveChangesAsync(cancellationToken);
