@@ -27,7 +27,7 @@ public sealed class MockTokenHandler : Mock<ITokenHandler>
 
     private void SetupGetPrincipalFromExpiredToken(ClaimsPrincipal claimsPrincipal)
     {
-        Setup(x => x.GetPrincipalFromExpiredToken(It.IsAny<string>()))
+        Setup(x => x.GetClaimsFromAccessToken(It.IsAny<string>()))
             .Returns(claimsPrincipal);
     }
 

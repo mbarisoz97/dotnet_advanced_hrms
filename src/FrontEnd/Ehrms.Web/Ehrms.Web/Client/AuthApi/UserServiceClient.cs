@@ -1,6 +1,6 @@
 ﻿using Ehrms.Web.Models.User;
 
-namespace Ehrms.Web.Client.AuthService;
+namespace Ehrms.Web.Client.AuthApi;
 
 internal class UserServiceClient : IUserServiceClient
 {

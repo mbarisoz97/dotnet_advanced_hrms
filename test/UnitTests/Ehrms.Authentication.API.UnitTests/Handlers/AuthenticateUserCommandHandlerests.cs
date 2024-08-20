@@ -92,4 +92,26 @@ public class AuthenticateUserCommandHandlerests
         result.IsSuccess.Should().BeTrue();
         generateTokenResponse.Should().BeEquivalentTo(mockTokenResponse);
     }
+    
+    [Fact]
+    public async Task Handle_ExistingUserWithInactiveAccount_ReturnsResultWithInactiveAccountException()
+    {
+        var user = new UserFaker()
+            .WithAccountStatus(isActive: false)
+            .Generate();
+
+        _mockUserManager.SetupFindByNameAsync(user);
+        _mockUserManager.SetupCheckPasswordAsync(isPasswordTrue: true);
+
+        var mockTokenResponse = new GenerateTokenResponseFaker().Generate();
+        _mockTokenHandler.Setup(x => x.Generate(It.IsAny<GenerateJwtRequest>()))
+            .Returns(mockTokenResponse);
+
+        var command = new AuthenticateUserCommandFaker().Generate();
+        var result = await _handler.Handle(command, default);
+        var exceptionResult = result.Match<Exception?>(s => null, f => f);
+
+        result.IsSuccess.Should().BeFalse();
+        exceptionResult.Should().BeOfType<UserAccountInactiveException>();
+    }
 }
