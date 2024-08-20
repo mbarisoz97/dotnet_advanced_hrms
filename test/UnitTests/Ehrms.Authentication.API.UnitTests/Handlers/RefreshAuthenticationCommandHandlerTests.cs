@@ -1,12 +1,10 @@
-﻿using System.Security.Claims;
-
+﻿using Ehrms.Shared;
 using Ehrms.Authentication.API.Exceptions;
 using Ehrms.Authentication.API.Database.Context;
 using Ehrms.Authentication.TestHelpers.Faker.Models;
 using Ehrms.Authentication.API.UnitTests.TestHelpers;
 using Ehrms.Authentication.API.Handlers.Auth.Commands;
 using Ehrms.Authentication.API.UnitTests.TestHelpers.Mock;
-using Ehrms.Shared;
 
 namespace Ehrms.Authentication.API.UnitTests.Handlers;
 
@@ -84,9 +82,28 @@ public class RefreshAuthenticationCommandHandlerTests
         result.IsFaulted.Should().BeTrue();
         exceptionInResult.Should().BeOfType<InvalidTokenException>();
     }
+    
+    [Fact]
+    public async Task Handle_UserAccountIsInactive_ReturnsResultWithInvalidAccessTokenException()
+    {
+        var user = new UserFaker()
+            .WithAccountStatus(isActive: false)
+            .Generate();
+        
+        _mockTokenHandler.SetupGetPrincipalFromExpiredToken(user);
+        _mockUserManager.SetupFindByNameAsync(user);
+        _mockTokenHandler.SetupGenerate(new GenerateTokenResponse());
+
+        var command = new RefreshAuthenticationCommandFaker();
+        var result = await _handler.Handle(command, default);
+        var exceptionInResult = result.Match<Exception?>(s => null, f => f);
+
+        result.IsFaulted.Should().BeTrue();
+        exceptionInResult.Should().BeOfType<UserAccountInactiveException>();
+    }
 
     [Fact]
-    public async Task Handle_TokenGenerationSuccessfull_ReturnsResultWithGeneratedToken()
+    public async Task Handle_TokenGenerationSuccessful_ReturnsResultWithGeneratedToken()
     {
         var role = new RoleFaker().Generate();
         var user = new UserFaker().Generate();
@@ -98,7 +115,7 @@ public class RefreshAuthenticationCommandHandlerTests
         
         _mockTokenHandler.SetupGetPrincipalFromExpiredToken(user);
         _mockUserManager.SetupFindByNameAsync(user);
-        _mockTokenHandler.SetupGenerate(new());
+        _mockTokenHandler.SetupGenerate(new GenerateTokenResponse());
 
         var command = new RefreshAuthenticationCommandFaker()
             .WithRefreshToken(user.RefreshToken)

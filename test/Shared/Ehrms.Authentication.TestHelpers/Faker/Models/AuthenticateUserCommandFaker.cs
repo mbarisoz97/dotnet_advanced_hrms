@@ -2,7 +2,7 @@
 
 namespace Ehrms.Authentication.TestHelpers.Faker.Models;
 
-public class AuthenticateUserCommandFaker : Faker<AuthenticateUserCommand>
+public sealed class AuthenticateUserCommandFaker : Faker<AuthenticateUserCommand>
 {
     public AuthenticateUserCommandFaker()
     {

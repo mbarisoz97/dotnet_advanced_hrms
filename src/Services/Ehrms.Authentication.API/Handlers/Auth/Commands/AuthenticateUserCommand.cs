@@ -1,10 +1,9 @@
 ﻿using Ehrms.Shared;
+using System.Security.Cryptography;
+using Microsoft.EntityFrameworkCore;
 using Ehrms.Authentication.API.Adapter;
 using Ehrms.Authentication.API.Exceptions;
-using System.Security.Cryptography;
 using Ehrms.Authentication.API.Database.Context;
-using Microsoft.EntityFrameworkCore;
-using System.Threading;
 
 namespace Ehrms.Authentication.API.Handlers.Auth.Commands;
 
@@ -34,13 +33,21 @@ internal sealed class AuthenticateUserCommandHandler : IRequestHandler<Authentic
         var user = await _userManagerAdapter.FindByNameAsync(request.Username);
         if (user == null)
         {
-            return new Result<GenerateTokenResponse?>(new UserNotFoundException($"Could not find user <{request.Username}>"));
+            return new Result<GenerateTokenResponse?>(
+                new UserNotFoundException($"Could not find user <{request.Username}>"));
         }
 
+        if (!user.IsActive)
+        {
+            return new Result<GenerateTokenResponse?>(
+                new UserAccountInactiveException($"User <{request.Username}> is not active"));
+        }
+        
         var isCredentialsValid = await _userManagerAdapter.CheckPasswordAsync(user, request.Password);
         if (!isCredentialsValid)
         {
-            return new Result<GenerateTokenResponse?>(new UserCredentialsInvalidException($"User password is not correct."));
+            return new Result<GenerateTokenResponse?>(
+                new UserCredentialsInvalidException($"User password is not correct."));
         }
 
         var authenticationRequest = _mapper.Map<GenerateJwtRequest>(request);

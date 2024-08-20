@@ -2,7 +2,7 @@
 
 namespace Ehrms.Authentication.TestHelpers.Faker.Models;
 
-public class RefreshAuthenticationCommandFaker : Faker<RefreshAuthenticationCommand>
+public sealed class RefreshAuthenticationCommandFaker : Faker<RefreshAuthenticationCommand>
 {
     public RefreshAuthenticationCommandFaker()
     {
@@ -10,6 +10,12 @@ public class RefreshAuthenticationCommandFaker : Faker<RefreshAuthenticationComm
         RuleFor(x => x.RefreshToken, f => f.Random.AlphaNumeric(20));
     }
 
+    public RefreshAuthenticationCommandFaker WithAccessToken(string accessToken)
+    {
+        RuleFor(x=>x.AccessToken, accessToken);
+        return this;
+    }
+    
     public RefreshAuthenticationCommandFaker WithRefreshToken(string refreshToken)
     {
         RuleFor(x => x.RefreshToken, refreshToken);

@@ -42,6 +42,12 @@ internal sealed class
                 new UserNotFoundException($"Could not find user with username {userName}>"));
         }
 
+        if (!user.IsActive)
+        {
+            return new Result<GenerateTokenResponse?>(
+                new UserAccountInactiveException("User account is inactive"));
+        }
+
         if (!request.HasValidRefreshToken(user))
         {
             return new Result<GenerateTokenResponse?>(
