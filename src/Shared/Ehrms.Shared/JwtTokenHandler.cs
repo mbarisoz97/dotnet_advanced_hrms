@@ -8,7 +8,7 @@ namespace Ehrms.Shared;
 public interface ITokenHandler
 {
     GenerateTokenResponse? Generate(GenerateJwtRequest request);
-    ClaimsPrincipal? GetPrincipalFromExpiredToken(string token);
+    ClaimsPrincipal? GetClaimsFromAccessToken(string token);
 }
 
 public class JwtTokenHandler : ITokenHandler
@@ -59,7 +59,7 @@ public class JwtTokenHandler : ITokenHandler
         };
     }
 
-    public ClaimsPrincipal? GetPrincipalFromExpiredToken(string token)
+    public ClaimsPrincipal? GetClaimsFromAccessToken(string token)
     {
         var validation = new TokenValidationParameters
         {

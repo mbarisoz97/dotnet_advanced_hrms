@@ -27,7 +27,7 @@ internal sealed class
     public async Task<Result<GenerateTokenResponse?>> Handle(RefreshAuthenticationCommand request,
         CancellationToken cancellationToken)
     {
-        var claimsPrincipal = _tokenHandler.GetPrincipalFromExpiredToken(request.AccessToken);
+        var claimsPrincipal = _tokenHandler.GetClaimsFromAccessToken(request.AccessToken);
         var userName = claimsPrincipal?.Identity?.Name ?? string.Empty;
         if (claimsPrincipal == null || string.IsNullOrEmpty(userName))
         {

@@ -1,147 +1,142 @@
-﻿@page "/login"
+﻿@using Ehrms.Web.Client.AuthApi.Account
 
-@using BitzArt.Blazor.Cookies
-@using Ehrms.Shared
-@using System.Net.Http.Headers
-@using Ehrms.Web.Routing
 @layout EmptyLayout
+@attribute [Route(UserRouting.Login)]
 
 @inject ICookieService CookieService
 @inject ITokenHandler TokenHandler
-@inject IHttpClientFactory HttpClientFactory
-@inject IEndpointProvider EndpointProvider
 @inject NavigationManager NavigationManager
+@inject IAccountServiceClient AccountServiceClient
 
 <div class="container">
-	<div class="row vh-100 align-items-center justify-content-center">
-		<div class="col col-lg-4 shadow p-3 mb-5 bg-body rounded">
-			<EditForm Model="@LoginRequest" FormName="UserLoginForm" OnValidSubmit="ValidSubmit">
-				<DataAnnotationsValidator />
-				<div class="mt-3 d-flex justify-content-center">
-					<i class="bi bi-lock fs-1 fw-bold"></i>
-				</div>
-				<div class="mt-3">
-					<label class="form-label">Username</label>
-					<InputText class="form-control form-control-lg" @bind-Value="LoginRequest.Username"></InputText>
-					<ValidationMessage class="text-danger" For="(()=> LoginRequest.Username)"></ValidationMessage>
-				</div>
-				<div class="mt-3">
-					<label class="form-label">Password</label>
-					<InputText type="password" class="form-control form-control-lg" @bind-Value="LoginRequest.Password"></InputText>
-					<ValidationMessage class="text-danger" For="(()=> LoginRequest.Password)"></ValidationMessage>
-				</div>
-				<div class="mt-3 d-flex justify-content-center">
-					<button type="submit" class="btn btn-success">
-						<i class="bi bi-box-arrow-in-right"></i>
-						Login
-					</button>
-				</div>
-			</EditForm>
-		</div>
-	</div>
+    <div class="row vh-100 align-items-center justify-content-center">
+        <div class="col col-lg-4 shadow p-3 mb-5 bg-body rounded">
+            <EditForm Model="@LoginRequest" FormName="UserLoginForm" OnValidSubmit="RequestUserLogin">
+                <DataAnnotationsValidator/>
+                <div class="mt-3 d-flex justify-content-center">
+                    <i class="bi bi-lock fs-1 fw-bold"></i>
+                </div>
+                <div class="mt-3">
+                    <label class="form-label">Username</label>
+                    <InputText class="form-control form-control-lg" @bind-Value="LoginRequest.Username"></InputText>
+                    <ValidationMessage class="text-danger" For="(() => LoginRequest.Username)"></ValidationMessage>
+                </div>
+                <div class="mt-3">
+                    <label class="form-label">Password</label>
+                    <InputText type="password" class="form-control form-control-lg" @bind-Value="LoginRequest.Password"></InputText>
+                    <ValidationMessage class="text-danger" For="(() => LoginRequest.Password)"></ValidationMessage>
+                </div>
+                <div class="mt-3 d-flex justify-content-center">
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                        Login
+                    </button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
 </div>
 
 @code {
-	[SupplyParameterFromForm]
-	public LoginRequestModel? LoginRequest { get; set; } = new()
-		{
-			Username = "testUser",
-			Password = "Passw0rd!"
-		};
 
-	[CascadingParameter]
-	public HttpContext? HttpContext { get; set; }
+    [SupplyParameterFromForm]
+    public LoginRequestModel? LoginRequest { get; set; } = new()
+    {
+        Username = "testUser",
+        Password = "Passw0rd!"
+    };
 
-	protected async override Task OnInitializedAsync()
-	{
-		if (HttpContext == null || 
-			HttpContext.User == null || 
-			HttpContext.User.Identity == null)
-		{
-			return;
-		}
+    [CascadingParameter] public HttpContext? HttpContext { get; set; }
 
-		if (HttpContext.User.Identity.IsAuthenticated)
-		{
-			return;
-		}
+    protected override async Task OnInitializedAsync()
+    {
+        var isUserAlreadyAuthenticated = HttpContext?.User?.Identity?.IsAuthenticated ?? false;
+        if (isUserAlreadyAuthenticated)
+        {
+            return;
+        }
 
-		if (await CanLoginWithExistingTokens())
-		{
-			NavigationManager.NavigateTo("/");
-		}
-	}
+        await RefreshSession();
+    }
 
-	private async Task ValidSubmit()
-	{
-		if (HttpContext == null)
-		{
-			return;
-		}
+    private async Task RequestUserLogin()
+    {
+        var loginResponse = await AccountServiceClient.Login(LoginRequest);
+        if (loginResponse.StatusCode != HttpStatusCode.OK)
+        {
+            //ToDo: Show error
+            return;
+        }
 
-		var client = HttpClientFactory.CreateClient("ApiGateway");
-		var response = await client.PostAsJsonAsync(EndpointProvider.AutheticationEndpoint, LoginRequest);
-		if (!response.IsSuccessStatusCode)
-		{
-			return;
-		}
+        await SignInUser(loginResponse.Content);
+        NavigateToPage();
+    }
 
-		var tokenDetails = await response.Content.ReadFromJsonAsync<LoginResponseModel>();
-		var claimsPrincipal = TokenHandler.GetPrincipalFromExpiredToken(tokenDetails.AccessToken);
+    private async Task RefreshSession()
+    {
+        var refreshLoginRequest = await TryGetLoginRefreshRequest();
+        if (refreshLoginRequest == null)
+        {
+            return;
+        }
 
-		var claims = new List<Claim>()
-		{
-			new Claim(ClaimTypes.Name, LoginRequest.Username)
-		};
-		claims.AddRange(claimsPrincipal!.Claims);
+        var loginResponse = await AccountServiceClient.RefreshSession(refreshLoginRequest);
+        if (loginResponse.StatusCode == HttpStatusCode.OK)
+        {
+            await SignInUser(loginResponse.Content);
+        }
+    }
 
-		var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-		var principal = new ClaimsPrincipal(identity);
+    private async Task<LoginRefreshModel?> TryGetLoginRefreshRequest()
+    {
+        var accessToken = await CookieService.GetAsync(CookieKeys.AccessToken);
+        var refreshToken = await CookieService.GetAsync(CookieKeys.RefreshToken);
+        if (accessToken == null || refreshToken == null)
+        {
+            return null;
+        }
 
-		await HttpContext.SignInAsync(principal);
+        var loginRefreshModel = new LoginRefreshModel()
+        {
+            AccessToken = accessToken.Value,
+            RefreshToken = refreshToken.Value,
+        };
 
-		HttpContext.Response.Cookies.Append(CookieKeys.AccessToken, tokenDetails.AccessToken);
-		HttpContext.Response.Cookies.Append(CookieKeys.RefreshToken, tokenDetails.RefreshToken);
+        return loginRefreshModel;
+    }
 
-		NavigationManager.NavigateTo("/");
-	}
+    private async Task SignInUser(LoginResponseModel? loginResponse)
+    {
+        if (loginResponse == null)
+        {
+            //ToDo: Show error
+            return;
+        }
 
-	private async Task<bool> CanLoginWithExistingTokens()
-	{
-		var accessToken = await CookieService.GetAsync(CookieKeys.AccessToken);
-		var refreshToken = await CookieService.GetAsync(CookieKeys.RefreshToken);
+        if (HttpContext == null)
+        {
+            //ToDo: Show error
+            return;
+        }
 
-		if (accessToken == null || refreshToken == null)
-		{
-			return false;
-		}
+        var claimsPrincipal = TokenHandler.GetClaimsFromAccessToken(loginResponse.AccessToken);
+        var identity = new ClaimsIdentity(claimsPrincipal?.Claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var principal = new ClaimsPrincipal(identity);
 
-		var client = HttpClientFactory.CreateClient("ApiGateway");
-		var response = await client.PostAsJsonAsync(EndpointProvider.RefreshEndpoint, new
-		{
-			AccessToken = accessToken.Value,
-			RefreshToken = refreshToken.Value,
-		});
+        await HttpContext.SignInAsync(principal);
+        HttpContext.Response.Cookies.Append(CookieKeys.AccessToken, loginResponse.AccessToken);
+        HttpContext.Response.Cookies.Append(CookieKeys.RefreshToken, loginResponse.RefreshToken);
+    }
 
-		if (!response.IsSuccessStatusCode)
-		{
-			return false;
-		}
+    private void NavigateToPage(string pageToNavigate = "")
+    {
+        if (string.IsNullOrEmpty(pageToNavigate))
+        {
+            //Return url contains the url user wanted to navigate before redirected to login page.
+            pageToNavigate = HttpContext?.Request?.Query["returnurl"].ToString() ?? "/";
+        }
 
-		var tokenDetails = await response.Content.ReadFromJsonAsync<LoginResponseModel>();
-		var claimsPrincipal = TokenHandler.GetPrincipalFromExpiredToken(tokenDetails.AccessToken);
+        NavigationManager.NavigateTo(pageToNavigate);
+    }
 
-		var offset = new DateTimeOffset(DateTime.UtcNow)
-			.ToOffset(TimeSpan.FromMinutes(5));
-
-		HttpContext.Response.Cookies.Append(CookieKeys.AccessToken, tokenDetails.AccessToken);
-		HttpContext.Response.Cookies.Append(CookieKeys.RefreshToken, tokenDetails.RefreshToken);
-
-		var identity = new ClaimsIdentity(claimsPrincipal.Claims, CookieAuthenticationDefaults.AuthenticationScheme);
-		var principal = new ClaimsPrincipal(identity);
-
-		await HttpContext.SignInAsync(principal);
-
-		return true;
-	}
 }
