@@ -1,5 +1,7 @@
-﻿@attribute [StreamRendering]
+﻿@using Ehrms.Web.Extensions
+@attribute [StreamRendering]
 
+@inject IToastService ToastService
 @inject ITrainingServiceClient TrainingServiceClient
 @inject IEmployeeServiceClient EmployeeServiceClient
 
@@ -22,9 +24,14 @@
         <ValidationMessage class="text-danger" For="(() => Training.Description)"></ValidationMessage>
     </div>
     <div class="mt-3">
-        <label class="form-label">Planned Date</label>
-        <InputDate class="form-control" @bind-Value="@Training.PlannedAt"></InputDate>
-        <ValidationMessage class="text-danger" For="(() => Training.PlannedAt)"></ValidationMessage>
+        <label class="form-label">Starts At</label>
+        <DateTimePicker MinDate="DateTime.UtcNow" SelectedDateTime="@Training.StartsAt" SelectedDateTimeUpdated="UpdateTrainingStartTime"/>
+        <ValidationMessage class="text-danger" For="(() => Training.StartsAt)"></ValidationMessage>
+    </div>
+    <div class="mt-3">
+        <label class="form-label">Ends At</label>
+        <DateTimePicker MinDate="DateTime.UtcNow" SelectedDateTime="@Training.EndsAt" SelectedDateTimeUpdated="UpdateTrainingEndTime"/>
+        <ValidationMessage class="text-danger" For="(() => Training.EndsAt)"></ValidationMessage>
     </div>
     <div class="mt-3">
         <MudSelect T="EmployeeModel" Label="Select Participants" MultiSelection="true" @bind-SelectedValues="Participants" AdornmentIcon="@Icons.Material.Filled.Add" AnchorOrigin="Origin.BottomCenter">
@@ -36,7 +43,7 @@
     </div>
     <div class="mt-3">
         <MudTooltip Text="Save">
-            <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save" ButtonType="ButtonType.Submit" />
+            <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Filled.Save" ButtonType="ButtonType.Submit"/>
         </MudTooltip>
     </div>
 </EditForm>
@@ -45,10 +52,12 @@
     [Parameter] public Guid Id { get; set; }
     [Parameter] public bool IsEditMode { get; set; }
     [Parameter] public string Description { get; set; } = string.Empty;
-    [Parameter] public IEnumerable<Guid> SelectedEmployees { get; set; } = [];
-
+    [Parameter] public IEnumerable<Guid>? SelectedEmployees { get; set; } = [];
     [Parameter] public EventCallback<TrainingModel> OnValidSubmit { get; set; }
+
     [SupplyParameterFromForm] public TrainingModel? Training { get; set; }
+    [SupplyParameterFromForm] private TimeSpan? TrainingStartTime { get; set; }
+    [SupplyParameterFromForm] private TimeSpan? TrainingEndTime { get; set; }
 
     private IEnumerable<EmployeeModel> Employees { get; set; } = [];
     private IEnumerable<EmployeeModel> Participants { get; set; } = [];
@@ -68,6 +77,11 @@
 
     protected async Task ValidSubmit()
     {
+        if (Training == null)
+        {
+            return;
+        }
+
         Training.Participants = Participants.Select(x => x.Id).ToList();
         await OnValidSubmit.InvokeAsync(Training);
     }
@@ -90,7 +104,7 @@
         {
             Participants = Employees.Where(x => SelectedEmployees.Contains(x.Id));
         }
-        
+
         return Task.CompletedTask;
     }
 
@@ -104,6 +118,22 @@
             {
                 Participants = Employees.Where(x => Training.Participants.Contains(x.Id));
             }
+        }
+    }
+
+    private void UpdateTrainingStartTime(object? sender, DateTime? startTime)
+    {
+        if (startTime != null && Training != null)
+        {
+            Training.StartsAt = startTime;
+        }
+    }
+
+    private void UpdateTrainingEndTime(object sender, DateTime? endTime)
+    {
+        if (endTime != null && Training != null)
+        {
+            Training.EndsAt = endTime;
         }
     }
 }

@@ -1,0 +1,65 @@
+@using Ehrms.Web.Extensions
+
+<MudPaper Class="d-flex flex-grow-1 gap-1 pa-4">
+    <MudTimePicker
+        @bind-Time="_selectedTime"
+        PickerClosed="SetSelectedTimeSpan"
+        PickerVariant="PickerVariant.Dialog"
+        AutoClose="true"
+        Editable="true"/>
+    <MudSpacer></MudSpacer>
+    <MudDatePicker
+        @bind-Date="SelectedDateTime"
+        PickerClosed="SetSelectedDate"
+        PickerVariant="PickerVariant.Dialog"
+        MinDate="MinDate"
+        Mask="@(new DateMask("dd.MM.yyyy"))"
+        DateFormat="dd.MM.yyyy"
+        Editable="true"/>
+</MudPaper>
+
+@code {
+    [Parameter] public DateTime? MinDate { get; set; }
+    [Parameter] public DateTime? SelectedDateTime { get; set; }
+    [Parameter] public EventHandler<DateTime?>? SelectedDateTimeUpdated { get; set; }
+
+    private TimeSpan? _selectedTime;
+
+    protected override Task OnInitializedAsync()
+    {
+        if (SelectedDateTime != null)
+        {
+            _selectedTime = ((DateTime)SelectedDateTime).TimeOfDay;
+        }
+
+        return Task.CompletedTask;
+    }
+
+    private void SetSelectedDate()
+    {
+        if (SelectedDateTime == null)
+        {
+            return;
+        }
+
+        SetSelectedTimeSpan();
+        NotifySelectedDateChange();
+    }
+
+    private void SetSelectedTimeSpan()
+    {
+        if (SelectedDateTime == null && _selectedTime == null)
+        {
+            return;
+        }
+
+        SelectedDateTime = SelectedDateTime.UpdateTime(_selectedTime);
+        NotifySelectedDateChange();
+    }
+
+    private void NotifySelectedDateChange()
+    {
+        SelectedDateTimeUpdated?.Invoke(this, SelectedDateTime);
+    }
+
+}

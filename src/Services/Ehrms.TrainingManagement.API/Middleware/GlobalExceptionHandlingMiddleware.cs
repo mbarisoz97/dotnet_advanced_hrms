@@ -13,13 +13,14 @@ internal class GlobalExceptionHandlingMiddleware : IMiddleware
 
     public async Task InvokeAsync(HttpContext context, RequestDelegate next)
     {
-        try
-        {
-            await next.Invoke(context);
-        }
-        catch (CustomNotFoundException)
+	    try
+	    {
+		    await next.Invoke(context);
+	    }
+        catch (CustomNotFoundException notFoundException)
         {
             context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+            await context.Response.WriteAsync(notFoundException.Message);
         }
 		catch (FluentValidation.ValidationException validationException)
 		{

@@ -1,4 +1,6 @@
-﻿namespace Ehrms.TrainingManagement.API.Handlers.Training.Commands;
+﻿using FluentValidation;
+
+namespace Ehrms.TrainingManagement.API.Handlers.Training.Commands;
 
 public sealed class CreateTrainingCommand : IRequest<Database.Models.Training>
 {
@@ -23,6 +25,11 @@ public sealed class CreateTrainingCommandHandler : IRequestHandler<CreateTrainin
 
 	public async Task<Database.Models.Training> Handle(CreateTrainingCommand request, CancellationToken cancellationToken)
 	{
+		if (request.StartsAt > request.EndsAt)
+		{
+			throw new ValidationException("Training end data should be later date than start date.");
+		}
+		
 		Database.Models.Training training = new();
 		_mapper.Map(request, training);
 
