@@ -33,11 +33,15 @@
     <HeaderContent>
         <MudTh>Name</MudTh>
         <MudTh>Planned Date</MudTh>
+        <MudTh>Starts At</MudTh>
+        <MudTh>Ends At</MudTh>
         <MudTh></MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Name">@context.Name</MudTd>
         <MudTd DataLabel="Date">@context.PlannedAt</MudTd>
+        <MudTd DataLabel="Date">@context.StartsAt</MudTd>
+        <MudTd DataLabel="Date">@context.EndsAt</MudTd>
         <MudTd>
             <MudTooltip Text="Edit">
                 <MudIconButton @onclick="@(() => ShowUpdateTrainingDialog(context))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small"/>

@@ -1,11 +1,12 @@
-﻿namespace Ehrms.TrainingManagement.API.UnitTests.TestHelpers.Fakers.Commands;
+﻿namespace Ehrms.Training.TestHelpers.Fakers.Commands;
 
-internal class UpdateTrainingCommandFaker : Faker<UpdateTrainingCommand>
+public sealed class UpdateTrainingCommandFaker : Faker<UpdateTrainingCommand>
 {
     public UpdateTrainingCommandFaker()
     {
         RuleFor(e => e.Name, f => f.Random.Word());
-        RuleFor(e => e.PlannedAt, f => f.Date.Future());
+        RuleFor(e => e.StartsAt, DateTime.Today.AddHours(1));
+        RuleFor(e => e.EndsAt, DateTime.Today.AddHours(2));
         RuleFor(e => e.Description, f => f.Random.Words());
     }
 
@@ -15,6 +16,12 @@ internal class UpdateTrainingCommandFaker : Faker<UpdateTrainingCommand>
         return this;
     }
 
+    public UpdateTrainingCommandFaker WithDescription(string description)
+    {
+        RuleFor(e=>e.Description, description);
+        return this;
+    }
+    
     public UpdateTrainingCommandFaker WithParticipants(ICollection<Employee> participants)
     {
         RuleFor(e => e.Participants, participants.Select(x=>x.Id).ToList());

@@ -71,6 +71,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ehrms.Authentication.API.In
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ehrms.Shared.TestHepers", "test\Shared\Ehrms.Shared.TestHepers\Ehrms.Shared.TestHepers.csproj", "{63DA2673-56E4-4C9E-8CE1-3A4D16B41624}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ehrms.Training.TestHelpers", "test\Shared\Ehrms.Training.TestHelpers\Ehrms.Training.TestHelpers.csproj", "{0EB109B9-DBA5-4951-A314-12C5E94FF007}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -173,6 +175,10 @@ Global
 		{63DA2673-56E4-4C9E-8CE1-3A4D16B41624}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{63DA2673-56E4-4C9E-8CE1-3A4D16B41624}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{63DA2673-56E4-4C9E-8CE1-3A4D16B41624}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0EB109B9-DBA5-4951-A314-12C5E94FF007}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0EB109B9-DBA5-4951-A314-12C5E94FF007}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0EB109B9-DBA5-4951-A314-12C5E94FF007}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0EB109B9-DBA5-4951-A314-12C5E94FF007}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -209,6 +215,7 @@ Global
 		{B6A5D4D8-EE0E-45C6-BA56-D94E00B66C23} = {BECD6B86-2AD1-401F-B720-63E9B3FD6E3C}
 		{0479E7BA-89EB-4E9F-85A6-0AC2EA89797C} = {065FDA5F-5706-4E00-B7FD-36A234D47955}
 		{63DA2673-56E4-4C9E-8CE1-3A4D16B41624} = {BECD6B86-2AD1-401F-B720-63E9B3FD6E3C}
+		{0EB109B9-DBA5-4951-A314-12C5E94FF007} = {BECD6B86-2AD1-401F-B720-63E9B3FD6E3C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {39A0E1C3-1F8D-4840-AD0D-087F270984A4}

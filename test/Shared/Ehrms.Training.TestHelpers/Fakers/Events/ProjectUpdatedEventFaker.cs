@@ -1,8 +1,6 @@
-﻿using Ehrms.Contracts.Project;
+﻿namespace Ehrms.Training.TestHelpers.Fakers.Events;
 
-namespace Ehrms.TrainingManagement.API.UnitTests.TestHelpers.Fakers.Events;
-
-internal class ProjectUpdatedEventFaker : Faker<ProjectUpdatedEvent>
+public sealed class ProjectUpdatedEventFaker : Faker<ProjectUpdatedEvent>
 {
 	public ProjectUpdatedEventFaker()
 	{

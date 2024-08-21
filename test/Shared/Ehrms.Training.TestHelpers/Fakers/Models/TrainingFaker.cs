@@ -1,6 +1,6 @@
-﻿namespace Ehrms.TrainingManagement.API.UnitTests.TestHelpers.Fakers.Models;
+﻿namespace Ehrms.Training.TestHelpers.Fakers.Models;
 
-internal class TrainingFaker : Faker<Training>
+public sealed class TrainingFaker : Faker<TrainingManagement.API.Database.Models.Training>
 {
 	public TrainingFaker()
 	{
@@ -14,5 +14,4 @@ internal class TrainingFaker : Faker<Training>
 		RuleFor(e => e.Participants, participants);
 		return this;
 	}
-
 }

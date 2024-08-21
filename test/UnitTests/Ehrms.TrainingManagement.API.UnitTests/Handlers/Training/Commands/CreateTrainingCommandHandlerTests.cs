@@ -1,4 +1,4 @@
-﻿namespace Ehrms.TrainingManagement.API.UnitTests.Handlers.Training;
+﻿namespace Ehrms.TrainingManagement.API.UnitTests.Handlers.Training.Commands;
 
 public class CreateTrainingCommandHandlerTests
 {
@@ -19,11 +19,20 @@ public class CreateTrainingCommandHandlerTests
         var command = new CreateTrainingCommandFaker().Generate();
         var training = await _handler.Handle(command, default);
 
-        training.Should().NotBeNull();
-        training.Id.Should().NotBe(Guid.Empty);
-        training.Name.Should().Be(command.Name);
-        training.Description.Should().Be(command.Description);
-        training.PlannedAt.Should().Be(command.PlannedAt);
-        training.Participants.Should().BeEmpty();
+        training.Should().BeEquivalentTo(command);
+    }
+
+    [Fact]
+    public async Task Handle_TrainingEndDateIsCloserThanStartDate_ThrowsValidationException()
+    {
+        var command = new CreateTrainingCommandFaker()
+            .WithStartDate(DateTime.UtcNow.AddHours(1))
+            .WithEndDate(DateTime.UtcNow)
+            .Generate();
+
+        await Assert.ThrowsAsync<FluentValidation.ValidationException>(async () =>
+        {
+            await _handler.Handle(command, default);
+        });
     }
 }

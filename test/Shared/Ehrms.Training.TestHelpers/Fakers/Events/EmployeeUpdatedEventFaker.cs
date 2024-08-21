@@ -1,8 +1,6 @@
-﻿using Ehrms.Contracts.Employee;
+﻿namespace Ehrms.Training.TestHelpers.Fakers.Events;
 
-namespace Ehrms.TrainingManagement.API.UnitTests.TestHelpers.Fakers.Events;
-
-internal class EmployeeUpdatedEventFaker : Faker<EmployeeUpdatedEvent>
+public sealed class EmployeeUpdatedEventFaker : Faker<EmployeeUpdatedEvent>
 {
 	public EmployeeUpdatedEventFaker()
 	{

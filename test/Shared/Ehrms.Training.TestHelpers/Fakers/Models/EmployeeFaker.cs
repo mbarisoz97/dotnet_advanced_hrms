@@ -1,6 +1,6 @@
-﻿namespace Ehrms.TrainingManagement.API.UnitTests.TestHelpers.Fakers.Models;
+﻿namespace Ehrms.Training.TestHelpers.Fakers.Models;
 
-internal sealed class EmployeeFaker : Faker<Employee>
+public sealed class EmployeeFaker : Faker<Employee>
 {
 	public EmployeeFaker()
 	{

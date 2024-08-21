@@ -1,6 +1,6 @@
-namespace Ehrms.TrainingManagement.API.UnitTests.TestHelpers.Fakers.Models;
+namespace Ehrms.Training.TestHelpers.Fakers.Models;
 
-internal sealed class TrainingRecommendationRequestFaker : Faker<TrainingRecommendationRequest>
+public sealed class TrainingRecommendationRequestFaker : Faker<TrainingRecommendationRequest>
 {
     public TrainingRecommendationRequestFaker()
     {

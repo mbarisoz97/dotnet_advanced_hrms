@@ -1,8 +1,6 @@
-﻿using Ehrms.Contracts.Employee;
+﻿namespace Ehrms.Training.TestHelpers.Fakers.Events;
 
-namespace Ehrms.TrainingManagement.API.UnitTests.TestHelpers.Fakers.Events;
-
-internal class EmployeeDeletedEventFaker : Faker<EmployeeDeletedEvent>
+public sealed class EmployeeDeletedEventFaker : Faker<EmployeeDeletedEvent>
 {
     public EmployeeDeletedEventFaker()
     {

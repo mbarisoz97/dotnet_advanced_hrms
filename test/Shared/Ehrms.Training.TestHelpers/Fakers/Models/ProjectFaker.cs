@@ -1,6 +1,6 @@
-﻿namespace Ehrms.TrainingManagement.API.UnitTests.TestHelpers.Fakers.Models;
+﻿namespace Ehrms.Training.TestHelpers.Fakers.Models;
 
-internal class ProjectFaker : Faker<Project>
+public sealed class ProjectFaker : Faker<Project>
 {
 	public ProjectFaker()
 	{

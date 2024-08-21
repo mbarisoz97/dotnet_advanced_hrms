@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
+using Ehrms.Training.TestHelpers.Fakers.Commands;
 
 namespace Ehrms.TrainingManagement.API.IntegrationTests.Controller.TrainingController;
 
@@ -35,10 +36,23 @@ public class TrainingControllerPutIntegrationTests : TrainingManagementBaseInteg
 	[Fact]
 	public async Task Put_EmptyDescription_ReturnsBadRequest()
 	{
-		var command = new CreateTrainingCommandFaker().Generate();
-		command.Description = "";
-		var response = await client.PutAsJsonAsync(Endpoints.TrainingApi, command);
+		var command = new CreateTrainingCommandFaker()
+			.WithDescription("")
+			.Generate();
 
+		var response = await client.PutAsJsonAsync(Endpoints.TrainingApi, command);
+		response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+	}
+
+	[Fact]
+	public async Task Put_EndDateIsACloserThanStartDate_ReturnsBadRequest()
+	{
+		var command = new CreateTrainingCommandFaker()
+			.WithStartDate(DateTime.Now.AddHours(1))
+			.WithEndDate(DateTime.Now)
+			.Generate();
+
+		var response = await client.PutAsJsonAsync(Endpoints.TrainingApi, command);
 		response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
 	}
 }
