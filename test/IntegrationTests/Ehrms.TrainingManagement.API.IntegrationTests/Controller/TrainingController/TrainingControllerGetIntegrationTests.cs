@@ -1,5 +1,4 @@
-﻿using Ehrms.TrainingManagement.API.Database.Models;
-using System.Net;
+﻿using System.Net;
 using System.Net.Http.Json;
 
 namespace Ehrms.TrainingManagement.API.IntegrationTests.Controller.TrainingController;
@@ -13,13 +12,13 @@ public class TrainingControllerGetIntegrationTests : TrainingManagementBaseInteg
 	[Fact]
 	public async Task Get_ExistingTrainingId_ReturnsOkWithReadTrainingDto()
 	{
-		Training traininig = await InsertRandomTraningRecord();
+		var training = await InsertRandomTraningRecord();
 
-		var response = await client.GetAsync($"{Endpoints.TrainingApi}/{traininig.Id}");
+		var response = await client.GetAsync($"{Endpoints.TrainingApi}/{training.Id}");
 		var readTrainingResponse = await response.Content.ReadFromJsonAsync<ReadTrainingDto>();
 
 		response.StatusCode.Should().Be(HttpStatusCode.OK);
-		readTrainingResponse?.Should().BeEquivalentTo(traininig);
+		readTrainingResponse?.Should().BeEquivalentTo(training);
 	}
 
 	[Fact]

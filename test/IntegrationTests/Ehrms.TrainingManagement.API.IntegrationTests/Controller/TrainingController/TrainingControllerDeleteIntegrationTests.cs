@@ -12,7 +12,7 @@ public class TrainingControllerDeleteIntegrationTests : TrainingManagementBaseIn
 	[Fact]
 	public async Task Delete_ExistingTrainingId_ReturnsNoContent()
 	{
-		Training traininig = await InsertRandomTraningRecord();
+		var traininig = await InsertRandomTraningRecord();
 		var response = await client.DeleteAsync($"{Endpoints.TrainingApi}/{traininig.Id}");
 
 		response.StatusCode.Should().Be(HttpStatusCode.NoContent);

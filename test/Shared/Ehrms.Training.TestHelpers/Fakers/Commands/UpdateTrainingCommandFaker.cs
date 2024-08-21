@@ -16,6 +16,12 @@ public sealed class UpdateTrainingCommandFaker : Faker<UpdateTrainingCommand>
         return this;
     }
 
+    public UpdateTrainingCommandFaker WithDescription(string description)
+    {
+        RuleFor(e=>e.Description, description);
+        return this;
+    }
+    
     public UpdateTrainingCommandFaker WithParticipants(ICollection<Employee> participants)
     {
         RuleFor(e => e.Participants, participants.Select(x=>x.Id).ToList());

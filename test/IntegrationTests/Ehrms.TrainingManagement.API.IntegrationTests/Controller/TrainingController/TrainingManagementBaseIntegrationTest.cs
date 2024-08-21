@@ -1,5 +1,6 @@
 ﻿using System.Net.Http.Headers;
 using Ehrms.Shared;
+using Ehrms.Training.TestHelpers.Fakers.Models;
 using Ehrms.TrainingManagement.API.Database.Models;
 
 namespace Ehrms.TrainingManagement.API.IntegrationTests.Controller.TrainingController;
@@ -22,12 +23,12 @@ public abstract class TrainingManagementBaseIntegrationTest : IClassFixture<Trai
 		client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.AccessToken);
 	}
 
-	protected async Task<Training> InsertRandomTraningRecord()
+	protected async Task<Database.Models.Training> InsertRandomTraningRecord()
 	{
 		var dbContext = _factory.CreateDbContext();
-		var traininig = new TrainingFaker().Generate();
-		await dbContext.AddAsync(traininig);
+		var training = new TrainingFaker().Generate();
+		await dbContext.AddAsync(training);
 		await dbContext.SaveChangesAsync();
-		return traininig;
+		return training;
 	}
 }

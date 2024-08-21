@@ -13,5 +13,14 @@ public class UpdateTrainingCommandValidator : AbstractValidator<UpdateTrainingCo
 
 		RuleFor(x => x.Description)
 			 .NotEmpty();
+		
+		RuleFor(x => x.StartsAt)
+			.NotNull();
+
+		RuleFor(x => x.EndsAt)
+			.NotNull();
+        
+		RuleFor(x => x.EndsAt)
+			.GreaterThan(x => x.StartsAt);
 	}
 }
