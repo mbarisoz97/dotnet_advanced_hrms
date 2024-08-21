@@ -44,11 +44,9 @@ public class UpdateTrainingHandlerCommandTests
 			.Generate();
 
 		var updatedTraining = await _handler.Handle(command, default);
-
-		updatedTraining.Name.Should().Be(command.Name);
-		updatedTraining.PlannedAt.Should().Be(command.PlannedAt);
-		updatedTraining.Description.Should().Be(command.Description);
-		updatedTraining.Participants.Should().HaveCount(0);
+		
+		updatedTraining.Should().BeEquivalentTo(command, opt =>
+			opt.Excluding(x =>x.Participants));
 	}
 
 	[Fact]
@@ -72,9 +70,7 @@ public class UpdateTrainingHandlerCommandTests
 
 		var updatedTraining = await _handler.Handle(command, default);
 
-		updatedTraining.Name.Should().Be(command.Name);
-		updatedTraining.PlannedAt.Should().Be(command.PlannedAt);
-		updatedTraining.Description.Should().Be(command.Description);
-		updatedTraining.Participants.Should().HaveCount(employeeList.Count);
+		updatedTraining.Should().BeEquivalentTo(command, opt =>
+			opt.Excluding(x =>x.Participants));
 	}
 }

@@ -5,7 +5,8 @@ public sealed class UpdateTrainingCommandFaker : Faker<UpdateTrainingCommand>
     public UpdateTrainingCommandFaker()
     {
         RuleFor(e => e.Name, f => f.Random.Word());
-        RuleFor(e => e.PlannedAt, f => f.Date.Future());
+        RuleFor(e => e.StartsAt, DateTime.Today.AddHours(1));
+        RuleFor(e => e.EndsAt, DateTime.Today.AddHours(2));
         RuleFor(e => e.Description, f => f.Random.Words());
     }
 
