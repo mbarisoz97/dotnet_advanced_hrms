@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Ehrms.Authentication.API.Dto.User;
+using Ehrms.Authentication.API.Extension;
 using Microsoft.AspNetCore.Authorization;
 using Ehrms.Authentication.API.Handlers.User.Queries;
 
@@ -38,6 +39,17 @@ public class UserController : ControllerBase
             Succ: user => Ok(_mapper.Map<UserUpdateResponseDto>(user)),
             Fail: this.MapUserUpdateFailureResult);
 
+        return actionResult;
+    }
+
+    [HttpPost("Reset")]
+    public async Task<IActionResult> ResetPassword([FromBody] UpdateUserPasswordCommand command)
+    {
+        var commandResult = await _mediator.Send(command);
+        var actionResult = commandResult.Match<IActionResult>(
+            Succ: user => Ok(_mapper.Map<UserUpdateResponseDto>(user)),
+            Fail: this.MapUserResetPasswordFailureResult);
+        
         return actionResult;
     }
 

@@ -1,5 +1,4 @@
-﻿using LanguageExt;
-using Ehrms.Authentication.API.Dto.User;
+﻿using Ehrms.Authentication.API.Dto.User;
 using Ehrms.Authentication.API.Handlers.User.Commands;
 
 namespace Ehrms.Authentication.API.IntegrationTests.ControllerTests.UserController;
@@ -11,7 +10,7 @@ public class UserControllerGetIntegrationTests : AuthenticationApiBaseIntegratio
     }
 
     [Fact]
-    public async Task GetUsers_ReturnsAllUsers()
+    public async Task GetUsers_ReturnsOkWithAllUsers()
     {
         var users = new UserFaker().Generate(10);
         await dbContext.AddRangeAsync(users);
@@ -55,6 +54,8 @@ public class UserControllerGetIntegrationTests : AuthenticationApiBaseIntegratio
         readUserDto?.Username.Should().Be(user.UserName);
         readUserDto?.Email.Should().Be(user.Email);
         readUserDto?.IsActive.Should().Be(user.IsActive);
+        readUserDto?.MustChangePassword.Should().Be(user.MustChangePassword);
+        
         readUserDto?.Roles.Should().BeEquivalentTo(
             user.UserRoles.Select(x=>x.Role!.Name));
     }

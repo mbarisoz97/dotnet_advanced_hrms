@@ -1,6 +1,7 @@
 ﻿using Ehrms.Authentication.API.Adapter;
 using Ehrms.Authentication.API.Database.Context;
 using Ehrms.Authentication.API.Exceptions;
+using LanguageExt;
 
 namespace Ehrms.Authentication.API.Handlers.User.Commands;
 
