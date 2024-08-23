@@ -17,6 +17,7 @@ public sealed class RegisterUserCommand : IRequest<Result<Database.Models.User>>
     public string Username { get; set; } = string.Empty;
     public string Email { get; set; } = string.Empty;
     public string Password { get; set; } = string.Empty;
+    public bool IsActive { get; set; }
     public IEnumerable<string> Roles { get; set; } = [];
 }
 
@@ -64,6 +65,7 @@ internal sealed class CreateUserCommandHandler : IRequestHandler<RegisterUserCom
                 Role = role
             });
         }
+
         await _dbContext.SaveChangesAsync();
     }
 
