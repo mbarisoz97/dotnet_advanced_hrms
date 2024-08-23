@@ -14,7 +14,9 @@ public sealed class ReadUserModel
     [Required]
     [EmailAddress]
     public string Email { get; set; } = string.Empty;
+    
     public bool IsActive { get; set; }
+    public bool MustChangePassword { get; set; }
     
     [Required]
     [EnsureOneItem]

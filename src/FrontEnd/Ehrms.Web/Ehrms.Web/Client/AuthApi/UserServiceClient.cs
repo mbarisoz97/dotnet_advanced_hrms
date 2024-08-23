@@ -13,6 +13,18 @@ internal class UserServiceClient : IUserServiceClient
         _httpClientFactoryWrapper = httpClientFactoryWrapper;
     }
 
+    public async Task<Response<ReadUserModel>> GetUserByNameAsync(string? username)
+    {
+        var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
+        var response = await client.GetAsync($"{_endpointProvider.UserEndpoint}/GetByName/{username}");
+
+        return new()
+        {
+            StatusCode = response.StatusCode,
+            Content = await response.GetContentAs<ReadUserModel>()
+        };
+    }
+
     public async Task<Response<IEnumerable<ReadUserModel>>> GetUsersAsync()
     {
         var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");

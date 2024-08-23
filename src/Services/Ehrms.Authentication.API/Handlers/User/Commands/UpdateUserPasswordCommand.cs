@@ -49,6 +49,9 @@ internal sealed class UpdateUserPasswordCommandHandler : IRequestHandler<UpdateU
                 new UserPasswordResetFailedException());
         }
 
+        user.MustChangePassword = false;
+        await _userManagerAdapter.UpdateAsync(user);
+        
         return new Result<Database.Models.User?>(user);
     }
 }

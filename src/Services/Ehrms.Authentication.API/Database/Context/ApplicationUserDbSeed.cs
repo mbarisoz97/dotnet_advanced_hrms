@@ -27,6 +27,7 @@ public class ApplicationUserDbSeed
             UserName = "testUser",
             Email = "adminTestAccount@test.com",
             IsActive = true,
+            MustChangePassword = false,
             SecurityStamp = Guid.NewGuid().ToString(),
         };
 

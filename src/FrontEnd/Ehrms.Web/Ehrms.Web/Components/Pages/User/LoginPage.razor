@@ -38,16 +38,9 @@
 </div>
 
 @code {
-
-    [SupplyParameterFromForm]
-    public LoginRequestModel? LoginRequest { get; set; } = new()
-    {
-        Username = "testUser",
-        Password = "Passw0rd!"
-    };
-
+    [SupplyParameterFromForm] public LoginRequestModel? LoginRequest { get; set; } = new();
     [CascadingParameter] public HttpContext? HttpContext { get; set; }
-
+    
     protected override async Task OnInitializedAsync()
     {
         var isUserAlreadyAuthenticated = HttpContext?.User?.Identity?.IsAuthenticated ?? false;
@@ -68,8 +61,7 @@
             return;
         }
 
-        await SignInUser(loginResponse.Content);
-        NavigateToPage();
+        SignInUser(loginResponse.Content);
     }
 
     private async Task RefreshSession()
@@ -83,7 +75,7 @@
         var loginResponse = await AccountServiceClient.RefreshSession(refreshLoginRequest);
         if (loginResponse.StatusCode == HttpStatusCode.OK)
         {
-            await SignInUser(loginResponse.Content);
+            SignInUser(loginResponse.Content);
         }
     }
 
@@ -105,7 +97,7 @@
         return loginRefreshModel;
     }
 
-    private async Task SignInUser(LoginResponseModel? loginResponse)
+    private void SignInUser(LoginResponseModel? loginResponse)
     {
         if (loginResponse == null)
         {
@@ -119,24 +111,8 @@
             return;
         }
 
-        var claimsPrincipal = TokenHandler.GetClaimsFromAccessToken(loginResponse.AccessToken);
-        var identity = new ClaimsIdentity(claimsPrincipal?.Claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        var principal = new ClaimsPrincipal(identity);
-
-        await HttpContext.SignInAsync(principal);
         HttpContext.Response.Cookies.Append(CookieKeys.AccessToken, loginResponse.AccessToken);
         HttpContext.Response.Cookies.Append(CookieKeys.RefreshToken, loginResponse.RefreshToken);
+        NavigationManager.NavigateTo(UserRouting.Authenticate);
     }
-
-    private void NavigateToPage(string pageToNavigate = "")
-    {
-        if (string.IsNullOrEmpty(pageToNavigate))
-        {
-            //Return url contains the url user wanted to navigate before redirected to login page.
-            pageToNavigate = HttpContext?.Request?.Query["returnurl"].ToString() ?? "/";
-        }
-
-        NavigationManager.NavigateTo(pageToNavigate);
-    }
-
 }

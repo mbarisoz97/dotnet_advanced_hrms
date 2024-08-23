@@ -19,7 +19,7 @@ internal static class UserControllerExtensions
 
     internal static IActionResult MapUserResetPasswordFailureResult(this UserController controller, Exception err)
     {
-        return err switch
+     return err switch
         {
             UserNotFoundException => controller.NotFound(err.Message),
             UserAccountInactiveException => controller.Unauthorized(err.Message),

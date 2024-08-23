@@ -1,0 +1,80 @@
+@layout EmptyLayout
+@attribute [Route(UserRouting.Authenticate)]
+
+@inject ITokenHandler TokenHandler
+@inject ICookieService CookieService
+@inject NavigationManager NavigationManager
+@inject IUserServiceClient UserServiceClient
+
+@code {
+    [CascadingParameter] public HttpContext? HttpContext { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var accessToken = await CookieService.GetAsync(CookieKeys.AccessToken);
+        if (accessToken?.Value == null)
+        {
+            await RedirectUserToLogin();
+            return;
+        }
+
+        var claimsPrincipal = TokenHandler.GetClaimsFromAccessToken(accessToken.Value);
+        var username = claimsPrincipal?.Identity?.Name;
+        if (username == null)
+        {
+            await RedirectUserToLogin();
+            return;
+        }
+
+        var response = await UserServiceClient.GetUserByNameAsync(username);
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            await RedirectUserToLogin();
+            return;
+        }
+
+        var user = response.Content;
+        if (user == null)
+        {
+            await RedirectUserToLogin();
+            return;
+        }
+
+        if (user.MustChangePassword)
+        {
+            NavigationManager.NavigateTo(UserRouting.PasswordReset);
+            return;
+        }
+
+        await SignInUser();
+    }
+
+    private async Task RedirectUserToLogin()
+    {
+        await CookieService.RemoveAsync(CookieKeys.AccessToken);
+        await CookieService.RemoveAsync(CookieKeys.RefreshToken);
+        NavigationManager.NavigateTo(UserRouting.Login);
+    }
+    
+    private async Task SignInUser()
+    {
+        if (HttpContext == null)
+        {
+            return;
+        }
+
+        var accessToken = await CookieService.GetAsync(CookieKeys.AccessToken);
+        if (accessToken == null)
+        {
+            await RedirectUserToLogin();
+            return;
+        }
+        
+        var claimsPrincipal = TokenHandler.GetClaimsFromAccessToken(accessToken.Value);
+        var identity = new ClaimsIdentity(claimsPrincipal?.Claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var principal = new ClaimsPrincipal(identity);
+        await HttpContext.SignInAsync(principal);
+        
+        NavigationManager.NavigateTo("/");
+    }
+}
