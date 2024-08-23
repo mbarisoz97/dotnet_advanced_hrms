@@ -5,4 +5,5 @@ internal static class UserControllerEndpoints
     internal const string Base = "/api/User";
     internal const string Register = $"{Base}/Register";
     internal const string Update = $"{Base}/Update";
+    internal const string PasswordReset = $"{Base}/Reset";
 }

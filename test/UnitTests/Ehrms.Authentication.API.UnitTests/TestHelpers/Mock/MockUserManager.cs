@@ -1,6 +1,7 @@
 ﻿using Ehrms.Authentication.API.Adapter;
 using Ehrms.Authentication.API.Database.Context;
 using Ehrms.Authentication.TestHelpers.Faker.Models;
+using LanguageExt;
 
 namespace Ehrms.Authentication.API.UnitTests.TestHelpers.Mock;
 
@@ -28,6 +29,18 @@ public sealed class MockUserManager : Mock<IUserManagerAdapter>
     public void SetupUpdateAsync(IdentityResult identityResult)
     {
         Setup(x => x.UpdateAsync(It.IsAny<User>()))
+            .ReturnsAsync(identityResult);
+    }
+
+    public void SetupGeneratePasswordResetTokenAsync(string? token = null)
+    {
+        Setup(x => x.GeneratePasswordResetTokenAsync(It.IsAny<User>()))!
+            .ReturnsAsync(token);
+    }
+    
+    public void SetupResetPasswordAsync(IdentityResult identityResult)
+    {
+        Setup(x => x.ResetPasswordAsync(It.IsAny<User>(), It.IsAny<string>(), It.IsAny<string>()))
             .ReturnsAsync(identityResult);
     }
 }

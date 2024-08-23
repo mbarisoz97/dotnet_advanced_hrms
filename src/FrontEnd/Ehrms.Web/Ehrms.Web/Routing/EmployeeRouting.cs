@@ -20,10 +20,10 @@ internal static class SkillRouting
 internal static class UserRouting
 {
     internal const string Index = "/User";
-	internal const string Edit = $"{Index}/Edit";
-	internal const string Create = $"{Index}/Create";
     internal const string Login = "/Login";
 	internal const string Logout = "/Logout";
+	internal const string Authenticate = "/Auth";
+	internal const string PasswordReset = "/PasswordReset";
 }
 
 internal static class ProjectRouting

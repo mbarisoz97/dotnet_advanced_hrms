@@ -1,7 +1,14 @@
-﻿@inherits LayoutComponentBase
+﻿@using Blazored.Toast.Configuration
+@inherits LayoutComponentBase
 
 <div class="main">
-	<div class="content px-3">
+	<div class="content container px-3">
 		@Body
 	</div>
 </div>
+
+<MudThemeProvider />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<BlazoredToasts Position="ToastPosition.TopRight" ShowProgressBar="true" Timeout="5"></BlazoredToasts>

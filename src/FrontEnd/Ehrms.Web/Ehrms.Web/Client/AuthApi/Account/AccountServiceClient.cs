@@ -1,4 +1,4 @@
-using BitzArt.Blazor.Cookies;
+using Ehrms.Web.Models.User;
 
 namespace Ehrms.Web.Client.AuthApi.Account;
 
@@ -34,6 +34,18 @@ internal sealed class AccountServiceClient : IAccountServiceClient
         {
             StatusCode = response.StatusCode,
             Content =  await response.GetContentAs<LoginResponseModel>()
+        };
+    }
+
+    public async Task<Response<ReadUserModel>> ResetPassword(PasswordResetModel? resetPasswordRequest)
+    {
+        var client = await _clientFactoryWrapper.CreateClient("ApiGateway");
+        var response = await client.PostAsJsonAsync($"{_endpointProvider.UserEndpoint}/Reset", resetPasswordRequest);
+        
+        return new()
+        {
+            StatusCode = response.StatusCode,
+            Content =  await response.GetContentAs<ReadUserModel>()
         };
     }
 }

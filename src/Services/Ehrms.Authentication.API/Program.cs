@@ -2,6 +2,7 @@ using Ehrms.Authentication.API.Database.Context;
 using Microsoft.EntityFrameworkCore;
 using Ehrms.Shared;
 using Ehrms.Authentication.API.Middleware;
+using Microsoft.AspNetCore.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +15,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddAuthenticationApi();
 builder.Services.AddIdentity<User, Role>()
-    .AddEntityFrameworkStores<ApplicationUserDbContext>();
+    .AddEntityFrameworkStores<ApplicationUserDbContext>()
+    .AddDefaultTokenProviders();
 
 builder.Services.AddDbContext<ApplicationUserDbContext>(options =>
 {

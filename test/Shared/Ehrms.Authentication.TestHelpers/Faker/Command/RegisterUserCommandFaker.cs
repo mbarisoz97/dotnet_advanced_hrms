@@ -1,6 +1,6 @@
 ﻿namespace Ehrms.Authentication.TestHelpers.Faker.Command;
 
-public class RegisterUserCommandFaker : Faker<RegisterUserCommand>
+public sealed class RegisterUserCommandFaker : Faker<RegisterUserCommand>
 {
     public RegisterUserCommandFaker()
     {

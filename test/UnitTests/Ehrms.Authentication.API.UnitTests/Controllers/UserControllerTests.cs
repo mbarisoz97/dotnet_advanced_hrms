@@ -1,11 +1,8 @@
+using System.Net;
 using LanguageExt.Common;
 using Microsoft.AspNetCore.Mvc;
-using Ehrms.Authentication.API.Exceptions;
 using Ehrms.Authentication.API.Controllers;
 using Ehrms.Authentication.API.Handlers.User.Queries;
-using Ehrms.Authentication.TestHelpers.Faker.Models;
-using Ehrms.Authentication.API.UnitTests.TestHelpers;
-using Ehrms.Authentication.API.UnitTests.TestHelpers.Mock;
 
 namespace Ehrms.Authentication.API.UnitTests.Controllers;
 
@@ -106,12 +103,73 @@ public class UserControllerTests
     }
 
     [Fact]
-    public async Task GetUsers_SuccessfullQueryResult_ReturnsBadRequestResult()
+    public async Task GetUsers_SuccessfulQueryResult_ReturnsBadRequestResult()
     {
         var userCollection = Enumerable.Empty<User>().AsQueryable();
         _mockMediatr.SetupSend<GetUsersQuery, IQueryable<User>>(userCollection);
         
         var actionResult = await _userController.GetUsers();
         actionResult.Should().BeOfType<OkObjectResult>(); 
+    }
+
+    [Fact]
+    public async Task ResetPassword_CommandExecutionFailedDueToUserNotFoundException_ReturnsNotFoundObjectResult()
+    {
+        var command = new UpdateUserPasswordCommandFaker().Generate();
+        var commandResult = new Result<User?>(new UserNotFoundException());
+        
+        _mockMediatr.SetupSend(command, commandResult);
+        
+        var actionResult = await _userController.ResetPassword(command);
+        actionResult.Should().BeOfType<NotFoundObjectResult>(); 
+    }
+    
+    [Fact]
+    public async Task ResetPassword_CommandExecutionFailedDueToUserAccountInactiveException_ReturnsUnauthorizedObjectResult()
+    {
+        var command = new UpdateUserPasswordCommandFaker().Generate();
+        var commandResult = new Result<User?>(new UserAccountInactiveException());
+        
+        _mockMediatr.SetupSend(command, commandResult);
+        
+        var actionResult = await _userController.ResetPassword(command);
+        actionResult.Should().BeOfType<UnauthorizedObjectResult>(); 
+    }
+    
+    [Fact]
+    public async Task ResetPassword_CommandExecutionFailedDueToUserCredentialsInvalidException_ReturnsBadRequestObjectResult()
+    {
+        var command = new UpdateUserPasswordCommandFaker().Generate();
+        var commandResult = new Result<User?>(new UserCredentialsInvalidException());
+        
+        _mockMediatr.SetupSend(command, commandResult);
+        
+        var actionResult = await _userController.ResetPassword(command);
+        actionResult.Should().BeOfType<BadRequestObjectResult>(); 
+    }
+    
+    [Fact]
+    public async Task ResetPassword_CommandExecutionFailedDueToUserPasswordResetFailedException_ReturnsBadRequestObjectResult()
+    {
+        var command = new UpdateUserPasswordCommandFaker().Generate();
+        var commandResult = new Result<User?>(new UserPasswordResetFailedException());
+        
+        _mockMediatr.SetupSend(command, commandResult);
+        
+        var actionResult = await _userController.ResetPassword(command);
+        actionResult.Should().BeOfType<BadRequestObjectResult>(); 
+    }
+    
+    [Fact]
+    public async Task ResetPassword_CommandExecutionFailedDueToUnhandledExceptionResult_ReturnsInternalServerError()
+    {
+        var command = new UpdateUserPasswordCommandFaker().Generate();
+        var commandResult = new Result<User?>(new Exception());
+        
+        _mockMediatr.SetupSend(command, commandResult);
+        
+        var actionResult = await _userController.ResetPassword(command);
+        actionResult.Should().BeOfType<ObjectResult>();
+        (actionResult as ObjectResult)!.StatusCode.Should().Be((int)HttpStatusCode.InternalServerError);
     }
 }
