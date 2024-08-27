@@ -9,10 +9,10 @@
 <MudTable Items="@TrainingModels" Dense="true" Hover="true" Loading="@_loading" Bordered="true" Striped="true">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Trainings</MudText>
-        <MudSpacer/>
+        <MudSpacer />
         <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
         <MudTooltip Text="Add Training">
-            <MudIconButton Size="Size.Medium" Color="Color.Success" Icon="@Icons.Material.Filled.AddBox" @onclick="@(ShowCreateTrainingDialog)"/>
+            <MudIconButton Size="Size.Medium" Color="Color.Success" Icon="@Icons.Material.Filled.AddBox" @onclick="@(ShowCreateTrainingDialog)" />
         </MudTooltip>
         <MudMenu ActivationEvent="@MouseEvent.MouseOver" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
             <ActivatorContent>
@@ -44,18 +44,18 @@
         <MudTd DataLabel="Date">@context.EndsAt</MudTd>
         <MudTd>
             <MudTooltip Text="Edit">
-                <MudIconButton @onclick="@(() => ShowUpdateTrainingDialog(context))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small"/>
+                <MudIconButton @onclick="@(() => ShowUpdateTrainingDialog(context))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
             </MudTooltip>
             <MudTooltip Text="Delete">
-                <MudIconButton @onclick="@(() => ShowDeleteTrainingDialog(context))" Color=" Color.Error" Icon="@Icons.Material.Filled.Delete" Size="Size.Small"/>
+                <MudIconButton @onclick="@(() => ShowDeleteTrainingDialog(context))" Color=" Color.Error" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />
             </MudTooltip>
             <MudTooltip Text="More">
-                <MudIconButton Icon="@Icons.Material.Filled.ReadMore" Size="Size.Small"/>
+                <MudIconButton Icon="@Icons.Material.Filled.ReadMore" Size="Size.Small" />
             </MudTooltip>
         </MudTd>
     </RowTemplate>
     <PagerContent>
-        <MudTablePager/>
+        <MudTablePager />
     </PagerContent>
 </MudTable>
 
@@ -106,12 +106,7 @@
     private async Task ShowTrainingRecommendationDialog()
     {
         var modalReference = ModalService.Show<TrainingRecommendationCreatePage>("Recommend Training");
-        var modalResult = await modalReference.Result;
-
-        if (modalResult.Confirmed)
-        {
-            ToastService.ShowSuccess("Successfully created training recommendation request.");
-        }
+        await modalReference.Result;
     }
 
     private async Task UpdateTrainings()
