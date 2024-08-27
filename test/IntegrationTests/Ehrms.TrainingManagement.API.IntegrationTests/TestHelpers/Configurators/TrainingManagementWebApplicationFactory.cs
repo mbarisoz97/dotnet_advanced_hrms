@@ -8,6 +8,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Ehrms.TrainingManagement.API.Database.Context;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Ehrms.Shared.TestHepers;
+using Docker.DotNet;
+using Polly.Retry;
+using Polly;
 
 namespace Ehrms.TrainingManagement.API.IntegrationTests.TestHelpers.Configurators;
 
@@ -15,6 +18,15 @@ public class TrainingManagementWebApplicationFactory : WebApplicationFactory<Pro
 {
     private int Port = PortNumberProvider.GetPortNumber();
     private readonly MsSqlContainer _msSqlContainer;
+
+    private readonly AsyncRetryPolicy _retryPolicy = Policy.Handle<DockerApiException>()
+        .WaitAndRetryAsync(
+        retryCount: 3,
+        sleepDurationProvider: attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)),
+        onRetry: (response, timespan, retryCount, context) =>
+        {
+            Console.WriteLine($"Retry {retryCount} after {timespan.Seconds}");
+        });
 
     public TrainingManagementWebApplicationFactory()
     {
@@ -61,12 +73,21 @@ public class TrainingManagementWebApplicationFactory : WebApplicationFactory<Pro
 
     public async Task InitializeAsync()
     {
-        await _msSqlContainer.StartAsync();
+        await _retryPolicy.ExecuteAsync(async () =>
+        {
+            await _msSqlContainer.StartAsync();
+        });
     }
 
     public async new Task DisposeAsync()
     {
-        await _msSqlContainer.StopAsync();
-        PortNumberProvider.ReleasePortNumber(Port);
+        try
+        {
+            await _msSqlContainer.StopAsync();
+        }
+        finally
+        {
+            PortNumberProvider.ReleasePortNumber(Port);
+        }
     }
 }

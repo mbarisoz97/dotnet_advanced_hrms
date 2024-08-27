@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Ehrms.Shared.TestHepers;
+using Docker.DotNet;
+using Polly.Retry;
+using Polly;
 
 namespace Ehrms.Administration.API.IntegrationTests.TestHelpers.Configurations;
 
@@ -13,6 +16,14 @@ public class AuthenticationWebApplicationFactory : WebApplicationFactory<Program
 {
     private readonly int Port = PortNumberProvider.GetPortNumber();
     private readonly MsSqlContainer _msSqlContainer;
+    private readonly AsyncRetryPolicy _retryPolicy = Policy.Handle<DockerApiException>()
+    .WaitAndRetryAsync(
+        retryCount: 3,
+        sleepDurationProvider: attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)),
+        onRetry: (response, timespan, retryCount, context) =>
+        {
+            Console.WriteLine($"Retry {retryCount} after {timespan.Seconds}");
+        });
 
     public AuthenticationWebApplicationFactory()
     {
@@ -48,12 +59,21 @@ public class AuthenticationWebApplicationFactory : WebApplicationFactory<Program
 
     public async Task InitializeAsync()
     {
-        await _msSqlContainer.StartAsync();
+        await _retryPolicy.ExecuteAsync(async () =>
+        {
+            await _msSqlContainer.StartAsync();
+        });
     }
 
     public async new Task DisposeAsync()
     {
-        await _msSqlContainer.StopAsync();
-        PortNumberProvider.ReleasePortNumber(Port);
+        try
+        {
+            await _msSqlContainer.StopAsync();
+        }
+        finally
+        {
+            PortNumberProvider.ReleasePortNumber(Port);
+        }
     }
 }
