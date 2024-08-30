@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Polly.Retry;
 using Docker.DotNet;
+using Microsoft.Data.SqlClient;
 
 namespace Ehrms.Administration.API.IntegrationTests.TestHelpers.Configurations;
 
@@ -19,6 +20,15 @@ public class AdministrationWebApplicationFactory : WebApplicationFactory<Program
 
     private readonly AsyncRetryPolicy _retryPolicy = Policy.Handle<DockerApiException>()
         .WaitAndRetryAsync(
+            retryCount: 3,
+            sleepDurationProvider: attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)),
+            onRetry: (response, timespan, retryCount, context) =>
+            {
+                Console.WriteLine($"Retry {retryCount} after {timespan.Seconds}");
+            });
+
+    private readonly RetryPolicy _databaseCreationRetryPolicy = Policy.Handle<SqlException>()
+        .WaitAndRetry(
             retryCount: 3,
             sleepDurationProvider: attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)),
             onRetry: (response, timespan, retryCount, context) =>
@@ -47,7 +57,11 @@ public class AdministrationWebApplicationFactory : WebApplicationFactory<Program
             });
 
             var dbContext = CreateDbContext(services);
-            dbContext.Database.EnsureCreated();
+
+            _databaseCreationRetryPolicy.Execute(() =>
+            {
+                dbContext.Database.EnsureCreated();
+            });
         });
     }
 
