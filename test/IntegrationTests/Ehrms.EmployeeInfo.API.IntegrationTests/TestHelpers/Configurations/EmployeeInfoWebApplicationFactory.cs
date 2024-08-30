@@ -12,6 +12,7 @@ using Polly.Retry;
 using Polly;
 using Testcontainers.MsSql;
 using Ehrms.Shared.TestHepers;
+using Microsoft.Data.SqlClient;
 
 namespace Ehrms.EmployeeInfo.API.IntegrationTests;
 
@@ -22,6 +23,15 @@ public class EmployeeInfoWebApplicationFactory : WebApplicationFactory<Program>,
 
     private readonly AsyncRetryPolicy _retryPolicy = Policy.Handle<DockerApiException>()
     .WaitAndRetryAsync(
+        retryCount: 3,
+        sleepDurationProvider: attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)),
+        onRetry: (response, timespan, retryCount, context) =>
+        {
+            Console.WriteLine($"Retry {retryCount} after {timespan.Seconds}");
+        });
+
+    private readonly RetryPolicy _databaseCreationRetryPolicy = Policy.Handle<SqlException>()
+    .WaitAndRetry(
         retryCount: 3,
         sleepDurationProvider: attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)),
         onRetry: (response, timespan, retryCount, context) =>
@@ -52,7 +62,10 @@ public class EmployeeInfoWebApplicationFactory : WebApplicationFactory<Program>,
             services.AddMassTransitTestHarness();
 
             var dbContext = CreateDbContext(services);
-            dbContext.Database.EnsureCreated();
+            _databaseCreationRetryPolicy.Execute(() =>
+            {
+                dbContext.Database.EnsureCreated();
+            });
         });
     }
 

@@ -11,6 +11,7 @@ using Ehrms.Shared.TestHepers;
 using Docker.DotNet;
 using Polly.Retry;
 using Polly;
+using Microsoft.Data.SqlClient;
 
 namespace Ehrms.TrainingManagement.API.IntegrationTests.TestHelpers.Configurators;
 
@@ -21,6 +22,15 @@ public class TrainingManagementWebApplicationFactory : WebApplicationFactory<Pro
 
     private readonly AsyncRetryPolicy _retryPolicy = Policy.Handle<DockerApiException>()
         .WaitAndRetryAsync(
+        retryCount: 3,
+        sleepDurationProvider: attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)),
+        onRetry: (response, timespan, retryCount, context) =>
+        {
+            Console.WriteLine($"Retry {retryCount} after {timespan.Seconds}");
+        });
+
+    private readonly RetryPolicy _databaseCreationRetryPolicy = Policy.Handle<SqlException>()
+    .WaitAndRetry(
         retryCount: 3,
         sleepDurationProvider: attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)),
         onRetry: (response, timespan, retryCount, context) =>
@@ -50,7 +60,10 @@ public class TrainingManagementWebApplicationFactory : WebApplicationFactory<Pro
             services.AddMassTransitTestHarness();
 
             var dbContext = CreateDbContext(services);
-            dbContext.Database.EnsureCreated();
+            _databaseCreationRetryPolicy.Execute(() =>
+            {
+                dbContext.Database.EnsureCreated();
+            });
         });
     }
 
