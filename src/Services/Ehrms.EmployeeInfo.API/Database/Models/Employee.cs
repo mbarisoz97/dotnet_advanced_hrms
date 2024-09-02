@@ -6,5 +6,6 @@ public sealed class Employee : BaseEntity
     public string LastName { get; set; } = string.Empty;
     public string Qualification { get; set; } = string.Empty;
     public DateOnly DateOfBirth { get; set; }
+    public Title? Title { get; set; }
     public ICollection<Skill> Skills { get; set; } = [];
 }
