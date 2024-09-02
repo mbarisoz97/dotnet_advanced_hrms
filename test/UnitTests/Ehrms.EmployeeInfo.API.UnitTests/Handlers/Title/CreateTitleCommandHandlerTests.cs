@@ -5,7 +5,6 @@ using Ehrms.EmployeeInfo.TestHelpers.Faker.Title.Model;
 using Ehrms.EmployeeInfo.TestHelpers.Faker.Title.Command;
 
 namespace Ehrms.EmployeeInfo.API.UnitTests.Handlers.Title;
-
 public class CreateTitleCommandHandlerTests
 {
     private readonly CreateTitleCommandHandler _handler;

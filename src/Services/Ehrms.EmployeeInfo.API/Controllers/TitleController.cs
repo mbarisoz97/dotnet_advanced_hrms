@@ -1,8 +1,8 @@
-﻿using Ehrms.EmployeeInfo.API.Dtos.Title;
+﻿using System.Net;
+using Ehrms.EmployeeInfo.API.Dtos.Title;
 using Microsoft.AspNetCore.Authorization;
 using Ehrms.EmployeeInfo.API.Exceptions.Title;
 using Ehrms.EmployeeInfo.API.Handlers.Title.Command;
-using System.Net;
 
 namespace Ehrms.EmployeeInfo.API.Controllers;
 
@@ -30,6 +30,18 @@ public class TitleController : ControllerBase
 
         return actionResult;
     }
+
+    [HttpDelete("{id:guid}")]
+    public async Task<IActionResult> Delete(Guid id)
+    {
+        var command = new DeleteTitleCommand() { Id = id };
+        var commandResult = await _mediator.Send(command);
+        var actionResult = commandResult.Match(
+            Succ: s => Ok(),
+            Fail: this.MapTitleDeleteFailureResult);
+
+        return actionResult;
+    }
 }
 
 internal static class TitleControllerResultMappingExtensions
@@ -39,6 +51,15 @@ internal static class TitleControllerResultMappingExtensions
         return err switch
         {
             TitleNameInUseException => controller.Conflict(err.Message),
+            _ => controller.Problem(statusCode: (int)HttpStatusCode.InternalServerError)
+        };
+    }
+
+    internal static IActionResult MapTitleDeleteFailureResult(this TitleController controller, Exception err)
+    {
+        return err switch
+        {
+            TitleNotFoundException => controller.BadRequest(err.Message),
             _ => controller.Problem(statusCode: (int)HttpStatusCode.InternalServerError)
         };
     }
