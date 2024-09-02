@@ -10,7 +10,7 @@ public class TrainingRecommendationRequestCompletedEventConsumerTests : UnitTest
     private readonly Mock<ILogger<TrainingRecommendationCompletedEventConsumer>> _loggerMock = new();
 
     public TrainingRecommendationRequestCompletedEventConsumerTests()
-        : base(TestDbContextFactory.CreateDbContext(nameof(TrainingRecommendationRequestCompletedEventConsumerTests)))
+        : base(TestDbContextFactory.CreateDbContext(Guid.NewGuid().ToString()))
     {
         _eventConsumer = new(dbContext, _loggerMock.Object);
     }
