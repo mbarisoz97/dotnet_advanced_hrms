@@ -2,10 +2,7 @@ using System.Net;
 using Ehrms.Shared;
 using LanguageExt.Common;
 using Microsoft.AspNetCore.Mvc;
-using Ehrms.Authentication.API.Exceptions;
 using Ehrms.Authentication.API.Controllers;
-using Ehrms.Authentication.TestHelpers.Faker.Models;
-using Ehrms.Authentication.API.UnitTests.TestHelpers.Mock;
 
 namespace Ehrms.Authentication.API.UnitTests.Controllers;
 

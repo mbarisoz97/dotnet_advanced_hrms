@@ -29,6 +29,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\src\Services\Ehrms.EmployeeInfo.API\Ehrms.EmployeeInfo.API.csproj" />
+		<ProjectReference Include="..\..\Shared\Ehrms.EmployeeInfo.TestHelpers\Ehrms.EmployeeInfo.TestHelpers.csproj" />
 		<ProjectReference Include="..\..\Shared\Ehrms.Shared.TestHepers\Ehrms.Shared.TestHepers.csproj" />
 	</ItemGroup>
 
