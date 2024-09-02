@@ -1,4 +1,5 @@
-﻿global using FluentAssertions;
+﻿global using Polly;
+global using FluentAssertions;
 
 global using System.Net;
 global using System.Net.Http.Json;

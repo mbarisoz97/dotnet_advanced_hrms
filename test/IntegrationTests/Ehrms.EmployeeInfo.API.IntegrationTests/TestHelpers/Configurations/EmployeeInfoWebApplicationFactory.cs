@@ -1,4 +1,5 @@
-﻿using DotNet.Testcontainers.Builders;
+﻿using Docker.DotNet;
+using DotNet.Testcontainers.Builders;
 using Ehrms.EmployeeInfo.API.Database.Context;
 using MassTransit;
 using Microsoft.AspNetCore.Hosting;
@@ -7,14 +8,36 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Polly.Retry;
+using Polly;
 using Testcontainers.MsSql;
+using Ehrms.Shared.TestHepers;
+using Microsoft.Data.SqlClient;
 
 namespace Ehrms.EmployeeInfo.API.IntegrationTests;
 
 public class EmployeeInfoWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
-    private readonly int Port = Random.Shared.Next(1024 , 49151);
+    private readonly int Port = PortNumberProvider.GetPortNumber();
     private readonly MsSqlContainer _msSqlContainer;
+
+    private readonly AsyncRetryPolicy _retryPolicy = Policy.Handle<DockerApiException>()
+    .WaitAndRetryAsync(
+        retryCount: 3,
+        sleepDurationProvider: attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)),
+        onRetry: (response, timespan, retryCount, context) =>
+        {
+            Console.WriteLine($"Retry {retryCount} after {timespan.Seconds}");
+        });
+
+    private readonly RetryPolicy _databaseCreationRetryPolicy = Policy.Handle<SqlException>()
+    .WaitAndRetry(
+        retryCount: 3,
+        sleepDurationProvider: attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)),
+        onRetry: (response, timespan, retryCount, context) =>
+        {
+            Console.WriteLine($"Retry {retryCount} after {timespan.Seconds}");
+        });
 
     public EmployeeInfoWebApplicationFactory()
     {
@@ -39,7 +62,10 @@ public class EmployeeInfoWebApplicationFactory : WebApplicationFactory<Program>,
             services.AddMassTransitTestHarness();
 
             var dbContext = CreateDbContext(services);
-            dbContext.Database.EnsureCreated();
+            _databaseCreationRetryPolicy.Execute(() =>
+            {
+                dbContext.Database.EnsureCreated();
+            });
         });
     }
 
@@ -54,11 +80,21 @@ public class EmployeeInfoWebApplicationFactory : WebApplicationFactory<Program>,
 
     public async Task InitializeAsync()
     {
-        await _msSqlContainer.StartAsync();
+        await _retryPolicy.ExecuteAsync(async () =>
+        {
+            await _msSqlContainer.StartAsync();
+        });
     }
 
     public async new Task DisposeAsync()
     {
-        await _msSqlContainer.StopAsync();
+        try
+        {
+            await _msSqlContainer.StopAsync();
+        }
+        finally
+        {
+            PortNumberProvider.ReleasePortNumber(Port);
+        }
     }
 }
