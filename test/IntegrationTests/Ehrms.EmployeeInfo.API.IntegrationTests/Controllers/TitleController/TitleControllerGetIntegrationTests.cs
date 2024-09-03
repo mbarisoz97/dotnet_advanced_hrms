@@ -20,9 +20,32 @@ public class TitleControllerGetIntegrationTests : BaseEmployeeInfoIntegrationTes
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var returnedTitleCollection = await response.Content.ReadFromJsonAsync<IEnumerable<ReadTitleDto>>();
-        returnedTitleCollection.Should().BeEquivalentTo(expectedTitleCollection,
-          options => options
-            .ComparingByMembers<Database.Models.Title>()
-            .Excluding(x => x.Employees));
+        foreach (var model in expectedTitleCollection)
+        {
+            returnedTitleCollection.Should().ContainEquivalentOf(model,
+             options => options.ComparingByMembers<Database.Models.Title>()
+                               .ExcludingMissingMembers());
+        }
+    }
+
+    [Fact]
+    public async Task Get_ExistingTitleId_ReturnsOkWithReadTitleDto()
+    {
+        var title = new TitleFaker().Generate();
+        await dbContext.AddAsync(title);
+        await dbContext.SaveChangesAsync();
+
+        var response = await client.GetAsync($"{Endpoints.EmployeeTitleApi}/{title.Id}");
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var returnedTitleDto = await response.Content.ReadFromJsonAsync<ReadTitleDto>();
+        returnedTitleDto.Should().BeEquivalentTo(title, options => options.Excluding(x => x.Employees));
+    }
+
+    [Fact]
+    public async Task Get_NonExistingTitleId_ReturnsBadRequest()
+    {
+        var response = await client.GetAsync($"{Endpoints.EmployeeTitleApi}/{Guid.NewGuid()}");
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 }

@@ -8,6 +8,7 @@ using Ehrms.EmployeeInfo.API.Handlers.Title.Query;
 using Ehrms.EmployeeInfo.API.Handlers.Title.Command;
 using Ehrms.EmployeeInfo.TestHelpers.Faker.Title.Model;
 using Ehrms.EmployeeInfo.TestHelpers.Faker.Title.Command;
+using Moq;
 
 namespace Ehrms.EmployeeInfo.API.UnitTests.Controllers;
 
@@ -145,10 +146,47 @@ public class TitleControllerTests
         var titleCollection = new TitleFaker()
             .Generate(2)
             .AsQueryable();
-        
+
         _mockMediator.SetupSend(query, titleCollection);
         var actionResult = await _controller.GetAllTitles();
         actionResult.Should().BeOfType<OkObjectResult>();
+    }
+
+    #endregion
+
+    #region GetById
+
+    [Fact]
+    public async Task GetById_SuccessfullyExecutedQuery_ReturnsOkWithReadDtoResult()
+    {
+        var title = new TitleFaker().Generate();
+        var queryResult = new Result<Database.Models.Title>(title);
+
+        _mockMediator.SetupSend<GetTitleByIdQuery, Result<Database.Models.Title>>(queryResult);
+        var actionResult = await _controller.GetTitleById(title.Id);
+
+        actionResult.Should().BeOfType<OkObjectResult>();
+    }
+
+    [Fact]
+    public async Task GetById_QueryExecutionFailedDueToTitleNotFoundException_ReturnsBadRequestObjectResult()
+    {
+        var queryResult = new Result<Database.Models.Title>(new TitleNotFoundException());
+        _mockMediator.SetupSend<GetTitleByIdQuery, Result<Database.Models.Title>>(queryResult);
+        var actionResult = await _controller.GetTitleById(Guid.NewGuid());
+
+        actionResult.Should().BeOfType<BadRequestObjectResult>();
+    }
+
+    [Fact]
+    public async Task GetById_QueryExecutionFailedDueToUnhandledException_ReturnsInternalServerError()
+    {
+        var queryResult = new Result<Database.Models.Title>(new Exception());
+        _mockMediator.SetupSend<GetTitleByIdQuery, Result<Database.Models.Title>>(queryResult);
+        var actionResult = await _controller.GetTitleById(Guid.NewGuid());
+
+        actionResult.Should().BeOfType<ObjectResult>();
+        (actionResult as ObjectResult)!.StatusCode.Should().Be((int)HttpStatusCode.InternalServerError);
     }
 
     #endregion

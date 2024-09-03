@@ -64,6 +64,18 @@ public class TitleController : ControllerBase
 
         return Ok(titleDtos);
     }
+
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> GetTitleById(Guid id)
+    {
+        var query = new GetTitleByIdQuery(id);
+        var queryResult = await _mediator.Send(query);
+        var actionResult = queryResult.Match(
+            Succ: s => Ok(_mapper.Map<ReadTitleDto>(s)),
+            Fail: this.MapGetTitleByIdFailureResult);
+
+        return actionResult;
+    }
 }
 
 internal static class TitleControllerResultMappingExtensions
@@ -87,6 +99,15 @@ internal static class TitleControllerResultMappingExtensions
     }
 
     internal static IActionResult MapTitleUpdateFailureResult(this TitleController controller, Exception err)
+    {
+        return err switch
+        {
+            TitleNotFoundException => controller.BadRequest(err.Message),
+            _ => controller.Problem(statusCode: (int)HttpStatusCode.InternalServerError)
+        };
+    }
+
+    internal static IActionResult MapGetTitleByIdFailureResult(this TitleController controller, Exception err)
     {
         return err switch
         {

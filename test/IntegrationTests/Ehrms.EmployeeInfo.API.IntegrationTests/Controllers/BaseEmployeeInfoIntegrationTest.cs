@@ -7,24 +7,24 @@ namespace Ehrms.EmployeeInfo.API.IntegrationTests.Controllers;
 
 public abstract class BaseEmployeeInfoIntegrationTest : IClassFixture<EmployeeInfoWebApplicationFactory>
 {
-	protected readonly EmployeeInfoDbContext dbContext;
-	protected readonly EmployeeInfoWebApplicationFactory factory;
-	protected readonly HttpClient client;
+    protected readonly EmployeeInfoDbContext dbContext;
+    protected readonly EmployeeInfoWebApplicationFactory factory;
+    protected readonly HttpClient client;
 
-	protected BaseEmployeeInfoIntegrationTest(EmployeeInfoWebApplicationFactory factory)
-	{
-		this.factory = factory;
-		client = this.factory.CreateClient();
+    protected BaseEmployeeInfoIntegrationTest(EmployeeInfoWebApplicationFactory factory)
+    {
+        this.factory = factory;
+        client = this.factory.CreateClient();
 
-		var scope = factory.Services.CreateScope();
+        var scope = factory.Services.CreateScope();
         dbContext = scope.ServiceProvider.GetRequiredService<EmployeeInfoDbContext>();
 
         var request = new GenerateJwtRequest
-		{
-			Username = "TestUser"
-		};
-		var jwt = new JwtTokenHandler().Generate(request);
-		client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.AccessToken);
-		this.factory = factory;
-	}
+        {
+            Username = "TestUser"
+        };
+        var jwt = new JwtTokenHandler().Generate(request);
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.AccessToken);
+        this.factory = factory;
+    }
 }
