@@ -2,6 +2,7 @@
 using Ehrms.EmployeeInfo.API.Dtos.Title;
 using Microsoft.AspNetCore.Authorization;
 using Ehrms.EmployeeInfo.API.Exceptions.Title;
+using Ehrms.EmployeeInfo.API.Handlers.Title.Query;
 using Ehrms.EmployeeInfo.API.Handlers.Title.Command;
 
 namespace Ehrms.EmployeeInfo.API.Controllers;
@@ -52,6 +53,16 @@ public class TitleController : ControllerBase
             Fail: this.MapTitleUpdateFailureResult);
 
         return actionResult;
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllTitles()
+    {
+        var query = new GetAllTitlesQuery();
+        var titles = await _mediator.Send(query);
+        var titleDtos = _mapper.ProjectTo<ReadTitleDto>(titles);
+
+        return Ok(titleDtos);
     }
 }
 
