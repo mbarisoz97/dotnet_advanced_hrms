@@ -21,7 +21,7 @@ internal sealed class CreateTitleCommandHandler : IRequestHandler<CreateTitleCom
 
     public async Task<Result<Database.Models.Title>> Handle(CreateTitleCommand request, CancellationToken cancellationToken)
     {
-        var existingTitle = await _dbContext.Titles.FirstOrDefaultAsync(cancellationToken);
+        var existingTitle = await _dbContext.Titles.FirstOrDefaultAsync(x => x.TitleName == request.TitleName, cancellationToken);
         if (existingTitle != null)
         {
             return new Result<Database.Models.Title>(

@@ -35,7 +35,9 @@ public class CreateTitleCommandHandlerTests
         await _dbContext.AddAsync(title);
         await _dbContext.SaveChangesAsync();
 
-        var command = new CreatTitleCommandFaker().Generate();
+        var command = new CreatTitleCommandFaker()
+            .WithName(title.TitleName)
+            .Generate();
         var result = await _handler.Handle(command, default);
         var exceptionInResult = result.Match<Exception?>(_ => null, f => f);
 
