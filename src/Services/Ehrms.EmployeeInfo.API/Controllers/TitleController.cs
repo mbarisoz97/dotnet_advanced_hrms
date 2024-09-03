@@ -42,6 +42,17 @@ public class TitleController : ControllerBase
 
         return actionResult;
     }
+
+    [HttpPost]
+    public async Task<IActionResult> Update(UpdateTitleCommand command)
+    {
+        var commandResult = await _mediator.Send(command);
+        var actionResult = commandResult.Match(
+            Succ: s => Ok(_mapper.Map<ReadTitleDto>(s)),
+            Fail: this.MapTitleUpdateFailureResult);
+
+        return actionResult;
+    }
 }
 
 internal static class TitleControllerResultMappingExtensions
@@ -56,6 +67,15 @@ internal static class TitleControllerResultMappingExtensions
     }
 
     internal static IActionResult MapTitleDeleteFailureResult(this TitleController controller, Exception err)
+    {
+        return err switch
+        {
+            TitleNotFoundException => controller.BadRequest(err.Message),
+            _ => controller.Problem(statusCode: (int)HttpStatusCode.InternalServerError)
+        };
+    }
+
+    internal static IActionResult MapTitleUpdateFailureResult(this TitleController controller, Exception err)
     {
         return err switch
         {

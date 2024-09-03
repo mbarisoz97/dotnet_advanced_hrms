@@ -10,6 +10,7 @@ public class TitleMappingProfile : Profile
     {
         AddCommandToModelMappings();
         AddModalToDtoMappings();
+
     }
 
     private void AddModalToDtoMappings()
@@ -20,5 +21,6 @@ public class TitleMappingProfile : Profile
     private void AddCommandToModelMappings()
     {
         CreateMap<CreateTitleCommand, Title>();
+        CreateMap<UpdateTitleCommand, Title>();
     }
 }

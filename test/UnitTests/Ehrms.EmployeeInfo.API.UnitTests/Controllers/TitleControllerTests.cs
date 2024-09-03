@@ -7,6 +7,7 @@ using Ehrms.EmployeeInfo.API.Exceptions.Title;
 using Ehrms.EmployeeInfo.TestHelpers.Faker.Title.Model;
 using Ehrms.EmployeeInfo.TestHelpers.Faker.Title.Command;
 using Ehrms.EmployeeInfo.API.Handlers.Title.Command;
+using MassTransit.NewIdProviders;
 
 namespace Ehrms.EmployeeInfo.API.UnitTests.Controllers;
 
@@ -20,6 +21,8 @@ public class TitleControllerTests
         var mapper = MapperFactory.CreateWithExistingProfiles();
         _controller = new(_mockMediator.Object, mapper);
     }
+
+    #region Create
 
     [Fact]
     public async Task Create_SuccessfullyExecutedCommand_ReturnsOkWithObjectResult()
@@ -56,6 +59,10 @@ public class TitleControllerTests
         (actionResult as ObjectResult)!.StatusCode.Should().Be((int)HttpStatusCode.InternalServerError);
     }
 
+    #endregion
+
+    #region Delete
+
     [Fact]
     public async Task Delete_SuccessfullyExecutedCommand_ReturnsOkResult()
     {
@@ -87,4 +94,45 @@ public class TitleControllerTests
         actionResult.Should().BeOfType<ObjectResult>();
         (actionResult as ObjectResult)!.StatusCode.Should().Be((int)HttpStatusCode.InternalServerError);
     }
+
+    #endregion
+
+    #region Update
+
+    [Fact]
+    public async Task Update_SuccessfullyExecutedCommand_ReturnsOkResultWithReadTitleDto()
+    {
+        var title = new TitleFaker().Generate();
+        var command = new UpdateTitleCommandFaker().Generate();
+        var commandResult = new Result<Database.Models.Title>(title);
+        _mockMediator.SetupSend(command, commandResult);
+
+        var actionResult = await _controller.Update(command);
+        actionResult.Should().BeOfType<OkObjectResult>();
+    }
+
+    [Fact]
+    public async Task Update_CommandExecutionFailedDueToTitleNotFoundException_ReturnsBadRequestObjectResult()
+    {
+        var command = new UpdateTitleCommandFaker().Generate();
+        var commandResult = new Result<Database.Models.Title>(new TitleNotFoundException());
+        _mockMediator.SetupSend(command, commandResult);
+
+        var actionResult = await _controller.Update(command);
+        actionResult.Should().BeOfType<BadRequestObjectResult>();
+    }
+
+    [Fact]
+    public async Task Update_CommandExeceutionFailedDueToUnhandledException_ReturnsObjectResultWithInternalServerError()
+    {
+        var command = new UpdateTitleCommandFaker().Generate();
+        var commandResult = new Result<Database.Models.Title>(new Exception());
+        _mockMediator.SetupSend(command, commandResult);
+
+        var actionResult = await _controller.Update(command);
+        actionResult.Should().BeOfType<ObjectResult>();
+        (actionResult as ObjectResult)!.StatusCode.Should().Be((int)HttpStatusCode.InternalServerError);
+    }
+
+    #endregion
 }
