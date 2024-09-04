@@ -73,7 +73,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ehrms.Shared.TestHepers", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ehrms.Training.TestHelpers", "test\Shared\Ehrms.Training.TestHelpers\Ehrms.Training.TestHelpers.csproj", "{0EB109B9-DBA5-4951-A314-12C5E94FF007}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Ehrms.EmployeeInfo.TestHelpers", "test\Shared\Ehrms.EmployeeInfo.TestHelpers\Ehrms.EmployeeInfo.TestHelpers.csproj", "{F389800C-6027-4892-AD72-599C972EB79F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Ehrms.EmployeeInfo.TestHelpers", "test\Shared\Ehrms.EmployeeInfo.TestHelpers\Ehrms.EmployeeInfo.TestHelpers.csproj", "{F389800C-6027-4892-AD72-599C972EB79F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

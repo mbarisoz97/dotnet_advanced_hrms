@@ -1,5 +1,13 @@
 ﻿namespace Ehrms.Web;
 
+internal partial class PageRouting
+{
+    internal class Title
+    {
+        internal const string Index = "/Title";
+    }
+}
+
 internal static class EmployeeRouting
 {
 	internal const string Index = "/Employee";
