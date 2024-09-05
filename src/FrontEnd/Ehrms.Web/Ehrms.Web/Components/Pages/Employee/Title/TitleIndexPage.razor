@@ -28,6 +28,9 @@
     <RowTemplate>
         <MudTd DataLabel="Title">@context.TitleName</MudTd>
         <MudTd>
+            <MudTooltip Text="Delete">
+                <MudIconButton @onclick="@(()=>ShowDeleteTitleDialog(context))" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />
+            </MudTooltip>
             <MudTooltip Text="Edit">
                 <MudIconButton @onclick="@(()=>ShowUpdateTitleDialog(context))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
             </MudTooltip>
@@ -75,6 +78,21 @@
         else
         {
             ToastService.ShowError($"Could not load employee titles. Service returned {response.StatusCode}");
+        }
+    }
+
+    private async Task ShowDeleteTitleDialog(EmployeeTitleModel employeeTitleModel)
+    {
+        var modalParameters = new ModalParameters()
+            .Add(nameof(TitleDeletePage.TitleId), employeeTitleModel.Id);
+
+        var modalReference = ModalService.Show<TitleDeletePage>("Delete title", modalParameters);
+        var result = await modalReference.Result;
+
+        if (result.Confirmed)
+        {
+            ToastService.ShowSuccess("Deleted title successfully");
+            await LoadEmployeeTitles();
         }
     }
 

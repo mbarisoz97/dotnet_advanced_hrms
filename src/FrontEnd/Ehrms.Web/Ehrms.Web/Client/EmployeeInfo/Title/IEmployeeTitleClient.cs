@@ -8,4 +8,5 @@ internal interface IEmployeeTitleClient
     Task<Response<EmployeeTitleModel>> UpdateTitle(EmployeeTitleModel employeeTitle);
     Task<Response<IEnumerable<EmployeeTitleModel>>> GetAllTitles();
     Task<Response<EmployeeTitleModel>> GetTitleById(Guid Id);
+	Task<Response<Guid>> DeleteById(Guid Id);
 }
