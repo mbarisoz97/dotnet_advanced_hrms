@@ -1,0 +1,70 @@
+﻿@attribute [StreamRendering]
+
+@inject IToastService ToastService
+@inject IEmployeeTitleClient TitleClient
+
+@if (EmployeeTitle == null)
+{
+    <Loading></Loading>
+    return;
+}
+
+<EditForm Model="@EmployeeTitle" OnValidSubmit="ValidSubmit" FormName="EmployeeTitleForm">
+    <DataAnnotationsValidator></DataAnnotationsValidator>
+    <div class="mt-3">
+        <label class="form-label">Title Name</label>
+        <InputText class="form-control" @bind-Value="@EmployeeTitle.TitleName"></InputText>
+        <ValidationMessage class="text-danger" For="(()=> EmployeeTitle.TitleName)"></ValidationMessage>
+    </div>
+    <div class="mt-3">
+        <button class="btn btn-primary" type="submit">
+            <i class="bi bi-floppy"></i> Save
+        </button>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter] public Guid TitleId { get; set; }
+    [Parameter] public bool IsEditMode { get; set; }
+    [Parameter] public EventCallback<EmployeeTitleModel> OnValidSubmit { get; set; }
+    [SupplyParameterFromForm] public EmployeeTitleModel? EmployeeTitle { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (IsEditMode)
+        {
+            await SetFormData();
+        }
+        else
+        {
+            ClearForm();
+        }
+    }
+
+    private async Task ValidSubmit()
+    {
+        await OnValidSubmit.InvokeAsync(EmployeeTitle);
+        if (!IsEditMode)
+        {
+            ClearForm();
+        }
+    }
+
+    private void ClearForm()
+    {
+        EmployeeTitle = new();
+    }
+
+    private async Task SetFormData()
+    {
+        var response = await TitleClient.GetTitleById(TitleId);
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            EmployeeTitle = response.Content;
+        }
+        else
+        {
+            ToastService.ShowError($"Could not load data. Service returned : {response.StatusCode}");
+        }
+    }
+}

@@ -1,0 +1,22 @@
+﻿@attribute [Authorize]
+
+@inject IToastService ToastService
+@inject IEmployeeTitleClient EmployeeTitleClient
+
+<TitleForm IsEditMode="false" OnValidSubmit="CreateTitle"></TitleForm>
+
+@code {
+    private async Task CreateTitle(EmployeeTitleModel title)
+    {
+        var response = await EmployeeTitleClient.CreateTitle(title);
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            ToastService.ShowSuccess($"New title created successfully");
+        }
+
+        if (response.StatusCode == HttpStatusCode.Conflict)
+        {
+            ToastService.ShowError($"A record with this name has already been created");
+        }
+    }
+}

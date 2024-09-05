@@ -15,15 +15,39 @@ internal class EmployeeTitleClient : IEmployeeTitleClient
         _httpClientFactory = httpClientFactory;
     }
 
-    public async Task<Response<IEnumerable<ReadEmployeeTitleModel>>> GetAllTitles()
+    public async Task<Response<EmployeeTitleModel>> CreateTitle(EmployeeTitleModel employeeTitle)
+    {
+        var client = await _httpClientFactory.CreateClient("ApiGateway");
+        var response = await client.PutAsJsonAsync(BaseEndpoint, employeeTitle);
+
+        return new Response<EmployeeTitleModel>
+        {
+            StatusCode = response.StatusCode,
+            Content = await response.GetContentAs<EmployeeTitleModel>()
+        };
+    }
+
+    public async Task<Response<IEnumerable<EmployeeTitleModel>>> GetAllTitles()
     {
         var client = await _httpClientFactory.CreateClient("ApiGateway");
         var response = await client.GetAsync(BaseEndpoint);
 
-        return new Response<IEnumerable<ReadEmployeeTitleModel>>
+        return new Response<IEnumerable<EmployeeTitleModel>>
         {
             StatusCode = response.StatusCode,
-            Content = await response.GetContentAs<IEnumerable<ReadEmployeeTitleModel>>()
+            Content = await response.GetContentAs<IEnumerable<EmployeeTitleModel>>()
+        };
+    }
+
+    public async Task<Response<EmployeeTitleModel>> GetTitleById(Guid Id)
+    {
+        var client = await _httpClientFactory.CreateClient("ApiGateway");
+        var response = await client.GetAsync($"{BaseEndpoint}/{Id}");
+
+        return new Response<EmployeeTitleModel>
+        {
+            StatusCode = response.StatusCode,
+            Content = await response.GetContentAs<EmployeeTitleModel>()
         };
     }
 }

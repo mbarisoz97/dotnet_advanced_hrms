@@ -3,6 +3,7 @@
 @attribute [Authorize]
 
 @inject IToastService ToastService
+@inject IModalService ModalService
 @inject IEmployeeTitleClient EmployeeTitleClient
 
 <MudTable Items="@_employeeTitles"
@@ -11,13 +12,13 @@
           Loading="@_loading"
           Bordered="true"
           Striped="true"
-          Filter="new Func<ReadEmployeeTitleModel, bool>(SearchFilter)">
+          Filter="new Func<EmployeeTitleModel, bool>(SearchFilter)">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Employee Titles</MudText>
         <MudSpacer />
         <MudTextField @bind-Value="_searchString" Placeholder="Search Employee Title" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
         <MudTooltip Text="Add New Title">
-            <MudIconButton Size="Size.Medium" Color="Color.Success" Icon="@Icons.Material.Filled.Add"/>
+            <MudIconButton Size="Size.Medium" Color="Color.Success" Icon="@Icons.Material.Filled.Add" OnClick="ShowTitleCreateDialog" />
         </MudTooltip>
     </ToolBarContent>
     <HeaderContent>
@@ -32,7 +33,7 @@
 </MudTable>
 
 @code {
-    private IEnumerable<ReadEmployeeTitleModel>? _employeeTitles;
+    private IEnumerable<EmployeeTitleModel>? _employeeTitles;
 
     private string _searchString = "";
 
@@ -57,6 +58,7 @@
         await GetEmployeeTitles();
         HideLoadingBar();
     }
+
     private async Task GetEmployeeTitles()
     {
         var response = await EmployeeTitleClient.GetAllTitles();
@@ -70,8 +72,16 @@
         }
     }
 
-    private bool SearchFilter(ReadEmployeeTitleModel element) => Search(element, _searchString);
-    private bool Search(ReadEmployeeTitleModel element, string searchString)
+    private async Task ShowTitleCreateDialog()
+    {
+        var modalReference = ModalService.Show<TitleCreatePage>("Create new title");
+        var result = await modalReference.Result;
+
+        await LoadEmployeeTitles();
+    }
+
+    private bool SearchFilter(EmployeeTitleModel element) => Search(element, _searchString);
+    private bool Search(EmployeeTitleModel element, string searchString)
     {
         if (element == null)
         {
