@@ -1,0 +1,28 @@
+﻿@attribute [Authorize]
+
+@inject IToastService ToastService
+@inject IEmployeeTitleClient EmployeeTitleClient
+
+<TitleForm IsEditMode="true" TitleId="TitleId" OnValidSubmit="Update"></TitleForm>
+
+@code {
+    [Parameter] public Guid TitleId { get; set; }
+
+    private async Task Update(EmployeeTitleModel title)
+    {
+        var response = await EmployeeTitleClient.CreateTitle(title);
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            ToastService.ShowSuccess($"Title updated successfully");
+            return;
+        }
+
+        if (response.StatusCode == HttpStatusCode.Conflict)
+        {
+            ToastService.ShowError($"A record with this name has already been created");
+            return;
+        }
+
+        ToastService.ShowError($"Could not update title. Service returned : {response.StatusCode}");
+    }
+}

@@ -23,9 +23,15 @@
     </ToolBarContent>
     <HeaderContent>
         <MudTh>Title</MudTh>
+        <MudTh></MudTh>
     </HeaderContent>
     <RowTemplate>
         <MudTd DataLabel="Title">@context.TitleName</MudTd>
+        <MudTd>
+            <MudTooltip Text="Edit">
+                <MudIconButton @onclick="@(()=>ShowUpdateTitleDialog(context))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
+            </MudTooltip>
+        </MudTd>
     </RowTemplate>
     <PagerContent>
         <MudTablePager />
@@ -70,6 +76,17 @@
         {
             ToastService.ShowError($"Could not load employee titles. Service returned {response.StatusCode}");
         }
+    }
+
+    private async Task ShowUpdateTitleDialog(EmployeeTitleModel employeeTitleModel)
+    {
+        var modalParameters = new ModalParameters()
+            .Add(nameof(TitleUpdatePage.TitleId), employeeTitleModel.Id);
+
+        var modalReference = ModalService.Show<TitleUpdatePage>("Update title", modalParameters);
+        var result = await modalReference.Result;
+
+        await LoadEmployeeTitles();
     }
 
     private async Task ShowTitleCreateDialog()

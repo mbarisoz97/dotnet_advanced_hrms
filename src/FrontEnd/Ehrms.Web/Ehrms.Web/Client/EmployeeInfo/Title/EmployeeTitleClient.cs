@@ -50,4 +50,16 @@ internal class EmployeeTitleClient : IEmployeeTitleClient
             Content = await response.GetContentAs<EmployeeTitleModel>()
         };
     }
+
+    public async Task<Response<EmployeeTitleModel>> UpdateTitle(EmployeeTitleModel employeeTitle)
+    {
+        var client = await _httpClientFactory.CreateClient("ApiGateway");
+        var response = await client.PostAsJsonAsync(BaseEndpoint, employeeTitle);
+
+        return new Response<EmployeeTitleModel>
+        {
+            StatusCode = response.StatusCode,
+            Content = await response.GetContentAs<EmployeeTitleModel>()
+        };
+    }
 }
