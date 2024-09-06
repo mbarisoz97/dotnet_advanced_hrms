@@ -22,8 +22,8 @@ public class PaymentMappingProfile : Profile
 	{
 		CreateMap<PaymentCriteria, ReadPaymentDto>()
 			.ForMember(dest => dest.EmployeeId,
-				opt => opt.MapFrom(src => src.Employee.Id))
+				opt => opt.MapFrom(src => src!.Employee!.Id))
 			.ForMember(dest => dest.PaymentCategoryId,
-				opt => opt.MapFrom(src => src.PaymentCategory.Id));
+				opt => opt.MapFrom(src => src!.PaymentCategory!.Id));
 	}
 }

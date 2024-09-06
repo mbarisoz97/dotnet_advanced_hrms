@@ -25,7 +25,7 @@
     [Parameter] public ReadTrainingRecommendationResultModel? RecommendationResult { get; set; }
     [Parameter] public EventCallback<ReadTrainingRecommendationResultModel> OnCreateTrainingRequested { get; set; }
 
-    private MudTable<RecommendationResultEmployeeModel> _table;
+    private MudTable<RecommendationResultEmployeeModel>? _table;
     private HashSet<RecommendationResultEmployeeModel> SelectedEmployees = new();
 
     private async Task CreateTraining(ReadTrainingRecommendationResultModel trainingRecommendationResult)

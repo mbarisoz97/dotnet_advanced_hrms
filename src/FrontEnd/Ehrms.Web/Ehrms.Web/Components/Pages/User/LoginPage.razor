@@ -38,7 +38,7 @@
 </div>
 
 @code {
-    [SupplyParameterFromForm] public LoginRequestModel? LoginRequest { get; set; } = new();
+    [SupplyParameterFromForm] public LoginRequestModel LoginRequest { get; set; } = new();
     [CascadingParameter] public HttpContext? HttpContext { get; set; }
     
     protected override async Task OnInitializedAsync()
