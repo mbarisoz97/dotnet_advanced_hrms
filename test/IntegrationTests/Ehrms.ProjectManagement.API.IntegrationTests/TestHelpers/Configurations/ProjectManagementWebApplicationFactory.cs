@@ -20,7 +20,7 @@ public class ProjectManagementWebApplicationFactory : WebApplicationFactory<Prog
 {
     private readonly int Port = PortNumberProvider.GetPortNumber();
     private readonly MsSqlContainer _msSqlContainer;
-    
+
     private readonly AsyncRetryPolicy _retryPolicy = Policy.Handle<DockerApiException>()
     .WaitAndRetryAsync(
         retryCount: 3,
@@ -73,6 +73,11 @@ public class ProjectManagementWebApplicationFactory : WebApplicationFactory<Prog
     {
         var scope = services.BuildServiceProvider().CreateScope();
         var dbContext = scope.ServiceProvider.GetService<ProjectDbContext>();
+
+        if (dbContext == null)
+        {
+            throw new ArgumentException("Could not resolve dbcontext");
+        }
 
         return dbContext;
     }
