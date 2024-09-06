@@ -3,7 +3,7 @@
 <MudTable @ref="_table"
           T="RecommendationResultEmployeeModel"
           Items="@RecommendationResult!.Employees"
-          @bind-SelectedEmployees="SelectedEmployees"
+          @bind-SelectedEmployees="_selectedEmployees"
           OnRowClick="@OnRowClick"
           Hover="true"
           Dense="false"
@@ -26,16 +26,16 @@
     [Parameter] public EventCallback<ReadTrainingRecommendationResultModel> OnCreateTrainingRequested { get; set; }
 
     private MudTable<RecommendationResultEmployeeModel>? _table;
-    private HashSet<RecommendationResultEmployeeModel> SelectedEmployees = new();
+    private HashSet<RecommendationResultEmployeeModel> _selectedEmployees = new();
 
     private async Task CreateTraining(ReadTrainingRecommendationResultModel trainingRecommendationResult)
     {
-        trainingRecommendationResult.Employees = SelectedEmployees;
+        trainingRecommendationResult.Employees = _selectedEmployees;
         await OnCreateTrainingRequested.InvokeAsync(new ReadTrainingRecommendationResultModel
             {
                 Skill = trainingRecommendationResult.Skill,
                 Title = trainingRecommendationResult.Title,
-                Employees = SelectedEmployees
+                Employees = _selectedEmployees
             });
     }
 
@@ -46,13 +46,13 @@
             return;
         }
 
-        if (SelectedEmployees.Contains(args.Item))
+        if (_selectedEmployees.Contains(args.Item))
         {
-            SelectedEmployees.Remove(args.Item);
+            _selectedEmployees.Remove(args.Item);
         }
         else
         {
-            SelectedEmployees.Add(args.Item);
+            _selectedEmployees.Add(args.Item);
         }
     }
 }
