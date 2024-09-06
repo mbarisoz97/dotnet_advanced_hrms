@@ -1,4 +1,5 @@
-﻿using Ehrms.EmployeeInfo.API.Database.Context;
+﻿using Ehrms.Contracts.Title;
+using Ehrms.EmployeeInfo.API.Database.Context;
 using Ehrms.EmployeeInfo.API.Exceptions.Title;
 
 namespace Ehrms.EmployeeInfo.API.Handlers.Title.Command;
@@ -10,10 +11,14 @@ public sealed class DeleteTitleCommand : IRequest<Result<Guid>>
 
 internal sealed class DeleteTitleCommandHandler : IRequestHandler<DeleteTitleCommand, Result<Guid>>
 {
+    private readonly IMapper _mapper;
+    private readonly IPublishEndpoint _publishEndpoint;
     private readonly EmployeeInfoDbContext _dbContext;
 
-    public DeleteTitleCommandHandler(EmployeeInfoDbContext dbContext)
+    public DeleteTitleCommandHandler(IMapper mapper, IPublishEndpoint publishEndpoint, EmployeeInfoDbContext dbContext)
     {
+        _mapper = mapper;
+        _publishEndpoint = publishEndpoint;
         _dbContext = dbContext;
     }
 
@@ -29,6 +34,9 @@ internal sealed class DeleteTitleCommandHandler : IRequestHandler<DeleteTitleCom
         _dbContext.Remove(title);
         await _dbContext.SaveChangesAsync(cancellationToken);
         
+        var titleDeletedEvent = _mapper.Map<TitleDeletedEvent>(request);
+        await _publishEndpoint.Publish(titleDeletedEvent, default);
+
         return new Result<Guid>(request.Id);
     }
 }

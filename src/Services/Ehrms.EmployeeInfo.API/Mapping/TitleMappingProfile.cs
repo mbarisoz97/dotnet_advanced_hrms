@@ -12,7 +12,12 @@ public class TitleMappingProfile : Profile
         AddCommandToModelMappings();
         AddModalToDtoMappings();
         AddModelToMessageQueueEventMappings();
+        AddCommandToMessageQueueEventMappings();
+    }
 
+    private void AddCommandToMessageQueueEventMappings()
+    {
+        CreateMap<DeleteTitleCommand, TitleDeletedEvent>();
     }
 
     private void AddModelToMessageQueueEventMappings()
