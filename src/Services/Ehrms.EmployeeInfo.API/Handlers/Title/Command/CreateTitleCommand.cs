@@ -1,4 +1,5 @@
-﻿using Ehrms.EmployeeInfo.API.Database.Context;
+﻿using Ehrms.Contracts.Title;
+using Ehrms.EmployeeInfo.API.Database.Context;
 using Ehrms.EmployeeInfo.API.Exceptions.Title;
 
 namespace Ehrms.EmployeeInfo.API.Handlers.Title.Command;
@@ -11,11 +12,13 @@ public sealed class CreateTitleCommand : IRequest<Result<Database.Models.Title>>
 internal sealed class CreateTitleCommandHandler : IRequestHandler<CreateTitleCommand, Result<Database.Models.Title>>
 {
     private readonly IMapper _mapper;
+    private readonly IPublishEndpoint _publishEndpoint;
     private readonly EmployeeInfoDbContext _dbContext;
 
-    public CreateTitleCommandHandler(IMapper mapper, EmployeeInfoDbContext dbContext)
+    public CreateTitleCommandHandler(IMapper mapper, IPublishEndpoint publishEndpoint, EmployeeInfoDbContext dbContext)
     {
         _mapper = mapper;
+        _publishEndpoint = publishEndpoint;
         _dbContext = dbContext;
     }
 
@@ -31,6 +34,9 @@ internal sealed class CreateTitleCommandHandler : IRequestHandler<CreateTitleCom
         var newTitle = _mapper.Map<Database.Models.Title>(request);
         await _dbContext.AddAsync(newTitle, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
+
+        var titleCreatedEvent = _mapper.Map<TitleCreatedEvent>(newTitle);
+        await _publishEndpoint.Publish(titleCreatedEvent, cancellationToken);
 
         return new Result<Database.Models.Title>(newTitle);
     }
