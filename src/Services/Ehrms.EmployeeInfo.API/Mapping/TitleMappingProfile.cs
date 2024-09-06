@@ -23,6 +23,7 @@ public class TitleMappingProfile : Profile
     private void AddModelToMessageQueueEventMappings()
     {
         CreateMap<Title, TitleCreatedEvent>();
+        CreateMap<Title, TitleUpdatedEvent>();
     }
 
     private void AddModalToDtoMappings()
