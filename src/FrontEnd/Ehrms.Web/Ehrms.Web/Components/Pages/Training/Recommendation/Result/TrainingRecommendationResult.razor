@@ -1,7 +1,6 @@
 @inject IModalService ModalService
 
-<MudTable @ref="_table"
-          T="RecommendationResultEmployeeModel"
+<MudTable T="RecommendationResultEmployeeModel"
           Items="@RecommendationResult!.Employees"
           @bind-SelectedEmployees="_selectedEmployees"
           OnRowClick="@OnRowClick"
@@ -25,7 +24,6 @@
     [Parameter] public ReadTrainingRecommendationResultModel? RecommendationResult { get; set; }
     [Parameter] public EventCallback<ReadTrainingRecommendationResultModel> OnCreateTrainingRequested { get; set; }
 
-    private MudTable<RecommendationResultEmployeeModel>? _table;
     private HashSet<RecommendationResultEmployeeModel> _selectedEmployees = new();
 
     private async Task CreateTraining(ReadTrainingRecommendationResultModel trainingRecommendationResult)
