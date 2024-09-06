@@ -29,7 +29,7 @@
         <MudTd DataLabel="Title">@context.TitleName</MudTd>
         <MudTd>
             <MudTooltip Text="Delete">
-                <MudIconButton @onclick="@(()=>ShowDeleteTitleDialog(context))" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />
+                <MudIconButton @onclick="@(()=>ShowDeleteTitleDialog(context))" Color="Color.Error" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />
             </MudTooltip>
             <MudTooltip Text="Edit">
                 <MudIconButton @onclick="@(()=>ShowUpdateTitleDialog(context))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
