@@ -17,7 +17,7 @@ public sealed class MockTokenHandler : Mock<ITokenHandler>
             new(ClaimTypes.Name, user.UserName!),
         };
 
-        claims.AddRange(user.UserRoles.Select(x => new Claim(ClaimTypes.Role, x.Role!.Name)));
+        claims.AddRange(user.UserRoles.Select(x => new Claim(ClaimTypes.Role, x.Role!.Name!)));
 
         var claimsIdentity = new ClaimsIdentity(claims);
         var claimsPrincipal = new ClaimsPrincipal(claimsIdentity);

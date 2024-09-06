@@ -10,9 +10,9 @@ public class ApplicationUserDbContext : IdentityDbContext<User, Role, Guid>
     {
     }
 
-    public DbSet<User> Users { get; set; }
-    public DbSet<Role> Roles { get; set; }
-    public DbSet<UserRole> UserRoles { get; set; }
+    public override DbSet<User> Users { get; set; }
+    public override DbSet<Role> Roles { get; set; }
+    public new DbSet<UserRole> UserRoles { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

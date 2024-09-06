@@ -26,8 +26,8 @@ public class PaymentControllerGetTests : AdministrationApiBaseIntegrationTest
 		var readPaymentDto = await response.Content.ReadFromJsonAsync<ReadPaymentDto>();
 		readPaymentDto?.Id.Should().Be(payment.Id);
 		readPaymentDto?.Amount.Should().Be(payment.Amount);
-		readPaymentDto?.EmployeeId.Should().Be(payment.Employee.Id);
-		readPaymentDto?.PaymentCategoryId.Should().Be(payment.PaymentCategory.Id);
+		readPaymentDto?.EmployeeId.Should().Be(payment!.Employee!.Id);
+		readPaymentDto?.PaymentCategoryId.Should().Be(payment!.PaymentCategory!.Id);
 	}
 
 	[Fact]

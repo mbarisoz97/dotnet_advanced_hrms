@@ -18,12 +18,12 @@ public class UpdateUserPasswordCommandHandlerTests
         _mockUserManager.SetupFindByNameAsync();
         var command = new UpdateUserPasswordCommandFaker().Generate();
         var commandResult = await _handler.Handle(command, default);
-        var exceptionInResult = commandResult.Match(_ => null, f => f);
+        var exceptionInResult = commandResult.Match<Exception?>(_ => null, f => f);
 
         commandResult.IsFaulted.Should().BeTrue();
         exceptionInResult.Should().BeOfType<UserNotFoundException>();
     }
-    
+
     [Fact]
     public async Task Handle_Inactive_ReturnsResultWithUserNotFoundException()
     {
@@ -32,10 +32,10 @@ public class UpdateUserPasswordCommandHandlerTests
             .Generate();
         _mockUserManager.SetupFindByNameAsync(user);
         _mockUserManager.SetupCheckPasswordAsync(false);
-        
+
         var command = new UpdateUserPasswordCommandFaker().Generate();
         var commandResult = await _handler.Handle(command, default);
-        var exceptionInResult = commandResult.Match(_ => null, f => f);
+        var exceptionInResult = commandResult.Match<Exception?>(_ => null, f => f);
 
         commandResult.IsFaulted.Should().BeTrue();
         exceptionInResult.Should().BeOfType<UserAccountInactiveException>();
@@ -47,10 +47,10 @@ public class UpdateUserPasswordCommandHandlerTests
         var user = new UserFaker().Generate();
         _mockUserManager.SetupFindByNameAsync(user);
         _mockUserManager.SetupCheckPasswordAsync(false);
-        
+
         var command = new UpdateUserPasswordCommandFaker().Generate();
         var commandResult = await _handler.Handle(command, default);
-        var exceptionInResult = commandResult.Match(_ => null, f => f);
+        var exceptionInResult = commandResult.Match<Exception?>(_ => null, f => f);
 
         commandResult.IsFaulted.Should().BeTrue();
         exceptionInResult.Should().BeOfType<UserCredentialsInvalidException>();
@@ -64,11 +64,11 @@ public class UpdateUserPasswordCommandHandlerTests
         _mockUserManager.SetupCheckPasswordAsync(true);
         _mockUserManager.SetupGeneratePasswordResetTokenAsync();
         _mockUserManager.SetupResetPasswordAsync(IdentityResult.Failed());
-        
+
         var command = new UpdateUserPasswordCommandFaker().Generate();
         var commandResult = await _handler.Handle(command, default);
-        var exceptionInResult = commandResult.Match(_ => null, f => f);
-        
+        var exceptionInResult = commandResult.Match<Exception?>(_ => null, f => f);
+
         commandResult.IsFaulted.Should().BeTrue();
         exceptionInResult.Should().BeOfType<UserPasswordResetFailedException>();
     }
@@ -81,11 +81,11 @@ public class UpdateUserPasswordCommandHandlerTests
         _mockUserManager.SetupCheckPasswordAsync(true);
         _mockUserManager.SetupGeneratePasswordResetTokenAsync();
         _mockUserManager.SetupResetPasswordAsync(IdentityResult.Success);
-        
+
         var command = new UpdateUserPasswordCommandFaker().Generate();
         var commandResult = await _handler.Handle(command, default);
-        var userInResult = commandResult.Match<User?>(s => s, _ => null);
-        
+        var userInResult = commandResult.Match(s => s, _ => null);
+
         commandResult.IsSuccess.Should().BeTrue();
         userInResult.Should().NotBeNull();
     }

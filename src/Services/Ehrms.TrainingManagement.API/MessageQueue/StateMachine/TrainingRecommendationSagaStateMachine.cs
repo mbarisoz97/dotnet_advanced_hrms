@@ -11,12 +11,12 @@ public class TrainingRecommendationSagaData : SagaStateMachineInstance
 
 public class TrainingRecommendationSaga : MassTransitStateMachine<TrainingRecommendationSagaData>
 {
-    public State Pending { get; set; }
-    public State Finalized { get; set; }
+    public required State Pending { get; set; }
+    public required State Finalized { get; set; }
 
-    public Event<TrainingRecommendationRequestAcceptedEvent> RecommendationRequestAccepted { get; set; }
-    public Event<TrainingRecommendationCompletedEvent> RecommendationCompleted { get; set; }
-    public Event<TrainingRecommendationCancelledEvent> RecommendationCancelled { get; set; }
+    public required Event<TrainingRecommendationRequestAcceptedEvent> RecommendationRequestAccepted { get; set; }
+    public required Event<TrainingRecommendationCompletedEvent> RecommendationCompleted { get; set; }
+    public required Event<TrainingRecommendationCancelledEvent> RecommendationCancelled { get; set; }
 
     public TrainingRecommendationSaga()
     {
