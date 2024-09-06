@@ -11,7 +11,6 @@ internal sealed class CreateTrainingRecommendationRequestCommandHandler
 {
     private readonly IMapper _mapper;
     private readonly IPublishEndpoint _publishEndpoint;
-    private readonly ILogger<CreateTrainingRecommendationRequestCommandHandler> _logger;
     private readonly TrainingDbContext _trainingDbContext;
 
     public CreateTrainingRecommendationRequestCommandHandler(
