@@ -45,7 +45,12 @@ namespace Ehrms.EmployeeInfo.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid?>("TitleId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("TitleId");
 
                     b.ToTable("Employees");
                 });
@@ -66,6 +71,21 @@ namespace Ehrms.EmployeeInfo.API.Migrations
                     b.ToTable("Skills");
                 });
 
+            modelBuilder.Entity("Ehrms.EmployeeInfo.API.Database.Models.Title", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("TitleName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Titles");
+                });
+
             modelBuilder.Entity("EmployeeSkill", b =>
                 {
                     b.Property<Guid>("EmployeesId")
@@ -81,6 +101,15 @@ namespace Ehrms.EmployeeInfo.API.Migrations
                     b.ToTable("EmployeeSkill");
                 });
 
+            modelBuilder.Entity("Ehrms.EmployeeInfo.API.Database.Models.Employee", b =>
+                {
+                    b.HasOne("Ehrms.EmployeeInfo.API.Database.Models.Title", "Title")
+                        .WithMany("Employees")
+                        .HasForeignKey("TitleId");
+
+                    b.Navigation("Title");
+                });
+
             modelBuilder.Entity("EmployeeSkill", b =>
                 {
                     b.HasOne("Ehrms.EmployeeInfo.API.Database.Models.Employee", null)
@@ -94,6 +123,11 @@ namespace Ehrms.EmployeeInfo.API.Migrations
                         .HasForeignKey("SkillsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Ehrms.EmployeeInfo.API.Database.Models.Title", b =>
+                {
+                    b.Navigation("Employees");
                 });
 #pragma warning restore 612, 618
         }

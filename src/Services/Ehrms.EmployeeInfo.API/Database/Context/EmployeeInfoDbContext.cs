@@ -13,7 +13,7 @@ public class EmployeeInfoDbContext : DbContext
 
     public DbSet<Employee> Employees { get; set; }
     public DbSet<Skill> Skills { get; set; }
-
+    public DbSet<Title> Titles { get; set; }    
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{

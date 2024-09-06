@@ -2,6 +2,7 @@
 global using AutoMapper;
 global using MassTransit;
 global using Microsoft.EntityFrameworkCore;
+global using LanguageExt.Common;
 
 global using Ehrms.Contracts.Employee;
 global using Microsoft.AspNetCore.Mvc;
