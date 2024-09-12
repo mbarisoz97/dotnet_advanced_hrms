@@ -12,23 +12,19 @@ public class EmployeeControlerPostIntegrationTests : BaseEmployeeInfoIntegration
     [Fact]
     public async Task Post_ExistingEmployeeId_ReturnsOkWithUpdatedReadEmployeeDto()
     {
+        var employee = new EmployeeFaker().Generate();
+        await dbContext.AddAsync(employee);
+        
         var title = new TitleFaker().Generate();
         await dbContext.AddAsync(title);
         await dbContext.SaveChangesAsync();
 
-        var createEmployeeCommand = new CreateEmployeeCommandFaker()
+        var updateEmployeeCommand = new UpdateEmployeeCommandFaker()
+            .WithId(employee.Id)
             .WithTitleId(title.Id)
             .Generate();
 
-        var response = await client.PutAsJsonAsync(Endpoints.EmployeeApi, createEmployeeCommand);
-        response.EnsureSuccessStatusCode();
-        var createEmployeeResponse = await response.Content.ReadFromJsonAsync<ReadEmployeeDto>();
-
-        var updateEmployeeCommand = new UpdateEmployeeCommandFaker()
-            .WithId(createEmployeeResponse!.Id)
-            .Generate();
-
-        response = await client.PostAsJsonAsync(Endpoints.EmployeeApi, updateEmployeeCommand);
+        var response = await client.PostAsJsonAsync(Endpoints.EmployeeApi, updateEmployeeCommand);
         response.EnsureSuccessStatusCode();
         var updateEmployeeResponse = await response.Content.ReadFromJsonAsync<ReadEmployeeDto>();
 
@@ -37,12 +33,12 @@ public class EmployeeControlerPostIntegrationTests : BaseEmployeeInfoIntegration
     }
 
     [Fact]
-    public async Task Post_NonExistingEmployeeId_ReturnsNotFound()
+    public async Task Post_NonExistingEmployeeId_ReturnsBadRequest()
     {
         var command = new UpdateEmployeeCommandFaker().Generate();
         var response = await client.PostAsJsonAsync(Endpoints.EmployeeApi, command);
 
-        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
     }
 
     [Fact]

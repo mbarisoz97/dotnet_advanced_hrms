@@ -17,9 +17,21 @@ public class UpdateEmployeeCommandFaker : Faker<UpdateEmployeeCommand>
         return this;
     }
 
+    public UpdateEmployeeCommandFaker WithTitleId(Guid id)
+    {
+        RuleFor(x => x.TitleId, id);
+        return this;
+    }
+
     public UpdateEmployeeCommandFaker WithSkills(ICollection<Guid> skills)
     {
         RuleFor(x => x.Skills, skills);
+        return this;
+    }
+
+    public UpdateEmployeeCommandFaker WithSkills(ICollection<API.Database.Models.Skill> skills)
+    {
+        RuleFor(x => x.Skills, skills.Select(x=>x.Id).ToArray());
         return this;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Ehrms.EmployeeInfo.API.Exceptions.Title;
+using Ehrms.EmployeeInfo.API.Handlers.Employee.Command;
 using Microsoft.AspNetCore.Authorization;
 using System.Net;
 
@@ -52,10 +53,12 @@ public class EmployeeController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Update([FromBody] UpdateEmployeeCommand updateEmployeeCommand)
     {
-        var employee = await _mediator.Send(updateEmployeeCommand);
-        var readEmployeeDto = _mapper.Map<ReadEmployeeDto>(employee);
+        var commandResult = await _mediator.Send(updateEmployeeCommand);
+        var actionResult = commandResult.Match(
+            Succ: e => Ok(_mapper.Map<ReadEmployeeDto>(e)),
+            Fail: this.MapEmployeeUpdateFailureResult);
 
-        return Ok(readEmployeeDto);
+        return actionResult;
     }
 
     [HttpDelete("{id}")]
@@ -77,5 +80,15 @@ internal static class EmployeeControllerResultMappingExtensions
             return controller.BadRequest(err.Message);
         }
         return controller.Problem(statusCode: (int)HttpStatusCode.InternalServerError);
+    }
+
+    internal static IActionResult MapEmployeeUpdateFailureResult(this EmployeeController controller, Exception err)
+    {
+        return err switch
+        {
+            TitleNotFoundException or 
+            EmployeeNotFoundException => controller.BadRequest(err.Message),
+            _ => controller.Problem(statusCode: (int)HttpStatusCode.InternalServerError)
+        };
     }
 }
