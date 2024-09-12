@@ -1,9 +1,8 @@
-﻿using Bogus;
-using Ehrms.EmployeeInfo.API.Database.Models;
+﻿using Ehrms.EmployeeInfo.API.Database.Models;
 
-namespace Ehrms.EmployeeInfo.API.IntegrationTests.TestHelpers.Fakers.Entity;
+namespace Ehrms.EmployeeInfo.TestHelpers.Faker.Model;
 
-internal class EmployeeFaker : Faker<Employee>
+public class EmployeeFaker : Faker<Employee>
 {
     public EmployeeFaker()
     {
@@ -11,5 +10,11 @@ internal class EmployeeFaker : Faker<Employee>
         RuleFor(e => e.LastName, f => f.Name.LastName());
         RuleFor(e => e.DateOfBirth, f => f.Date.BetweenDateOnly(new DateOnly(2000, 1, 1), new DateOnly(2022, 12, 1)));
         RuleFor(e => e.Qualification, f => f.Name.JobTitle());
+    }
+
+    public EmployeeFaker WithSkills(ICollection<Skill> skills)
+    {
+        RuleFor(e => e.Skills, skills);
+        return this;
     }
 }

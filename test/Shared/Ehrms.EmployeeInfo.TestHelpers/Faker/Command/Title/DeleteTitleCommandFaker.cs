@@ -1,4 +1,4 @@
-﻿namespace Ehrms.EmployeeInfo.TestHelpers.Faker.Title.Command;
+﻿namespace Ehrms.EmployeeInfo.TestHelpers.Faker.Command.Title;
 
 public sealed class DeleteTitleCommandFaker : Faker<DeleteTitleCommand>
 {

@@ -1,8 +1,5 @@
 ﻿using Ehrms.EmployeeInfo.API.Database.Context;
 using Ehrms.EmployeeInfo.API.Exceptions.Title;
-using Ehrms.EmployeeInfo.API.Handlers.Title.Query;
-using Ehrms.EmployeeInfo.TestHelpers.Faker.Title.Model;
-using LanguageExt.Common;
 
 namespace Ehrms.EmployeeInfo.API.UnitTests.Handlers.Title;
 

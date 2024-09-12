@@ -1,8 +1,6 @@
-﻿using Ehrms.EmployeeInfo.TestHelpers.Faker.Title.Command;
+﻿namespace Ehrms.EmployeeInfo.TestHelpers.Faker.Model;
 
-namespace Ehrms.EmployeeInfo.TestHelpers.Faker.Title.Model;
-
-public sealed class TitleFaker : Faker<API.Database.Models.Title>
+public sealed class TitleFaker : Faker<Title>
 {
     public TitleFaker()
     {

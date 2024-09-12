@@ -1,4 +1,5 @@
-﻿using Ehrms.Shared;
+﻿using Ehrms.EmployeeInfo.API.IntegrationTests.TestHelpers.Configurations;
+using Ehrms.Shared;
 using System.Net.Http.Headers;
 
 namespace Ehrms.EmployeeInfo.API.IntegrationTests.Controllers;

@@ -1,6 +1,5 @@
 ﻿using Ehrms.EmployeeInfo.API.Dtos.Title;
-using Ehrms.EmployeeInfo.TestHelpers.Faker.Title.Command;
-using Ehrms.EmployeeInfo.TestHelpers.Faker.Title.Model;
+using Ehrms.EmployeeInfo.API.IntegrationTests.TestHelpers.Configurations;
 
 namespace Ehrms.EmployeeInfo.API.IntegrationTests.Controllers.TitleController;
 

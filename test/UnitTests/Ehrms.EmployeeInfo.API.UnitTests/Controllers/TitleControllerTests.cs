@@ -4,11 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using Ehrms.Shared.TestHepers.Mock;
 using Ehrms.EmployeeInfo.API.Controllers;
 using Ehrms.EmployeeInfo.API.Exceptions.Title;
-using Ehrms.EmployeeInfo.API.Handlers.Title.Query;
-using Ehrms.EmployeeInfo.API.Handlers.Title.Command;
-using Ehrms.EmployeeInfo.TestHelpers.Faker.Title.Model;
-using Ehrms.EmployeeInfo.TestHelpers.Faker.Title.Command;
-using Moq;
 
 namespace Ehrms.EmployeeInfo.API.UnitTests.Controllers;
 

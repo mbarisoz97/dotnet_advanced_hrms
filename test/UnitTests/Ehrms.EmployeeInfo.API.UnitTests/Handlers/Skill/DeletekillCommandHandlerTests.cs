@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.Logging;
-using Ehrms.EmployeeInfo.API.Database.Context;
 using Ehrms.EmployeeInfo.API.Handlers.Skill.Command;
 using Ehrms.Contracts.Skill;
 
@@ -30,7 +29,7 @@ public class DeletekillCommandHandlerTests
 	[Fact]
 	public async Task Handle_NonExistingEmployeeId_ThrowsSkillNotFoundException()
 	{
-		var command = new DeleteCommandFaker().Generate();
+		var command = new DeleteSkillCommandFaker().Generate();
 
 		await Assert.ThrowsAsync<SkillNotFoundException>(async () =>
 		{
@@ -45,7 +44,7 @@ public class DeletekillCommandHandlerTests
 		await _dbContext.AddAsync(skill, default);
 		await _dbContext.SaveChangesAsync(default);
 
-		var command = new DeleteCommandFaker()
+		var command = new DeleteSkillCommandFaker()
 			.WithId(skill.Id)
 			.Generate();
 
@@ -60,7 +59,7 @@ public class DeletekillCommandHandlerTests
 		await _dbContext.AddAsync(skill, default);
 		await _dbContext.SaveChangesAsync(default);
 
-		var command = new DeleteCommandFaker()
+		var command = new DeleteSkillCommandFaker()
 			.WithId(skill.Id)
 			.Generate();
 

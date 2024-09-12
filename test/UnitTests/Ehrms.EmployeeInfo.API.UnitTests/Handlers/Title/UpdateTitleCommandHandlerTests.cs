@@ -1,9 +1,6 @@
-﻿using Ehrms.EmployeeInfo.API.Database.Context;
+﻿using Ehrms.Contracts.Title;
+using Ehrms.EmployeeInfo.API.Database.Context;
 using Ehrms.EmployeeInfo.API.Exceptions.Title;
-using Ehrms.EmployeeInfo.API.Handlers.Title.Command;
-using Ehrms.EmployeeInfo.TestHelpers.Faker.Title.Model;
-using Ehrms.EmployeeInfo.TestHelpers.Faker.Title.Command;
-using Ehrms.Contracts.Title;
 
 namespace Ehrms.EmployeeInfo.API.UnitTests.Handlers.Title;
 
