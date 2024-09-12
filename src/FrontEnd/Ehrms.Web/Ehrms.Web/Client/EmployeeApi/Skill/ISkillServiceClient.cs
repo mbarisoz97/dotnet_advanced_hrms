@@ -1,6 +1,6 @@
 ﻿using Ehrms.Web.Models;
 
-namespace Ehrms.Web.Client;
+namespace Ehrms.Web.Client.EmployeeApi.Skill;
 
 public interface ISkillServiceClient
 {

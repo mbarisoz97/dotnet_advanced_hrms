@@ -30,16 +30,24 @@
 @using Ehrms.Shared
 @using System.Net.Http.Headers
 @using Ehrms.Web.Routing
+@using Ehrms.Web.Extensions
 
 @using Ehrms.Web.Components.Pages.Chart
 @using Ehrms.Web.Components.Layout
 @using Ehrms.Web.Client.Components
 @using MudBlazor
 
+
 @using Ehrms.Web.Models.User;
-@using Ehrms.Web.Client.AuthApi
 @using Ehrms.Web.Components.Pages.Training.Recommendation.Result
 @using Ehrms.Web.Components.Pages.Training.Recommendation.Request
-@using Ehrms.Web.Client.AuthApi.Account
-@using Ehrms.Web.Client.EmployeeInfo.Title
 @using Ehrms.Web.Models.EmployeeInfo
+
+@using Ehrms.Web.Client.AuthApi
+@using Ehrms.Web.Client.AuthApi.Account
+
+@using Ehrms.Web.Client.EmployeeApi.Info
+@using Ehrms.Web.Client.EmployeeApi.Title
+@using Ehrms.Web.Client.EmployeeApi.Skill
+
+@using Blazored.Toast.Configuration

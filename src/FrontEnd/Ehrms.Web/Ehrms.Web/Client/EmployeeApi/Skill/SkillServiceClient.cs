@@ -1,6 +1,7 @@
 ﻿using Ehrms.Web.Models;
+using Ehrms.Web.Routing;
 
-namespace Ehrms.Web.Client;
+namespace Ehrms.Web.Client.EmployeeApi.Skill;
 
 internal sealed class SkillServiceClient : ISkillServiceClient
 {
@@ -65,7 +66,7 @@ internal sealed class SkillServiceClient : ISkillServiceClient
     {
         var client = await _clientFactoryWrapper.CreateClient("ApiGateway");
         var response = await client.PostAsJsonAsync(_endpointProvider.EmployeeSkillServiceEndpoint, skill);
-        
+
         return await response.AsCustomResponse<SkillModel>();
     }
 }

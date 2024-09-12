@@ -1,4 +1,6 @@
-﻿namespace Ehrms.Web.Client;
+﻿using Ehrms.Web.Routing;
+
+namespace Ehrms.Web.Client;
 
 internal sealed class TrainingServiceClient : ITrainingServiceClient
 {
