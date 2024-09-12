@@ -1,17 +1,19 @@
 ﻿using Ehrms.EmployeeInfo.API.Database.Context;
+using Ehrms.EmployeeInfo.API.Exceptions.Title;
 
 namespace Ehrms.EmployeeInfo.API.Handlers.Employee.Command;
 
-public sealed class CreateEmployeeCommand : IRequest<Database.Models.Employee>
+public sealed class CreateEmployeeCommand : IRequest<Result<Database.Models.Employee>>
 {
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
     public string Qualification { get; set; } = string.Empty;
     public DateOnly DateOfBirth { get; set; }
+    public Guid TitleId { get; set; }
     public ICollection<Guid> Skills { get; set; } = [];
 }
 
-internal sealed class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeCommand, Database.Models.Employee>
+internal sealed class CreateEmployeeCommandHandler : IRequestHandler<CreateEmployeeCommand, Result<Database.Models.Employee>>
 {
     private readonly IMapper _mapper;
     private readonly IPublishEndpoint _publishEndpoint;
@@ -24,7 +26,7 @@ internal sealed class CreateEmployeeCommandHandler : IRequestHandler<CreateEmplo
         _dbContext = dbContext;
     }
 
-    public async Task<Database.Models.Employee> Handle(CreateEmployeeCommand request, CancellationToken cancellationToken)
+    public async Task<Result<Database.Models.Employee>> Handle(CreateEmployeeCommand request, CancellationToken cancellationToken)
     {
         Database.Models.Employee employee = _mapper.Map<Database.Models.Employee>(request);
 
@@ -32,6 +34,16 @@ internal sealed class CreateEmployeeCommandHandler : IRequestHandler<CreateEmplo
             .Where(x => request.Skills.Contains(x.Id))
             .ForEachAsync(employee.Skills.Add);
 
+        var title = await _dbContext.Titles
+            .FirstOrDefaultAsync(x => x.Id == request.TitleId, cancellationToken);
+
+        if (title == null)
+        {
+            return new Result<Database.Models.Employee>(
+                new TitleNotFoundException($"Could not find employee title with id : <{request.TitleId}>"));
+        }
+
+        employee.Title = title;
         await _dbContext.Employees.AddAsync(employee, cancellationToken);
         await _dbContext.SaveChangesAsync(cancellationToken);
 

@@ -23,9 +23,8 @@ public class EmployeeMappingProfiles : Profile
     private void AddEntityToDtoMappings()
     {
         CreateMap<Employee, ReadEmployeeDto>()
-            .ForMember(dest => dest.Skills,
-                opt => opt.MapFrom(
-                    src => src.Skills.Select(x => x.Id)));
+            .ForMember(dest => dest.Skills, opt => opt.MapFrom(src => src.Skills.Select(x => x.Id)))
+            .ForMember(dest => dest.TitleId, opt => opt.MapFrom(src => src.Title!.Id));
     }
 
     private void AddModelToMessageQueueEventMappings()

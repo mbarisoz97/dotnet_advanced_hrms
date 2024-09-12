@@ -17,4 +17,10 @@ public class EmployeeFaker : Faker<Employee>
         RuleFor(e => e.Skills, skills);
         return this;
     }
+
+    public EmployeeFaker WithTitle(Title title)
+    {
+        RuleFor(e => e.Title, title);
+        return this;
+    }
 }

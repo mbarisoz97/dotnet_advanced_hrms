@@ -6,7 +6,6 @@ using Ehrms.EmployeeInfo.API.Controllers;
 using Ehrms.EmployeeInfo.API.Exceptions.Title;
 
 namespace Ehrms.EmployeeInfo.API.UnitTests.Controllers;
-
 public class TitleControllerTests
 {
     private readonly MockMediatr _mockMediator = new();

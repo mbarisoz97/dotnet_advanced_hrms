@@ -12,7 +12,14 @@ public class EmployeeControlerPostIntegrationTests : BaseEmployeeInfoIntegration
     [Fact]
     public async Task Post_ExistingEmployeeId_ReturnsOkWithUpdatedReadEmployeeDto()
     {
-        var createEmployeeCommand = new CreateEmployeeCommandFaker().Generate();
+        var title = new TitleFaker().Generate();
+        await dbContext.AddAsync(title);
+        await dbContext.SaveChangesAsync();
+
+        var createEmployeeCommand = new CreateEmployeeCommandFaker()
+            .WithTitleId(title.Id)
+            .Generate();
+
         var response = await client.PutAsJsonAsync(Endpoints.EmployeeApi, createEmployeeCommand);
         response.EnsureSuccessStatusCode();
         var createEmployeeResponse = await response.Content.ReadFromJsonAsync<ReadEmployeeDto>();

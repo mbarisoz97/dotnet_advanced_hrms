@@ -11,7 +11,13 @@ public class EmployeeControlerPutIntegrationTests : BaseEmployeeInfoIntegrationT
     [Fact]
     public async Task Put_ValidEmployeeDetails_ReturnsOkWithEmployeeDto()
     {
-        var command = new CreateEmployeeCommandFaker().Generate();
+        var title = new TitleFaker().Generate();
+        await dbContext.AddAsync(title);    
+        await dbContext.SaveChangesAsync(); 
+
+        var command = new CreateEmployeeCommandFaker()
+            .WithTitleId(title.Id)
+            .Generate();
 
         var response = await client.PutAsJsonAsync(Endpoints.EmployeeApi, command);
         var createEmployeeResponse = await response.Content.ReadFromJsonAsync<ReadEmployeeDto>();

@@ -11,7 +11,13 @@ public class EmployeeControlerDeleteIntegrationTests : BaseEmployeeInfoIntegrati
     [Fact]
     public async Task Delete_ExistingEmployeeId_RemovesEmployee()
     {
-        var createEmployeeCommand = new CreateEmployeeCommandFaker().Generate();
+        var title = new TitleFaker().Generate();
+        await dbContext.AddAsync(title);
+        await dbContext.SaveChangesAsync();
+
+        var createEmployeeCommand = new CreateEmployeeCommandFaker()
+            .WithTitleId(title.Id)
+            .Generate();
 
         var response = await client.PutAsJsonAsync(Endpoints.EmployeeApi, createEmployeeCommand);
         response.EnsureSuccessStatusCode();
