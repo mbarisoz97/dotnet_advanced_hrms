@@ -8,15 +8,20 @@ public sealed class GetEmployeesQuery : IRequest<IQueryable<Database.Models.Empl
 
 internal sealed class GetEmployeesQueryHandler : IRequestHandler<GetEmployeesQuery, IQueryable<Database.Models.Employee>>
 {
-    private readonly EmployeeInfoDbContext _dbContext;
+	private readonly EmployeeInfoDbContext _dbContext;
 
-    public GetEmployeesQueryHandler(EmployeeInfoDbContext dbContext)
-    {
-        _dbContext = dbContext;
-    }
+	public GetEmployeesQueryHandler(EmployeeInfoDbContext dbContext)
+	{
+		_dbContext = dbContext;
+	}
 
-    public Task<IQueryable<Database.Models.Employee>> Handle(GetEmployeesQuery request, CancellationToken cancellationToken)
-    {
-        return Task.FromResult(_dbContext.Employees.AsQueryable());
-    }
+	public Task<IQueryable<Database.Models.Employee>> Handle(GetEmployeesQuery request, CancellationToken cancellationToken)
+	{
+		var employees = _dbContext.Employees
+			.Include(x => x.Skills)
+			.Include(x => x.Title)
+			.AsQueryable();
+
+		return Task.FromResult(employees);
+	}
 }
