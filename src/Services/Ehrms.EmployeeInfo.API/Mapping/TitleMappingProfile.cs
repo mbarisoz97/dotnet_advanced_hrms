@@ -28,7 +28,7 @@ public class TitleMappingProfile : Profile
 
     private void AddModalToDtoMappings()
     {
-        CreateMap<Title, ReadTitleDto>();
+        CreateMap<Title, Dtos.Title.ReadTitleDto>();
     }
 
     private void AddCommandToModelMappings()

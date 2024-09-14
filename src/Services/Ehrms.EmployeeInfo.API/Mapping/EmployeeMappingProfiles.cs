@@ -14,7 +14,8 @@ public class EmployeeMappingProfiles : Profile
     private void AddCommandToEntityMappings()
     {
         CreateMap<UpdateEmployeeCommand, Employee>()
-            .ForMember(dest => dest.Skills, opt => opt.Ignore());
+            .ForMember(dest => dest.Skills, opt => opt.Ignore())
+            .ForMember(dest => dest.Title, opt => opt.Ignore());
 
         CreateMap<CreateEmployeeCommand, Employee>()
             .ForMember(dest => dest.Skills, opt => opt.Ignore());
@@ -22,9 +23,8 @@ public class EmployeeMappingProfiles : Profile
 
     private void AddEntityToDtoMappings()
     {
-        CreateMap<Employee, ReadEmployeeDto>()
-            .ForMember(dest => dest.Skills, opt => opt.MapFrom(src => src.Skills.Select(x => x.Id)))
-            .ForMember(dest => dest.TitleId, opt => opt.MapFrom(src => src.Title!.Id));
+        CreateMap<Employee, ReadTitleDto>()
+            .ForMember(dest => dest.Skills, opt => opt.MapFrom(src => src.Skills.Select(x => x.Id)));
     }
 
     private void AddModelToMessageQueueEventMappings()

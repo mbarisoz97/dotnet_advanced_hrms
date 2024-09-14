@@ -26,7 +26,7 @@ public class TitleController : ControllerBase
     {
         var commandResult = await _mediator.Send(command);
         var actionResult = commandResult.Match(
-            Succ: s => Ok(_mapper.Map<ReadTitleDto>(s)),
+            Succ: s => base.Ok(_mapper.Map<Dtos.Title.ReadTitleDto>(s)),
             Fail: this.MapTitleCreateFailureResult);
 
         return actionResult;
@@ -49,7 +49,7 @@ public class TitleController : ControllerBase
     {
         var commandResult = await _mediator.Send(command);
         var actionResult = commandResult.Match(
-            Succ: s => Ok(_mapper.Map<ReadTitleDto>(s)),
+            Succ: s => base.Ok(_mapper.Map<Dtos.Title.ReadTitleDto>(s)),
             Fail: this.MapTitleUpdateFailureResult);
 
         return actionResult;
@@ -60,7 +60,7 @@ public class TitleController : ControllerBase
     {
         var query = new GetAllTitlesQuery();
         var titles = await _mediator.Send(query);
-        var titleDtos = _mapper.ProjectTo<ReadTitleDto>(titles);
+        var titleDtos = _mapper.ProjectTo<Dtos.Title.ReadTitleDto>(titles);
 
         return Ok(titleDtos);
     }
@@ -71,7 +71,7 @@ public class TitleController : ControllerBase
         var query = new GetTitleByIdQuery(id);
         var queryResult = await _mediator.Send(query);
         var actionResult = queryResult.Match(
-            Succ: s => Ok(_mapper.Map<ReadTitleDto>(s)),
+            Succ: s => base.Ok(_mapper.Map<Dtos.Title.ReadTitleDto>(s)),
             Fail: this.MapGetTitleByIdFailureResult);
 
         return actionResult;

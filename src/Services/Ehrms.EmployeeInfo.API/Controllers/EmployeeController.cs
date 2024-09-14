@@ -24,7 +24,7 @@ public class EmployeeController : ControllerBase
     {
         var query = new GetEmployeesQuery();
         var employeeCollection = await _mediator.Send(query);
-        var employeeReadDtoCollection = _mapper.ProjectTo<ReadEmployeeDto>(employeeCollection);
+        var employeeReadDtoCollection = _mapper.ProjectTo<ReadTitleDto>(employeeCollection);
 
         return Ok(employeeReadDtoCollection);
     }
@@ -34,7 +34,7 @@ public class EmployeeController : ControllerBase
     {
         var query = new GetEmployeeByIdQuery() { Id = id };
         var employee = await _mediator.Send(query);
-        var readEmployeeDto = _mapper.Map<ReadEmployeeDto>(employee);
+        var readEmployeeDto = _mapper.Map<ReadTitleDto>(employee);
 
         return Ok(readEmployeeDto);
     }
@@ -44,7 +44,7 @@ public class EmployeeController : ControllerBase
     {
         var commandResult = await _mediator.Send(createEmployeeCommand);
         var actionResult = commandResult.Match(
-            Succ: e => Ok(_mapper.Map<ReadEmployeeDto>(e)),
+            Succ: e => Ok(_mapper.Map<ReadTitleDto>(e)),
             Fail: this.MapEmployeeCreateFailureResult);
 
         return actionResult;
@@ -55,7 +55,7 @@ public class EmployeeController : ControllerBase
     {
         var commandResult = await _mediator.Send(updateEmployeeCommand);
         var actionResult = commandResult.Match(
-            Succ: e => Ok(_mapper.Map<ReadEmployeeDto>(e)),
+            Succ: e => Ok(_mapper.Map<ReadTitleDto>(e)),
             Fail: this.MapEmployeeUpdateFailureResult);
 
         return actionResult;

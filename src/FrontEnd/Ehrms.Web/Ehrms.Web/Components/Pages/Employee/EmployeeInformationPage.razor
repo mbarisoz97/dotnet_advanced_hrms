@@ -12,7 +12,7 @@
 <MudTextField @bind-Value="Employee.FirstName" Label="First Name" ReadOnly="true" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Person" />
 <MudTextField @bind-Value="Employee.LastName" Label="Last Name" ReadOnly="true" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.TextDecrease" />
 <MudTextField @bind-Value="Employee.DateOfBirth" Label="Date Of Birth" ReadOnly="true" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.DateRange" />
-<MudTextField @bind-Value="Employee.Qualification" Label="Qualification" ReadOnly="true" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Stars" />
+<MudTextField @bind-Value="Employee.Title!.TitleName" Label="Title" ReadOnly="true" Variant="Variant.Text" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Stars" />
 
 @code {
 	[Parameter]

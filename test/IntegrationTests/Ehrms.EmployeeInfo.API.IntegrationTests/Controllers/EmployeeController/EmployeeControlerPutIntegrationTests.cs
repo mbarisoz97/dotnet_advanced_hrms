@@ -20,11 +20,12 @@ public class EmployeeControlerPutIntegrationTests : BaseEmployeeInfoIntegrationT
             .Generate();
 
         var response = await client.PutAsJsonAsync(Endpoints.EmployeeApi, command);
-        var createEmployeeResponse = await response.Content.ReadFromJsonAsync<ReadEmployeeDto>();
+        var createEmployeeResponse = await response.Content.ReadFromJsonAsync<ReadTitleDto>();
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         createEmployeeResponse?.Id.Should().NotBe(Guid.Empty);
-        createEmployeeResponse?.Should().BeEquivalentTo(command);
+        createEmployeeResponse?.Should().BeEquivalentTo(command, opt => opt.Excluding(p => p.TitleId));
+        title.Should().BeEquivalentTo(createEmployeeResponse?.Title);
     }
 
     [Fact]

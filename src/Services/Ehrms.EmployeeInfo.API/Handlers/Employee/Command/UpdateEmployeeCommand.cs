@@ -8,9 +8,9 @@ public sealed class UpdateEmployeeCommand : IRequest<Result<Database.Models.Empl
     public Guid Id { get; set; }
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
-    public string Qualification { get; set; } = string.Empty;
     public DateOnly DateOfBirth { get; set; }
-    public Guid TitleId { get; set; }
+    //public Guid TitleId { get; set; }
+    public ReadTitleDto? Title {get; set;}
     public ICollection<Guid> Skills { get; set; } = [];
 }
 
@@ -36,10 +36,16 @@ internal sealed class UpdateEmployeeCommandHandler : IRequestHandler<UpdateEmplo
         if (employee == null)
         {
             return new Result<Database.Models.Employee>(
-                new  EmployeeNotFoundException($"Could not find employee with id '{request.Id}'"));
+                new EmployeeNotFoundException($"Could not find employee with id '{request.Id}'"));
         }
-        
-        var title = await _dbContext.Titles.FirstOrDefaultAsync(t=>t.Id == request.TitleId, cancellationToken);
+
+        if (request.Title == null)
+        {
+            return new Result<Database.Models.Employee>(
+                new TitleNotFoundException($"Employee title data is null"));
+        }
+
+        var title = await _dbContext.Titles.FirstOrDefaultAsync(t => t.Id == request.Title.Id, cancellationToken);
         if (title == null)
         {
             return new Result<Database.Models.Employee>(

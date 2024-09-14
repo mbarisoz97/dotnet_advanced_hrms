@@ -16,7 +16,7 @@ public class TitleControllerPutIntegrationTests : BaseEmployeeInfoIntegrationTes
         var response = await client.PutAsJsonAsync(Endpoints.EmployeeTitleApi, createTitleCommand);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var readTitleDto = await response.Content.ReadFromJsonAsync<ReadTitleDto>();
+        var readTitleDto = await response.Content.ReadFromJsonAsync<Dtos.Title.ReadTitleDto>();
 
         readTitleDto?.Id.Should().NotBe(Guid.Empty);
         readTitleDto?.TitleName.Should().Be(createTitleCommand.TitleName);

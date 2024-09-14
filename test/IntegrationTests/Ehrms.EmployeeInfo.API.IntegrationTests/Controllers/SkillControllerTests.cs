@@ -54,7 +54,7 @@ public class SkillControllerTests : BaseEmployeeInfoIntegrationTest
 
 		var response = await client.PutAsJsonAsync(Endpoints.EmployeeSkillsApi, createSkillCommand);
 		response.EnsureSuccessStatusCode();
-		var createSkillResponse = await response.Content.ReadFromJsonAsync<ReadEmployeeDto>();
+		var createSkillResponse = await response.Content.ReadFromJsonAsync<ReadTitleDto>();
 		response = await client.DeleteAsync($"{Endpoints.EmployeeSkillsApi}/{createSkillResponse?.Id}");
 
 		response.StatusCode.Should().Be(HttpStatusCode.NoContent);

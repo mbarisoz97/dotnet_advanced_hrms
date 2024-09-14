@@ -8,7 +8,6 @@ public class UpdateEmployeeCommandFaker : Faker<UpdateEmployeeCommand>
         RuleFor(p => p.FirstName, f => f.Name.FirstName());
         RuleFor(p => p.LastName, f => f.Name.LastName());
         RuleFor(e => e.DateOfBirth, f => f.Date.BetweenDateOnly(new DateOnly(2000, 1, 1), new DateOnly(2022, 12, 1)));
-        RuleFor(e => e.Qualification, f => f.Name.JobTitle());
     }
 
     public UpdateEmployeeCommandFaker WithId(Guid id)
@@ -19,7 +18,10 @@ public class UpdateEmployeeCommandFaker : Faker<UpdateEmployeeCommand>
 
     public UpdateEmployeeCommandFaker WithTitleId(Guid id)
     {
-        RuleFor(x => x.TitleId, id);
+        RuleFor(x => x.Title, new API.Dtos.Employee.ReadTitleDto
+        {
+            Id = id
+        });
         return this;
     }
 
@@ -31,7 +33,7 @@ public class UpdateEmployeeCommandFaker : Faker<UpdateEmployeeCommand>
 
     public UpdateEmployeeCommandFaker WithSkills(ICollection<API.Database.Models.Skill> skills)
     {
-        RuleFor(x => x.Skills, skills.Select(x=>x.Id).ToArray());
+        RuleFor(x => x.Skills, skills.Select(x => x.Id).ToArray());
         return this;
     }
 }

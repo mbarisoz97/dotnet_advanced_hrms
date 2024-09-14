@@ -22,7 +22,7 @@ public class TitleControllerPostIntegrationTests : BaseEmployeeInfoIntegrationTe
         var response = await client.PostAsJsonAsync(Endpoints.EmployeeTitleApi, updateTitleCommand);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var readTitleDto = await response.Content.ReadFromJsonAsync<ReadTitleDto>();
+        var readTitleDto = await response.Content.ReadFromJsonAsync<Dtos.Title.ReadTitleDto>();
 
         readTitleDto?.Should().BeEquivalentTo(updateTitleCommand);
     }

@@ -22,7 +22,7 @@ public class EmployeeControlerDeleteIntegrationTests : BaseEmployeeInfoIntegrati
         var response = await client.PutAsJsonAsync(Endpoints.EmployeeApi, createEmployeeCommand);
         response.EnsureSuccessStatusCode();
 
-        var createEmployeeResponse = await response.Content.ReadFromJsonAsync<ReadEmployeeDto>();
+        var createEmployeeResponse = await response.Content.ReadFromJsonAsync<ReadTitleDto>();
         response = await client.DeleteAsync($"{Endpoints.EmployeeApi}/{createEmployeeResponse?.Id}");
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);

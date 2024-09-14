@@ -24,23 +24,21 @@ public class EmployeeControlerGetIntegrationTests : BaseEmployeeInfoIntegrationT
         var response = await client.GetAsync($"{Endpoints.EmployeeApi}/{employee.Id}");
         response.EnsureSuccessStatusCode();
 
-        var createEmployeeResponse = await response.Content.ReadFromJsonAsync<ReadEmployeeDto>();
+        var createEmployeeResponse = await response.Content.ReadFromJsonAsync<ReadTitleDto>();
         response = await client.GetAsync($"{Endpoints.EmployeeApi}/{createEmployeeResponse?.Id}");
-        var readEmployeeResponse = await response.Content.ReadFromJsonAsync<ReadEmployeeDto>();
+        var readEmployeeResponse = await response.Content.ReadFromJsonAsync<ReadTitleDto>();
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         readEmployeeResponse?.Id.Should().NotBe(Guid.Empty);
 
-        var expectedEmployeeSkills = employee.Skills.Select(s => s.Id);
         readEmployeeResponse.Should().BeEquivalentTo(employee, opt => opt
-            // Exclude properties that are not directly comparable    
-            .Excluding(p => p.Title)
             .Excluding(p => p.Skills)
-            // Custom comparison for TitleId
-            .Using<Guid>(ctx => ctx.Subject.Should().Be(title.Id))
-            .When(info => info.Path == nameof(ReadEmployeeDto.TitleId))
-            // Custom comparison for Skills
-            .Using<ICollection<Guid>>(ctx => ctx.Subject.Should().BeEquivalentTo(expectedEmployeeSkills))
-            .When(info => info.Path == nameof(ReadEmployeeDto.Skills)));
+            .Excluding(p => p.Title));
+
+        readEmployeeResponse?.Skills.Should()
+            .BeEquivalentTo(employee.Skills.Select(s => s.Id));
+
+        readEmployeeResponse?.Title.Should()
+            .BeEquivalentTo(title, opt => opt.ExcludingMissingMembers());
     }
 }

@@ -14,7 +14,7 @@ public class EmployeeControlerPostIntegrationTests : BaseEmployeeInfoIntegration
     {
         var employee = new EmployeeFaker().Generate();
         await dbContext.AddAsync(employee);
-        
+
         var title = new TitleFaker().Generate();
         await dbContext.AddAsync(title);
         await dbContext.SaveChangesAsync();
@@ -26,10 +26,13 @@ public class EmployeeControlerPostIntegrationTests : BaseEmployeeInfoIntegration
 
         var response = await client.PostAsJsonAsync(Endpoints.EmployeeApi, updateEmployeeCommand);
         response.EnsureSuccessStatusCode();
-        var updateEmployeeResponse = await response.Content.ReadFromJsonAsync<ReadEmployeeDto>();
+        var updateEmployeeResponse = await response.Content.ReadFromJsonAsync<ReadTitleDto>();
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        updateEmployeeResponse.Should().BeEquivalentTo(updateEmployeeCommand);
+        updateEmployeeResponse.Should().BeEquivalentTo(updateEmployeeCommand,
+            opt => opt.Excluding(p => p.Title));
+
+        title.Should().BeEquivalentTo(updateEmployeeResponse?.Title);
     }
 
     [Fact]

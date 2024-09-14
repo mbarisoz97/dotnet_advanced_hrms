@@ -19,7 +19,7 @@ public class TitleControllerGetIntegrationTests : BaseEmployeeInfoIntegrationTes
         var response = await client.GetAsync(Endpoints.EmployeeTitleApi);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var returnedTitleCollection = await response.Content.ReadFromJsonAsync<IEnumerable<ReadTitleDto>>();
+        var returnedTitleCollection = await response.Content.ReadFromJsonAsync<IEnumerable<Dtos.Title.ReadTitleDto>>();
         foreach (var model in expectedTitleCollection)
         {
             returnedTitleCollection.Should().ContainEquivalentOf(model,
@@ -38,7 +38,7 @@ public class TitleControllerGetIntegrationTests : BaseEmployeeInfoIntegrationTes
         var response = await client.GetAsync($"{Endpoints.EmployeeTitleApi}/{title.Id}");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var returnedTitleDto = await response.Content.ReadFromJsonAsync<ReadTitleDto>();
+        var returnedTitleDto = await response.Content.ReadFromJsonAsync<Dtos.Title.ReadTitleDto>();
         returnedTitleDto.Should().BeEquivalentTo(title, options => options.Excluding(x => x.Employees));
     }
 
