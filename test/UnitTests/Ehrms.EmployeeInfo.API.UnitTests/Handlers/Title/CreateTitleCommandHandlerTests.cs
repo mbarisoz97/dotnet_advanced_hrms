@@ -1,10 +1,6 @@
 ﻿using Ehrms.Contracts.Title;
-using Ehrms.Shared.TestHepers.Mock;
 using Ehrms.EmployeeInfo.API.Database.Context;
 using Ehrms.EmployeeInfo.API.Exceptions.Title;
-using Ehrms.EmployeeInfo.API.Handlers.Title.Command;
-using Ehrms.EmployeeInfo.TestHelpers.Faker.Title.Model;
-using Ehrms.EmployeeInfo.TestHelpers.Faker.Title.Command;
 
 namespace Ehrms.EmployeeInfo.API.UnitTests.Handlers.Title;
 public class CreateTitleCommandHandlerTests

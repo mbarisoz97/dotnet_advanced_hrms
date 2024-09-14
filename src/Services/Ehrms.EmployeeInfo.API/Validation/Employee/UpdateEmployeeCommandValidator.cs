@@ -9,9 +9,6 @@ public class UpdateEmployeeCommandValidator : AbstractValidator<UpdateEmployeeCo
 		RuleFor(x => x.Id)
 			.NotEqual(Guid.Empty);
 
-		RuleFor(x => x.Qualification)
-			.NotEmpty();
-
 		RuleFor(x => x.FirstName)
 			.NotEmpty()
 			.MinimumLength(Consts.MinNameLength)

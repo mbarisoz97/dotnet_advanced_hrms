@@ -6,6 +6,7 @@ using BitzArt.Blazor.Cookies;
 using Blazored.Toast;
 using Blazored.Modal;
 using MudBlazor.Services;
+using Ehrms.Web.Routing;
 
 var builder = WebApplication.CreateBuilder(args);
 

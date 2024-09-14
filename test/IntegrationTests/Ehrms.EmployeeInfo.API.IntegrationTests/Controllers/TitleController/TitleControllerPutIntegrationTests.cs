@@ -1,5 +1,5 @@
 ﻿using Ehrms.EmployeeInfo.API.Dtos.Title;
-using Ehrms.EmployeeInfo.TestHelpers.Faker.Title.Command;
+using Ehrms.EmployeeInfo.API.IntegrationTests.TestHelpers.Configurations;
 
 namespace Ehrms.EmployeeInfo.API.IntegrationTests.Controllers.TitleController;
 
@@ -16,7 +16,7 @@ public class TitleControllerPutIntegrationTests : BaseEmployeeInfoIntegrationTes
         var response = await client.PutAsJsonAsync(Endpoints.EmployeeTitleApi, createTitleCommand);
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
-        var readTitleDto = await response.Content.ReadFromJsonAsync<ReadTitleDto>();
+        var readTitleDto = await response.Content.ReadFromJsonAsync<Dtos.Title.ReadTitleDto>();
 
         readTitleDto?.Id.Should().NotBe(Guid.Empty);
         readTitleDto?.TitleName.Should().Be(createTitleCommand.TitleName);

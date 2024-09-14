@@ -1,5 +1,4 @@
-﻿using Ehrms.EmployeeInfo.API.Database.Models;
-using Ehrms.EmployeeInfo.TestHelpers.Faker.Title.Model;
+﻿using Ehrms.EmployeeInfo.API.IntegrationTests.TestHelpers.Configurations;
 
 namespace Ehrms.EmployeeInfo.API.IntegrationTests.Controllers.TitleController;
 

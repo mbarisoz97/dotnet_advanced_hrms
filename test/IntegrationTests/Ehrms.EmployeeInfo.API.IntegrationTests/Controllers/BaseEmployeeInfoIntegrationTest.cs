@@ -1,4 +1,5 @@
 ﻿using Ehrms.EmployeeInfo.API.Database.Context;
+using Ehrms.EmployeeInfo.API.IntegrationTests.TestHelpers.Configurations;
 using Ehrms.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Headers;

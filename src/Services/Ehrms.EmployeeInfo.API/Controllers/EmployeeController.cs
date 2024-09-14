@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Ehrms.EmployeeInfo.API.Exceptions.Title;
+using Ehrms.EmployeeInfo.API.Handlers.Employee.Command;
+using Microsoft.AspNetCore.Authorization;
+using System.Net;
 
 namespace Ehrms.EmployeeInfo.API.Controllers;
 
@@ -21,7 +24,7 @@ public class EmployeeController : ControllerBase
     {
         var query = new GetEmployeesQuery();
         var employeeCollection = await _mediator.Send(query);
-        var employeeReadDtoCollection = _mapper.ProjectTo<ReadEmployeeDto>(employeeCollection);
+        var employeeReadDtoCollection = _mapper.ProjectTo<ReadTitleDto>(employeeCollection);
 
         return Ok(employeeReadDtoCollection);
     }
@@ -31,7 +34,7 @@ public class EmployeeController : ControllerBase
     {
         var query = new GetEmployeeByIdQuery() { Id = id };
         var employee = await _mediator.Send(query);
-        var readEmployeeDto = _mapper.Map<ReadEmployeeDto>(employee);
+        var readEmployeeDto = _mapper.Map<ReadTitleDto>(employee);
 
         return Ok(readEmployeeDto);
     }
@@ -39,19 +42,23 @@ public class EmployeeController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Create([FromBody] CreateEmployeeCommand createEmployeeCommand)
     {
-        var employee = await _mediator.Send(createEmployeeCommand);
-        var readEmployeeDto = _mapper.Map<ReadEmployeeDto>(employee);
+        var commandResult = await _mediator.Send(createEmployeeCommand);
+        var actionResult = commandResult.Match(
+            Succ: e => Ok(_mapper.Map<ReadTitleDto>(e)),
+            Fail: this.MapEmployeeCreateFailureResult);
 
-        return Ok(readEmployeeDto);
+        return actionResult;
     }
 
     [HttpPost]
     public async Task<IActionResult> Update([FromBody] UpdateEmployeeCommand updateEmployeeCommand)
     {
-        var employee = await _mediator.Send(updateEmployeeCommand);
-        var readEmployeeDto = _mapper.Map<ReadEmployeeDto>(employee);
+        var commandResult = await _mediator.Send(updateEmployeeCommand);
+        var actionResult = commandResult.Match(
+            Succ: e => Ok(_mapper.Map<ReadTitleDto>(e)),
+            Fail: this.MapEmployeeUpdateFailureResult);
 
-        return Ok(readEmployeeDto);
+        return actionResult;
     }
 
     [HttpDelete("{id}")]
@@ -61,5 +68,27 @@ public class EmployeeController : ControllerBase
         await _mediator.Send(command);
 
         return Ok();
+    }
+}
+
+internal static class EmployeeControllerResultMappingExtensions
+{
+    internal static IActionResult MapEmployeeCreateFailureResult(this EmployeeController controller, Exception err)
+    {
+        if (err is TitleNotFoundException)
+        {
+            return controller.BadRequest(err.Message);
+        }
+        return controller.Problem(statusCode: (int)HttpStatusCode.InternalServerError);
+    }
+
+    internal static IActionResult MapEmployeeUpdateFailureResult(this EmployeeController controller, Exception err)
+    {
+        return err switch
+        {
+            TitleNotFoundException or 
+            EmployeeNotFoundException => controller.BadRequest(err.Message),
+            _ => controller.Problem(statusCode: (int)HttpStatusCode.InternalServerError)
+        };
     }
 }

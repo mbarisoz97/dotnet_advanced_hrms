@@ -3,7 +3,7 @@ using Ehrms.EmployeeInfo.API.Database.Context;
 
 namespace Ehrms.EmployeeInfo.API.Handlers.Skill.Command;
 
-internal sealed class DeleteSkillCommand : IRequest
+public sealed class DeleteSkillCommand : IRequest
 {
 	public Guid Id { get; set; }
 }

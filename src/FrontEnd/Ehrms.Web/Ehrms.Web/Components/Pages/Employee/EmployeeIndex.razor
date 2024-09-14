@@ -23,14 +23,14 @@
 		<MudTh>First Name</MudTh>
 		<MudTh>Last Name</MudTh>
 		<MudTh>Date Of Birth</MudTh>
-		<MudTh>Qualification</MudTh>
+		<MudTh>Title</MudTh>
 		<MudTh></MudTh>
 	</HeaderContent>
 	<RowTemplate>
 		<MudTd DataLabel="First Name">@context.FirstName</MudTd>
 		<MudTd DataLabel="Last Name">@context.LastName</MudTd>
 		<MudTd DataLabel="Date Of Birth">@context.DateOfBirth</MudTd>
-		<MudTd DataLabel="Qualification">@context.Qualification</MudTd>
+		<MudTd DataLabel="Qualification">@context.Title?.TitleName</MudTd>
 		<MudTd Class="d-flex justify-center flex-grow-1">
 			<MudTooltip Text="Edit">
 				<MudIconButton Href="@($"{EmployeeRouting.Update}/{context.Id}")" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
@@ -77,6 +77,6 @@
 		return (string.IsNullOrWhiteSpace(searchString) ||
 			element.FirstName!.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
 			element.LastName!.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
-			element.Qualification!.Contains(searchString, StringComparison.OrdinalIgnoreCase));
+			element.Title!.TitleName!.Contains(searchString, StringComparison.OrdinalIgnoreCase));
 	}
 }

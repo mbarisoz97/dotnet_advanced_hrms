@@ -1,4 +1,5 @@
 ﻿using Ehrms.Web.Models.User;
+using Ehrms.Web.Routing;
 
 namespace Ehrms.Web.Client.AuthApi;
 

@@ -14,7 +14,7 @@ using Testcontainers.MsSql;
 using Ehrms.Shared.TestHepers;
 using Microsoft.Data.SqlClient;
 
-namespace Ehrms.EmployeeInfo.API.IntegrationTests;
+namespace Ehrms.EmployeeInfo.API.IntegrationTests.TestHelpers.Configurations;
 
 public class EmployeeInfoWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
@@ -52,7 +52,7 @@ public class EmployeeInfoWebApplicationFactory : WebApplicationFactory<Program>,
         {
             services.RemoveAll(typeof(DbContextOptions<EmployeeInfoDbContext>));
             services.AddEmployeeInfoApi();
-            
+
             services.AddDbContext<EmployeeInfoDbContext>(options =>
             {
                 options.UseSqlServer(_msSqlContainer.GetConnectionString(),

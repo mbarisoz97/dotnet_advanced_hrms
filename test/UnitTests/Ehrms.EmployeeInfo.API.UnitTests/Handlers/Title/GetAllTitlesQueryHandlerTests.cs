@@ -1,6 +1,4 @@
 ﻿using Ehrms.EmployeeInfo.API.Database.Context;
-using Ehrms.EmployeeInfo.API.Handlers.Title.Query;
-using Ehrms.EmployeeInfo.TestHelpers.Faker.Title.Model;
 
 namespace Ehrms.EmployeeInfo.API.UnitTests.Handlers.Title;
 

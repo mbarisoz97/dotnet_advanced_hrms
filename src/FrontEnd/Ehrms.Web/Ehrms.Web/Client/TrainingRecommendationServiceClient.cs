@@ -1,3 +1,5 @@
+using Ehrms.Web.Routing;
+
 namespace Ehrms.Web.Client;
 
 internal sealed class TrainingRecommendationServiceClient : ITrainingRecommendationServiceClient

@@ -41,10 +41,6 @@ namespace Ehrms.EmployeeInfo.API.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<string>("Qualification")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<Guid?>("TitleId")
                         .HasColumnType("uniqueidentifier");
 

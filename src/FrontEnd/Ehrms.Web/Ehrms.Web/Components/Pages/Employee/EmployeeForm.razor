@@ -1,99 +1,117 @@
 ﻿@inject ISkillServiceClient SkillService
+@inject IEmployeeTitleClient TitleService
 @inject IEmployeeServiceClient EmployeeService
 
 @attribute [StreamRendering]
 
 @if (Employee == null)
 {
-	return;
+    return;
 }
 
 <EditForm Model="@Employee" OnValidSubmit="ValidSubmit" FormName="EmployeeForm">
-	<DataAnnotationsValidator></DataAnnotationsValidator>
-	<div class="mt-3">
-		<label class="form-label">First Name</label>
-		<InputText class="form-control" @bind-Value="@Employee.FirstName"></InputText>
-		<ValidationMessage class="text-danger" For="(()=> Employee.FirstName)"></ValidationMessage>
-	</div>
-	<div class="mt-3">
-		<label class="form-label">Last Name</label>
-		<InputText class="form-control" @bind-Value="@Employee.LastName"></InputText>
-		<ValidationMessage class="text-danger" For="(()=> Employee.LastName)"></ValidationMessage>
-	</div>
-	<div>
-		<label class="form-label">Date of Birth</label>
-		<InputDate class="form-control" @bind-Value="@Employee.DateOfBirth"></InputDate>
-		<ValidationMessage class="text-danger" For="(()=> Employee.DateOfBirth)"></ValidationMessage>
-	</div>
-	<div class="mt-3">
-		<label class="form-label">Qualification</label>
-		<InputText class="form-control" @bind-Value="@Employee.Qualification"></InputText>
-		<ValidationMessage class="text-danger" For="(()=> Employee.Qualification)"></ValidationMessage>
-	</div>
-	<div class="mt-3">
-		<MudSelect T="SkillModel" Label="Employee Skills" MultiSelection="true" @bind-SelectedValues="SelectedSkills" AdornmentIcon="@Icons.Material.Filled.Add" AnchorOrigin="Origin.BottomCenter">
-			@foreach (var skill in Skills)
-			{
-				<MudSelectItem T="SkillModel" Value="@skill">@(skill.Name)</MudSelectItem>
-			}
-		</MudSelect>
-	</div>
-	<div class="mt-3">
-		<button class="btn btn-primary" type="submit">
-			<i class="bi bi-floppy"></i> Save
-		</button>
-	</div>
+    <DataAnnotationsValidator></DataAnnotationsValidator>
+    <div class="mt-3">
+        <label class="form-label">First Name</label>
+        <InputText class="form-control" @bind-Value="@Employee.FirstName"></InputText>
+        <ValidationMessage class="text-danger" For="(()=> Employee.FirstName)"></ValidationMessage>
+    </div>
+    <div class="mt-3">
+        <label class="form-label">Last Name</label>
+        <InputText class="form-control" @bind-Value="@Employee.LastName"></InputText>
+        <ValidationMessage class="text-danger" For="(()=> Employee.LastName)"></ValidationMessage>
+    </div>
+    <div>
+        <label class="form-label">Date of Birth</label>
+        <InputDate class="form-control" @bind-Value="@Employee.DateOfBirth"></InputDate>
+        <ValidationMessage class="text-danger" For="(()=> Employee.DateOfBirth)"></ValidationMessage>
+    </div>
+    <div class="mt-3">
+        <MudSelect T="EmployeeTitleModel" ToStringFunc="@((e)=> e?.TitleName)" Label="Title" Placeholder="Select Employee Title"
+                   @bind-Value="Employee.Title" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Clearable>
+            @foreach (var title in EmployeeTitles)
+            {
+                <MudSelectItem T="EmployeeTitleModel" Value="@title">@(title.TitleName)</MudSelectItem>
+            }
+        </MudSelect>
+    </div>
+    <div class="mt-3">
+        <MudSelect T="SkillModel" Label="Skills" MultiSelection="true" AdornmentIcon="@Icons.Material.Filled.Add"
+                   @bind-SelectedValues="SelectedSkills" AnchorOrigin="Origin.BottomCenter">
+            @foreach (var skill in Skills)
+            {
+                <MudSelectItem T="SkillModel" Value="@skill">@(skill.Name)</MudSelectItem>
+            }
+        </MudSelect>
+    </div>
+    <div class="mt-3">
+        <button class="btn btn-primary" type="submit">
+            <i class="bi bi-floppy"></i> Save
+        </button>
+    </div>
 </EditForm>
 
 @code {
-	[Parameter] public bool IsEditMode { get; set; }
-	[Parameter] public Guid EmployeeId { get; set; }
-	[Parameter] public EventCallback<EmployeeModel> OnValidSubmit { get; set; }
-	[SupplyParameterFromForm] public EmployeeModel? Employee { get; set; }
+    [Parameter] public bool IsEditMode { get; set; }
+    [Parameter] public Guid EmployeeId { get; set; }
+    [Parameter] public EventCallback<EmployeeModel> OnValidSubmit { get; set; }
+    [SupplyParameterFromForm] public EmployeeModel? Employee { get; set; }
 
-	private IEnumerable<SkillModel> Skills { get; set; } = [];
-	private IEnumerable<SkillModel> SelectedSkills { get; set; } = [];
+    private IEnumerable<SkillModel> Skills { get; set; } = [];
+    private IEnumerable<SkillModel> SelectedSkills { get; set; } = [];
+    private IEnumerable<EmployeeTitleModel> EmployeeTitles { get; set; } = [];
 
-	protected override async Task OnInitializedAsync()
-	{
-		await FillSkillDataInForm();
-		if (IsEditMode)
-		{
-			await FillEmployeeInfoInForm();
-		}
-		else
-		{
-			Employee ??= new();
-		}
-	}
+    protected override async Task OnInitializedAsync()
+    {
+        await FillSkillDataInForm();
+        await FillEmployeeTitleDataInForm();
 
-	protected async Task ValidSubmit()
-	{
-		Employee!.Skills = SelectedSkills.Select(s => s.Id).ToList();
-		await OnValidSubmit.InvokeAsync(Employee);
-	}
+        if (IsEditMode)
+        {
+            await FillEmployeeInfoInForm();
+        }
+        else
+        {
+            Employee ??= new();
+        }
+    }
 
-	private async Task FillSkillDataInForm()
-	{
-		var response = await SkillService.GetSkillsAsync();
-		if (response.StatusCode == HttpStatusCode.OK)
-		{
-			Skills = response.Content ?? [];
-		}
-	}
+    protected async Task ValidSubmit()
+    {
+        Employee!.Skills = SelectedSkills.Select(s => s.Id).ToList();
+        await OnValidSubmit.InvokeAsync(Employee);
+    }
 
-	private async Task FillEmployeeInfoInForm()
-	{
-		var response = await EmployeeService.GetEmployeeAsync(EmployeeId);
+    private async Task FillSkillDataInForm()
+    {
+        var response = await SkillService.GetSkillsAsync();
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            Skills = response.Content ?? [];
+        }
+    }
 
-		if (response.StatusCode == HttpStatusCode.OK)
-		{
-			Employee ??= response.Content;
-		}
+    private async Task FillEmployeeTitleDataInForm()
+    {
+        var response = await TitleService.GetAllTitles();
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            EmployeeTitles = response.Content ?? [];
+        }
+    }
 
-		if (IsEditMode && Employee != null)
-		{
-			SelectedSkills = Skills.Where(x => Employee.Skills.Contains(x.Id));
-		}
-	}
+    private async Task FillEmployeeInfoInForm()
+    {
+        var response = await EmployeeService.GetEmployeeAsync(EmployeeId);
+
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            Employee ??= response.Content;
+        }
+
+        if (IsEditMode && Employee != null)
+        {
+            SelectedSkills = Skills.Where(x => Employee.Skills.Contains(x.Id));
+        }
+    }
 }

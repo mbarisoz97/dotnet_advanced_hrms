@@ -42,7 +42,7 @@ else
             return;
         }
 
-        var group = response.Content.GroupBy(x => x.Qualification);
+        var group = response.Content.GroupBy(x => x.Title?.TitleName);
         _data = group.Select(x => (double)x.Count()).ToArray();
         _labels = group.Select(x => x.Key).ToArray();
     }
