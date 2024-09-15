@@ -27,6 +27,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\..\Shared\Ehrms.Contracts\Ehrms.Contracts.csproj" />
 	  <ProjectReference Include="..\..\Shared\Ehrms.Shared\Ehrms.Shared.csproj" />
 	</ItemGroup>
 	
