@@ -1,6 +1,6 @@
 using Ehrms.Administration.API;
-using Ehrms.Administration.API.Database.Context;
 using Ehrms.Administration.API.Middleware;
+using Ehrms.Administration.API.Database.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +15,8 @@ builder.Services.AddAdministrationApi();
 
 builder.Services.AddDbContext<AdministrationDbContext>(options =>
 {
-    options.UseInMemoryDatabase("AdministrationDb");
+    var connectionString = builder.Configuration.GetConnectionString("AdministrationDb");
+    options.UseSqlServer(connectionString, options => options.EnableRetryOnFailure());
 });
 
 var app = builder.Build();
