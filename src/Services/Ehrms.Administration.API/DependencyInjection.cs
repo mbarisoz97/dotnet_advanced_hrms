@@ -45,6 +45,7 @@ public static class DependencyInjection
     internal static IBusRegistrationConfigurator AddEventConsumers(this IBusRegistrationConfigurator busConfigurator)
     {
         busConfigurator.AddConsumer<EmployeeCreatedEventConsumer>();
+        busConfigurator.AddConsumer<EmployeeUpdatedEventConsumer>();
         return busConfigurator;
     }
 }

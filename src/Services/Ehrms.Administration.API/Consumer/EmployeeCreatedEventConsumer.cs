@@ -28,8 +28,8 @@ public class EmployeeCreatedEventConsumer : IConsumer<EmployeeCreatedEvent>
         }
 
         var employee = _mapper.Map<Employee>(message);
-        
-        await _dbContext.AddAsync(employee);    
-        await _dbContext.SaveChangesAsync();    
+
+        await _dbContext.AddAsync(employee);
+        await _dbContext.SaveChangesAsync();
     }
 }
