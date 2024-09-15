@@ -13,6 +13,7 @@ public class EmployeeMappingProfile : Profile
 
     private void AddMessageQueueEventToModelMappings()
     {
+        CreateMap<EmployeeCreatedEvent, Employee>();
         CreateMap<EmployeeUpdatedEvent, Employee>();
     }
 }
