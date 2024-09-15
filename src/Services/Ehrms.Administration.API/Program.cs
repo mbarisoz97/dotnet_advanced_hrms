@@ -1,5 +1,5 @@
 using Ehrms.Administration.API;
-using Ehrms.Administration.API.Context;
+using Ehrms.Administration.API.Database.Context;
 using Ehrms.Administration.API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);

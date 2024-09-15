@@ -3,7 +3,7 @@ using FluentValidation;
 using System.Reflection;
 using Ehrms.Administration.API.PipelineBehaviors;
 using Ehrms.Administration.API.Middleware;
-using Ehrms.Administration.API.Context;
+using Ehrms.Administration.API.Database.Context;
 
 namespace Ehrms.Administration.API;
 

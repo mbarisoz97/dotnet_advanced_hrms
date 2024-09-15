@@ -1,46 +1,46 @@
 ﻿using MediatR;
-using Ehrms.Administration.API.Context;
 using Ehrms.Administration.API.Exceptions;
 using AutoMapper;
+using Ehrms.Administration.API.Database.Context;
 
-namespace Ehrms.Administration.API.Handlers.Payment.Commands;
+namespace Ehrms.Administration.API.Handlers.PaymentCategory.Commands;
 
 public class CreatePaymentCategoryCommand : IRequest<Guid>
 {
-	public string Name { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
 }
 
 internal sealed class CreatePaymentCategoryCommandHandler : IRequestHandler<CreatePaymentCategoryCommand, Guid>
 {
-	private readonly IMapper _mapper;
-	private readonly AdministrationDbContext _dbContext;
+    private readonly IMapper _mapper;
+    private readonly AdministrationDbContext _dbContext;
 
-	public CreatePaymentCategoryCommandHandler(IMapper mapper,AdministrationDbContext dbContext)
-	{
-		_mapper = mapper;
-		_dbContext = dbContext;
-	}
+    public CreatePaymentCategoryCommandHandler(IMapper mapper, AdministrationDbContext dbContext)
+    {
+        _mapper = mapper;
+        _dbContext = dbContext;
+    }
 
-	public async Task<Guid> Handle(CreatePaymentCategoryCommand request, CancellationToken cancellationToken)
-	{
-		if (IsCategoryNameInUse(request.Name))
-		{
-			throw new CategoryNameAlreadyInUseException($"Category name <{request.Name}> is already in use");
-		}
+    public async Task<Guid> Handle(CreatePaymentCategoryCommand request, CancellationToken cancellationToken)
+    {
+        if (IsCategoryNameInUse(request.Name))
+        {
+            throw new CategoryNameAlreadyInUseException($"Category name <{request.Name}> is already in use");
+        }
 
-		var paymentCategory = _mapper.Map<Models.PaymentCategory>(request);
+        var paymentCategory = _mapper.Map<Database.Models.PaymentCategory>(request);
 
-		await _dbContext.AddAsync(paymentCategory, cancellationToken);
-		await _dbContext.SaveChangesAsync(cancellationToken);
+        await _dbContext.AddAsync(paymentCategory, cancellationToken);
+        await _dbContext.SaveChangesAsync(cancellationToken);
 
-		return paymentCategory.Id;
-	}
+        return paymentCategory.Id;
+    }
 
-	private bool IsCategoryNameInUse(string categoryName)
-	{
-		return _dbContext.PaymentCategories
-			.Select(x => x.Name.Trim())
-			.Where(name => name == categoryName.Trim())
-			.Any();
-	}
+    private bool IsCategoryNameInUse(string categoryName)
+    {
+        return _dbContext.PaymentCategories
+            .Select(x => x.Name.Trim())
+            .Where(name => name == categoryName.Trim())
+            .Any();
+    }
 }

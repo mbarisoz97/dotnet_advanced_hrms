@@ -1,7 +1,8 @@
 ﻿using MediatR;
 using AutoMapper;
-using Ehrms.Administration.API.Context;
 using Ehrms.Administration.API.Exceptions;
+using Ehrms.Administration.API.Database.Context;
+using Ehrms.Administration.API.Database.Models;
 
 namespace Ehrms.Administration.API.Handlers.Payment.Commands;
 

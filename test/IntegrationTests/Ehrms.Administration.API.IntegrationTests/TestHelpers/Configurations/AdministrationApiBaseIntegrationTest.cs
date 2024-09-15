@@ -1,4 +1,4 @@
-﻿using Ehrms.Administration.API.Context;
+﻿using Ehrms.Administration.API.Database.Context;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Ehrms.Administration.API.IntegrationTests.TestHelpers.Configurations;

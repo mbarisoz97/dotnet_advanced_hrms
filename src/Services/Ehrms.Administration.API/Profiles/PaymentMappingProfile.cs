@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Ehrms.Administration.API.Database.Models;
 using Ehrms.Administration.API.Dto.Payment;
 using Ehrms.Administration.API.Handlers.Payment.Commands;
 

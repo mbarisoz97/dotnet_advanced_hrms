@@ -2,8 +2,8 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Ehrms.Administration.API.Dto.PaymentCategorty;
-using Ehrms.Administration.API.Handlers.Payment.Commands;
 using Ehrms.Administration.API.Handlers.PaymentCategory.Queries;
+using Ehrms.Administration.API.Handlers.PaymentCategory.Commands;
 
 namespace Ehrms.Administration.API.Controllers;
 

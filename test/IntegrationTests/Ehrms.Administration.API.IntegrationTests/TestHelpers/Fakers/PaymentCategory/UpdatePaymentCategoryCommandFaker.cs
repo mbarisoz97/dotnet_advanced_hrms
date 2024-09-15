@@ -1,4 +1,5 @@
 ﻿using Bogus;
+using Ehrms.Administration.API.Handlers.PaymentCategory.Commands;
 
 namespace Ehrms.Administration.API.IntegrationTests.TestHelpers.Fakers.PaymentCategorty;
 
