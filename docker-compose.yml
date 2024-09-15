@@ -134,6 +134,24 @@ services:
     networks:
         - proxybackend
 
+  ehrms.administration.api:
+    image: ${DOCKER_REGISTRY-}ehrmsadministrationapi
+    build:
+      context: .
+      dockerfile: src/Services/Ehrms.Administration.API/Dockerfile
+
+  ehrms.administration.api.db:
+    image: mcr.microsoft.com/mssql/server
+    ports:
+      - 1437:1433
+    volumes:
+      - ./.container/db/administrationManagementDb/data:/var/opt/mssql/data
+    environment:
+      - SA_PASSWORD=yourStrong(!)Password
+      - ACCEPT_EULA=Y
+    networks:
+        - proxybackend
+
   ehrms.web:
     image: ${DOCKER_REGISTRY-}ehrmsweb
     build:
