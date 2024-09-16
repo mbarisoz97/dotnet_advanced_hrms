@@ -3,80 +3,85 @@
 @attribute [Route(EmployeeRouting.Index)]
 
 @inject IEmployeeServiceClient EmployeeServiceServiceClient
+@inject IDialogService DialogService
 
 <MudTable Items="@_employees"
-		  Dense="true"
-		  Hover="true"
-		  Loading="@Loading"
-		  Bordered="true"
-		  Striped="true"
-		  Filter="new Func<EmployeeModel, bool>(SearchFilter)">
-	<ToolBarContent>
-		<MudText Typo="Typo.h6">Employees</MudText>
-		<MudSpacer />
-		<MudTextField @bind-Value="SearchString" Placeholder="Search Employee" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.PersonSearch" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-		<MudTooltip Text="Add Employee">
-			<MudIconButton Size="Size.Medium" Color="Color.Success" Icon="@Icons.Material.Filled.PersonAdd" Href="@(EmployeeRouting.Create)" />
-		</MudTooltip>
-	</ToolBarContent>
-	<HeaderContent>
-		<MudTh>First Name</MudTh>
-		<MudTh>Last Name</MudTh>
-		<MudTh>Date Of Birth</MudTh>
-		<MudTh>Title</MudTh>
-		<MudTh></MudTh>
-	</HeaderContent>
-	<RowTemplate>
-		<MudTd DataLabel="First Name">@context.FirstName</MudTd>
-		<MudTd DataLabel="Last Name">@context.LastName</MudTd>
-		<MudTd DataLabel="Date Of Birth">@context.DateOfBirth</MudTd>
-		<MudTd DataLabel="Qualification">@context.Title?.TitleName</MudTd>
-		<MudTd Class="d-flex justify-center flex-grow-1">
-			<MudTooltip Text="Edit">
-				<MudIconButton Href="@($"{EmployeeRouting.Update}/{context.Id}")" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
-			</MudTooltip>
-			<MudTooltip Text="Delete">
-				<MudIconButton Href="@($"{EmployeeRouting.Delete}/{context.Id}")" Color=" Color.Error" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />
-			</MudTooltip>
-			<MudTooltip Text="Details">
-				<MudIconButton Href="@($"{EmployeeRouting.Details}/{context.Id}")" Color=" Color.Info" Icon="@Icons.Material.Filled.ReadMore" Size="Size.Small" />
-			</MudTooltip>
-		</MudTd>
-	</RowTemplate>
-	<PagerContent>
-		<MudTablePager />
-	</PagerContent>
+          Dense="true"
+          Hover="true"
+          Loading="@Loading"
+          Bordered="true"
+          Striped="true"
+          Filter="new Func<EmployeeModel, bool>(SearchFilter)">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Employees</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="SearchString" Placeholder="Search Employee" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.PersonSearch" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudTooltip Text="Add Employee">
+            <MudIconButton Size="Size.Medium" Color="Color.Success" Icon="@Icons.Material.Filled.PersonAdd" OnClick="ShowCreateEmployeeDialog" />
+        </MudTooltip>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>First Name</MudTh>
+        <MudTh>Last Name</MudTh>
+        <MudTh>Date Of Birth</MudTh>
+        <MudTh>Title</MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="First Name">@context.FirstName</MudTd>
+        <MudTd DataLabel="Last Name">@context.LastName</MudTd>
+        <MudTd DataLabel="Date Of Birth">@context.DateOfBirth</MudTd>
+        <MudTd DataLabel="Qualification">@context.Title?.TitleName</MudTd>
+        <MudTd Class="d-flex justify-center flex-grow-1">
+            <MudTooltip Text="Edit">
+                <MudIconButton Href="@($"{EmployeeRouting.Update}/{context.Id}")" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
+            </MudTooltip>
+            <MudTooltip Text="Delete">
+                <MudIconButton Href="@($"{EmployeeRouting.Delete}/{context.Id}")" Color=" Color.Error" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />
+            </MudTooltip>
+            <MudTooltip Text="Details">
+                <MudIconButton Href="@($"{EmployeeRouting.Details}/{context.Id}")" Color=" Color.Info" Icon="@Icons.Material.Filled.ReadMore" Size="Size.Small" />
+            </MudTooltip>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
 </MudTable>
 
 @code {
-	private IEnumerable<EmployeeModel>? _employees { get; set; } = [];
+    private IEnumerable<EmployeeModel>? _employees { get; set; } = [];
 
-	private bool Loading { get; set; } = true;
-	private string SearchString { get; set; } = string.Empty;
+    private bool Loading { get; set; } = true;
+    private string SearchString { get; set; } = string.Empty;
 
-	protected override async Task OnParametersSetAsync()
-	{
-		Loading = true;
-		var response = await EmployeeServiceServiceClient.GetEmployeesAsync();
-		if (response.StatusCode == HttpStatusCode.OK)
-		{
-			_employees = response.Content;
-		}
-		Loading = false;
-	}
+    protected override async Task OnParametersSetAsync()
+    {
+        Loading = true;
+        var response = await EmployeeServiceServiceClient.GetEmployeesAsync();
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            _employees = response.Content;
+        }
+        Loading = false;
+    }
 
-	private bool SearchFilter(EmployeeModel element) => Search(element, SearchString);
+    private async Task ShowCreateEmployeeDialog()
+    {
+        await DialogService.ShowAsync<CreateEmployee>("Create new employe");
+    }
 
-	private bool Search(EmployeeModel element, string searchString)
-	{
-		if (element == null)
-		{
-			return false;
-		}
+    private bool SearchFilter(EmployeeModel element) => Search(element, SearchString);
+    private bool Search(EmployeeModel element, string searchString)
+    {
+        if (element == null)
+        {
+            return false;
+        }
 
-		return (string.IsNullOrWhiteSpace(searchString) ||
-			element.FirstName!.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
-			element.LastName!.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
-			element.Title!.TitleName!.Contains(searchString, StringComparison.OrdinalIgnoreCase));
-	}
+        return (string.IsNullOrWhiteSpace(searchString) ||
+            element.FirstName!.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+            element.LastName!.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+            element.Title!.TitleName!.Contains(searchString, StringComparison.OrdinalIgnoreCase));
+    }
 }

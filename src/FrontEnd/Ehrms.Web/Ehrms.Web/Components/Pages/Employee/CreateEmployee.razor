@@ -1,16 +1,30 @@
-﻿@attribute [Route($"{EmployeeRouting.Create}")]
-@attribute [Authorize]
-@rendermode InteractiveServer
+﻿@attribute [Authorize]
 
+@inject IToastService ToastService
 @inject IEmployeeServiceClient EmployeeServiceClient
-@inject NavigationManager NavigationManager
 
-<EmployeeForm IsEditMode="false" OnValidSubmit="CreteEmployee" />
+<MudDialog>
+    <DialogContent>
+        <EmployeeForm IsEditMode="false" OnValidSubmit="CreteEmployee" />
+    </DialogContent>
+</MudDialog>
+
 
 @code {
+	[CascadingParameter]
+	private MudDialogInstance? MudDialog { get; set; }
+
 	protected async Task CreteEmployee(EmployeeModel employee)
 	{
-		await EmployeeServiceClient.CreateEmployeeAsync(employee);
-		NavigationManager.NavigateTo(EmployeeRouting.Index);
+		var response = await EmployeeServiceClient.CreateEmployeeAsync(employee);
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			ToastService.ShowSuccess("Created employee successfully.");
+			MudDialog?.Close();
+		}
+		else
+		{
+			ToastService.ShowError($"Could not create employee. Service returned {response.StatusCode}");
+		}
 	}
 }
