@@ -34,7 +34,7 @@
         <MudTd DataLabel="Qualification">@context.Title?.TitleName</MudTd>
         <MudTd Class="d-flex justify-center flex-grow-1">
             <MudTooltip Text="Edit">
-                <MudIconButton Href="@($"{EmployeeRouting.Update}/{context.Id}")" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
+                <MudIconButton OnClick="()=>(ShowUpdateEmployeeDialog(context))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
             </MudTooltip>
             <MudTooltip Text="Delete">
                 <MudIconButton Href="@($"{EmployeeRouting.Delete}/{context.Id}")" Color=" Color.Error" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />
@@ -69,6 +69,15 @@
     private async Task ShowCreateEmployeeDialog()
     {
         await DialogService.ShowAsync<CreateEmployee>("Create new employe");
+    }
+
+    private async Task ShowUpdateEmployeeDialog(EmployeeModel employee)
+    {
+        var dialogParameters = new DialogParameters<UpdateEmployee>()
+        {
+            {x => x.Id, employee.Id}
+        };
+        await DialogService.ShowAsync<UpdateEmployee>("Update employe", dialogParameters);
     }
 
     private bool SearchFilter(EmployeeModel element) => Search(element, SearchString);

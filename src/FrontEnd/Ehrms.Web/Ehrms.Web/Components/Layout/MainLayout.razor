@@ -5,7 +5,7 @@
     <MudAppBar Elevation="1">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
         <MudSpacer />
-        <MudToggleIconButton @bind-Toggled="_isDarkMode"
+        <MudToggleIconButton @bind-Toggled="_isDarkModeEnabled"
                              Icon="@Icons.Material.Filled.DarkMode"
                              Color="@Color.Dark"
                              ToggledIcon="@Icons.Material.Filled.LightMode"
@@ -14,7 +14,7 @@
             <MudIconButton Icon="@Icons.Material.Filled.Logout" Href="@PageRouting.User.Logout" />
         </MudTooltip>
     </MudAppBar>
-    <MudDrawer @bind-Open="@_isOpen" ClipMode="_clipMode" Breakpoint="@_breakpoint" Elevation="1">
+    <MudDrawer @bind-Open="@_isDrawerOpened" ClipMode="_clipMode" Breakpoint="@_breakpoint" Elevation="1">
         <MudNavMenu>
             <AuthorizeView Roles="Admin">
                 <MudNavLink Href="@PageRouting.User.Index"
@@ -57,7 +57,7 @@
     </MudMainContent>
 </MudLayout>
 
-<MudThemeProvider @bind-IsDarkMode="@_isDarkMode" />
+<MudThemeProvider @bind-IsDarkMode="@_isDarkModeEnabled" />
 <MudPopoverProvider />
 <MudDialogProvider FullWidth="true"
                    MaxWidth="MaxWidth.Medium"
@@ -71,15 +71,14 @@
 @code {
     private ErrorBoundary ErrorBoundary { get; set; } = new();
 
-    private bool _isOpen = false;
-    private bool _isDense = false;
-    private bool _isDarkMode = false;
+    private bool _isDrawerOpened = false;
+    private bool _isDarkModeEnabled = false;
 
     private Breakpoint _breakpoint = Breakpoint.Xxl;
     private DrawerClipMode _clipMode = DrawerClipMode.Always;
 
     private void ToggleDrawer()
     {
-        _isOpen = !_isOpen;
+        _isDrawerOpened = !_isDrawerOpened;
     }
 }
