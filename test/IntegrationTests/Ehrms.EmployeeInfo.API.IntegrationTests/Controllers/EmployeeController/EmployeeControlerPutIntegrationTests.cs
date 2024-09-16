@@ -24,7 +24,7 @@ public class EmployeeControlerPutIntegrationTests : BaseEmployeeInfoIntegrationT
 
         response.StatusCode.Should().Be(HttpStatusCode.OK);
         createEmployeeResponse?.Id.Should().NotBe(Guid.Empty);
-        createEmployeeResponse?.Should().BeEquivalentTo(command, opt => opt.Excluding(p => p.TitleId));
+        createEmployeeResponse?.Should().BeEquivalentTo(command, opt => opt.Excluding(p => p.Title));
         title.Should().BeEquivalentTo(createEmployeeResponse?.Title);
     }
 
