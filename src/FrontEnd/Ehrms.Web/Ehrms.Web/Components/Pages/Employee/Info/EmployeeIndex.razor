@@ -73,11 +73,11 @@
 
     private async Task ShowUpdateEmployeeDialog(EmployeeModel employee)
     {
-        var dialogParameters = new DialogParameters<UpdateEmployee>()
+        var dialogParameters = new DialogParameters<EmployeeUpdate>()
         {
             {x => x.Id, employee.Id}
         };
-        await DialogService.ShowAsync<UpdateEmployee>("Update employe", dialogParameters);
+        await DialogService.ShowAsync<EmployeeUpdate>("Update employe", dialogParameters);
     }
 
     private bool SearchFilter(EmployeeModel element) => Search(element, SearchString);
