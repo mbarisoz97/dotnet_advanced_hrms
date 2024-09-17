@@ -30,7 +30,7 @@ public class EmployeeUpdateEventConsumerTests
     public async Task Consume_ExistingEmployeeId_UpdatesEmployeeDetails()
     {
         var employee = new EmployeeFaker().Generate();
-        await _dbContext.AddAsync(employee);    
+        await _dbContext.AddAsync(employee);
         await _dbContext.SaveChangesAsync();
 
         var employeeUpdatedEvent = new EmployeeUpdatedEventFaker()
@@ -44,7 +44,7 @@ public class EmployeeUpdateEventConsumerTests
             .Returns(employeeUpdatedEvent);
 
         await _consumer.Consume(contextMock.Object);
-        employeeUpdatedEvent.Should().BeEquivalentTo(employee, opt => 
+        employeeUpdatedEvent.Should().BeEquivalentTo(employee, opt =>
             opt.Excluding(p => p.PaymentCriteria));
     }
 
@@ -62,7 +62,7 @@ public class EmployeeUpdateEventConsumerTests
         Mock<ConsumeContext<EmployeeUpdatedEvent>> contextMock = new();
         contextMock.Setup(x => x.Message)
             .Returns(employeeUpdatedEvent!);
-        
+
         await _consumer.Consume(contextMock.Object);
         _dbContext.Employees.Count().Should().Be(0);
     }

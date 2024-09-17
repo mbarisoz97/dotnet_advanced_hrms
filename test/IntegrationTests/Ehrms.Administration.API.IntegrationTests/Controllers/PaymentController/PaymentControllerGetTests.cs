@@ -1,8 +1,4 @@
-﻿using Ehrms.Administration.API.Dto.Payment;
-using Ehrms.Administration.TestHelpers.Fakers;
-using Ehrms.Administration.TestHelpers.Fakers.Employee;
-
-namespace Ehrms.Administration.API.IntegrationTests.Controllers.PaymentController;
+﻿namespace Ehrms.Administration.API.IntegrationTests.Controllers.PaymentController;
 
 public class PaymentControllerGetTests : AdministrationApiBaseIntegrationTest
 {

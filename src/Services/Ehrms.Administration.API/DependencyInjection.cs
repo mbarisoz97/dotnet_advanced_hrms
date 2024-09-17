@@ -46,6 +46,7 @@ public static class DependencyInjection
     {
         busConfigurator.AddConsumer<EmployeeCreatedEventConsumer>();
         busConfigurator.AddConsumer<EmployeeUpdatedEventConsumer>();
+        busConfigurator.AddConsumer<EmployeeDeletedEventConsumer>();
         return busConfigurator;
     }
 }

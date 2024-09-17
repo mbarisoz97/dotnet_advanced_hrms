@@ -12,7 +12,7 @@ public class EmployeeUpdatedEventFaker : Faker<EmployeeUpdatedEvent>
         RuleFor(x => x.LastName, f => f.Name.LastName());
     }
 
-    public EmployeeUpdatedEventFaker WithId(Guid id )
+    public EmployeeUpdatedEventFaker WithId(Guid id)
     {
         RuleFor(x => x.Id, id);
         return this;

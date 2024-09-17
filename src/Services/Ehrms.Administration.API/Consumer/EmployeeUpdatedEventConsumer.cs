@@ -12,7 +12,7 @@ public class EmployeeUpdatedEventConsumer : IConsumer<EmployeeUpdatedEvent>
 
     public EmployeeUpdatedEventConsumer(
         AdministrationDbContext dbContext,
-        IMapper mapper, 
+        IMapper mapper,
         ILogger<EmployeeUpdatedEventConsumer> logger)
     {
         _dbContext = dbContext;
@@ -27,7 +27,7 @@ public class EmployeeUpdatedEventConsumer : IConsumer<EmployeeUpdatedEvent>
             _logger.LogError("Null event context ignored by consumer.");
             return;
         }
-        
+
         var message = context.Message;
         if (message == null)
         {
