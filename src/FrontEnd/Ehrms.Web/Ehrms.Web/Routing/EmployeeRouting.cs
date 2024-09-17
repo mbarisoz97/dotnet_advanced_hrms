@@ -2,9 +2,38 @@
 
 internal partial class PageRouting
 {
+    internal class Employee
+    {
+        internal const string Index = "/Employee";
+    }
+
     internal class Title
     {
         internal const string Index = "/Title";
+    }
+
+    internal class Skill
+    {
+        internal const string Index = "/Skill";
+    }
+
+    internal class Training
+    {
+        internal const string Index = "/Training";
+    }
+
+    internal class Project
+    {
+        internal const string Index = "/Project";
+    }
+
+    internal class User
+    {
+        internal const string Index = "/User";
+        internal const string Login = "/Login";
+        internal const string Logout = "/Logout";
+        internal const string Authenticate = "/Auth";
+        internal const string PasswordReset = "/PasswordReset";
     }
 }
 

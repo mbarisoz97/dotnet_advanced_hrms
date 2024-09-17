@@ -1,0 +1,30 @@
+﻿@attribute [Authorize]
+
+@inject IToastService ToastService
+@inject IEmployeeServiceClient EmployeeServiceClient
+
+<MudDialog>
+    <DialogContent>
+        <EmployeeForm IsEditMode="false" OnValidSubmit="CreteEmployee" />
+    </DialogContent>
+</MudDialog>
+
+
+@code {
+	[CascadingParameter]
+	private MudDialogInstance? MudDialog { get; set; }
+
+	protected async Task CreteEmployee(EmployeeModel employee)
+	{
+		var response = await EmployeeServiceClient.CreateEmployeeAsync(employee);
+		if (response.StatusCode == HttpStatusCode.OK)
+		{
+			ToastService.ShowSuccess("Created employee successfully.");
+			MudDialog?.Close();
+		}
+		else
+		{
+			ToastService.ShowError($"Could not create employee. Service returned {response.StatusCode}");
+		}
+	}
+}

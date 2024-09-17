@@ -1,0 +1,83 @@
+﻿@attribute [Authorize]
+@inject IToastService ToastService
+@inject IEmployeeServiceClient EmployeeInfoServiceClient
+
+<MudDialog>
+    <DialogContent>
+        @if (employeeRecord == null)
+        {
+            <Loading />
+        }
+        else
+        {
+            <div class="form-group">
+                <h4>Do you want to delete this employee?</h4>
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td>First Name</td>
+                            <td>@employeeRecord.FirstName</td>
+                        </tr>
+                        <tr>
+                            <td>Last Name</td>
+                            <td>@employeeRecord.LastName</td>
+                        </tr>
+                        <tr>
+                            <td>Date Of Birth</td>
+                            <td>@employeeRecord.DateOfBirth</td>
+                        </tr>
+                        <tr>
+                            <td>Title</td>
+                            <td>@employeeRecord.Title?.TitleName</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="form-group">
+                <button @onclick="Remove" class="btn btn-danger">Delete</button>
+                <button @onclick="Cancel" class="btn btn-warning">Cancel</button>
+            </div>
+        }
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+    public EmployeeModel? employeeRecord;
+
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await EmployeeInfoServiceClient.GetEmployeeAsync(Id);
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            employeeRecord ??= response.Content;
+        }
+        else
+        {
+            ToastService.ShowError($"Could load employee. Service returned : {response.StatusCode}");
+        }
+    }
+
+    protected async Task Remove()
+    {
+        var response = await EmployeeInfoServiceClient.DeleteEmployeeAsync(Id);
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            ToastService.ShowSuccess("Delete employee successfully.");
+            MudDialog?.Close();
+        }
+        else
+        {
+            ToastService.ShowError($"Could not delete employee. Service returned : {response.StatusCode}");
+        }
+    }
+
+    protected void Cancel()
+    {
+        MudDialog?.Close(DialogResult.Cancel);
+    }
+}
