@@ -18,7 +18,8 @@ public class EmployeeMappingProfiles : Profile
             .ForMember(dest => dest.Title, opt => opt.Ignore());
 
         CreateMap<CreateEmployeeCommand, Employee>()
-            .ForMember(dest => dest.Skills, opt => opt.Ignore());
+            .ForMember(dest => dest.Skills, opt => opt.Ignore())
+            .ForMember(dest => dest.Title, opt => opt.Ignore());
     }
 
     private void AddEntityToDtoMappings()

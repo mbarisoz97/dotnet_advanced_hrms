@@ -1,4 +1,5 @@
-﻿
+﻿using Ehrms.EmployeeInfo.API.Dtos.Employee;
+
 namespace Ehrms.EmployeeInfo.TestHelpers.Faker.Command.Employee;
 
 public class CreateEmployeeCommandFaker : Faker<CreateEmployeeCommand>
@@ -12,7 +13,10 @@ public class CreateEmployeeCommandFaker : Faker<CreateEmployeeCommand>
 
     public CreateEmployeeCommandFaker WithTitleId(Guid id)
     {
-        RuleFor(e=>e.TitleId, id);
+        RuleFor(e=>e.Title, new ReadTitleDto()
+        {
+            Id = id,
+        });
         return this;
     }
 }

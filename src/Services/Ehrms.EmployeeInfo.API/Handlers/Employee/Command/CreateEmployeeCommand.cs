@@ -8,7 +8,7 @@ public sealed class CreateEmployeeCommand : IRequest<Result<Database.Models.Empl
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
     public DateOnly DateOfBirth { get; set; }
-    public Guid TitleId { get; set; }
+    public ReadTitleDto? Title { get; set; }
     public ICollection<Guid> Skills { get; set; } = [];
 }
 
@@ -33,13 +33,17 @@ internal sealed class CreateEmployeeCommandHandler : IRequestHandler<CreateEmplo
             .Where(x => request.Skills.Contains(x.Id))
             .ForEachAsync(employee.Skills.Add);
 
-        var title = await _dbContext.Titles
-            .FirstOrDefaultAsync(x => x.Id == request.TitleId, cancellationToken);
+        if (request.Title == null)
+        {
+            return new Result<Database.Models.Employee>(
+                new TitleNotFoundException("Employee title was invalid."));
+        }
 
+        var title = await _dbContext.Titles.FirstOrDefaultAsync(x => x.Id == request.Title.Id, cancellationToken);
         if (title == null)
         {
             return new Result<Database.Models.Employee>(
-                new TitleNotFoundException($"Could not find employee title with id : <{request.TitleId}>"));
+                new TitleNotFoundException($"Could not find employee title with id : <{request.Title.Id}>"));
         }
 
         employee.Title = title;

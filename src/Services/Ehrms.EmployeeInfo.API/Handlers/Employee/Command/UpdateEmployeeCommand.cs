@@ -9,7 +9,6 @@ public sealed class UpdateEmployeeCommand : IRequest<Result<Database.Models.Empl
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
     public DateOnly DateOfBirth { get; set; }
-    //public Guid TitleId { get; set; }
     public ReadTitleDto? Title {get; set;}
     public ICollection<Guid> Skills { get; set; } = [];
 }
