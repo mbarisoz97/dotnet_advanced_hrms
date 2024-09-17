@@ -3,7 +3,7 @@ using FluentValidation;
 using System.Reflection;
 using Ehrms.Administration.API.PipelineBehaviors;
 using Ehrms.Administration.API.Middleware;
-using Ehrms.Administration.API.Context;
+using Ehrms.Administration.API.Database.Context;
 
 namespace Ehrms.Administration.API;
 
@@ -41,4 +41,12 @@ public static class DependencyInjection
 
 		return services;
 	}
+
+    internal static IBusRegistrationConfigurator AddEventConsumers(this IBusRegistrationConfigurator busConfigurator)
+    {
+        busConfigurator.AddConsumer<EmployeeCreatedEventConsumer>();
+        busConfigurator.AddConsumer<EmployeeUpdatedEventConsumer>();
+        busConfigurator.AddConsumer<EmployeeDeletedEventConsumer>();
+        return busConfigurator;
+    }
 }

@@ -1,5 +1,6 @@
 ﻿using MediatR;
-using Ehrms.Administration.API.Context;
+using Ehrms.Administration.API.Database.Context;
+using Ehrms.Administration.API.Database.Models;
 
 namespace Ehrms.Administration.API.Handlers.Payment.Queries;
 

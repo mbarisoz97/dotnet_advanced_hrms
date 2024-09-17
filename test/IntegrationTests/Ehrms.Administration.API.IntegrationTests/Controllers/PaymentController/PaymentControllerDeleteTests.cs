@@ -1,4 +1,7 @@
-﻿namespace Ehrms.Administration.API.IntegrationTests.Controllers.PaymentController;
+﻿using Ehrms.Administration.TestHelpers.Fakers;
+using Ehrms.Administration.TestHelpers.Fakers.Employee;
+
+namespace Ehrms.Administration.API.IntegrationTests.Controllers.PaymentController;
 public class PaymentControllerDeleteTests : AdministrationApiBaseIntegrationTest
 {
 	public PaymentControllerDeleteTests(AdministrationWebApplicationFactory factory) : base(factory)

@@ -1,4 +1,5 @@
-﻿using Ehrms.Administration.API.IntegrationTests.TestHelpers.Fakers.Payment;
+﻿using Ehrms.Administration.TestHelpers.Fakers.Employee;
+using Ehrms.Administration.TestHelpers.Fakers.Payment;
 
 namespace Ehrms.Administration.API.IntegrationTests.Controllers.PaymentController;
 

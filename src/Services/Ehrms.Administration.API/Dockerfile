@@ -10,6 +10,7 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["src/Services/Ehrms.Administration.API/Ehrms.Administration.API.csproj", "src/Services/Ehrms.Administration.API/"]
+COPY ["src/Shared/Ehrms.Shared/Ehrms.Shared.csproj", "src/Shared/Ehrms.Shared/"]
 RUN dotnet restore "./src/Services/Ehrms.Administration.API/Ehrms.Administration.API.csproj"
 COPY . .
 WORKDIR "/src/src/Services/Ehrms.Administration.API"

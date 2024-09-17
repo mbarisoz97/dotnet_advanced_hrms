@@ -1,6 +1,5 @@
 ﻿using Testcontainers.MsSql;
 using Ehrms.Shared.TestHepers;
-using Ehrms.Administration.API.Context;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -10,6 +9,8 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Polly.Retry;
 using Docker.DotNet;
 using Microsoft.Data.SqlClient;
+using Ehrms.Administration.API.Database.Context;
+using MassTransit;
 
 namespace Ehrms.Administration.API.IntegrationTests.TestHelpers.Configurations;
 
@@ -56,8 +57,9 @@ public class AdministrationWebApplicationFactory : WebApplicationFactory<Program
                     opt => opt.EnableRetryOnFailure());
             });
 
-            var dbContext = CreateDbContext(services);
+            services.AddMassTransitTestHarness();
 
+            var dbContext = CreateDbContext(services);
             _databaseCreationRetryPolicy.Execute(() =>
             {
                 dbContext.Database.EnsureCreated();

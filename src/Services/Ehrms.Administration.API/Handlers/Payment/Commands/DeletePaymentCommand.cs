@@ -1,4 +1,4 @@
-﻿using Ehrms.Administration.API.Context;
+﻿using Ehrms.Administration.API.Database.Context;
 using Ehrms.Administration.API.Exceptions;
 using MediatR;
 

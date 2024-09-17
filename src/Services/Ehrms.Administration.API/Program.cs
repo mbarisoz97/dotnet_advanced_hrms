@@ -1,6 +1,6 @@
 using Ehrms.Administration.API;
-using Ehrms.Administration.API.Context;
 using Ehrms.Administration.API.Middleware;
+using Ehrms.Administration.API.Database.Context;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +15,24 @@ builder.Services.AddAdministrationApi();
 
 builder.Services.AddDbContext<AdministrationDbContext>(options =>
 {
-    options.UseInMemoryDatabase("AdministrationDb");
+    var connectionString = builder.Configuration.GetConnectionString("AdministrationDb");
+    options.UseSqlServer(connectionString, options => options.EnableRetryOnFailure());
+});
+
+builder.Services.AddMassTransit(busConfigurator =>
+{
+    busConfigurator.SetKebabCaseEndpointNameFormatter();
+    busConfigurator.AddEventConsumers();
+    busConfigurator.UsingRabbitMq((context, configurator) =>
+    {
+        configurator.Host(new Uri(builder.Configuration["MessageBroker:Host"]!), h =>
+        {
+            h.Username(builder.Configuration["MessageBroker:Username"]!);
+            h.Password(builder.Configuration["MessageBroker:Password"]!);
+        });
+
+        configurator.ConfigureEndpoints(context);
+    });
 });
 
 var app = builder.Build();
