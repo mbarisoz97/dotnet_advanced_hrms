@@ -52,8 +52,8 @@ app.MapControllers();
 
 app.UseMiddleware<GlobalExceptionHandlingMiddleware>();
 
+await app.CheckDatabase();
 app.Run();
-
 
 //Do not delete following partial class definition.
 //It is required for integration tests.
