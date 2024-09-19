@@ -28,9 +28,9 @@ jobs:
           tool-cache: true
           android: true
           dotnet: false
-          haskell: false
-          large-packages: true
-          swap-storage: false
+          haskell: true
+          large-packages: false
+          swap-storage: true
 
       - uses: actions/checkout@v3
 
