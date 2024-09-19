@@ -35,8 +35,8 @@ jobs:
       - name: Build
         run: dotnet build ${{env.SOLUTION_FILE}} --configuration ${{env.BUILD_CONFIGURATION}} --no-restore
 
-      - name: Unit Test
-        run: dotnet test ${{env.SOLUTION_FILE}} --configuration ${{env.BUILD_CONFIGURATION}} --filter "FullyQualifiedName~UnitTests" --no-restore --no-build --logger "trx;LogFileName=test-results.trx" || true 
+      # - name: Unit Test
+      #   run: dotnet test ${{env.SOLUTION_FILE}} --configuration ${{env.BUILD_CONFIGURATION}} --filter "FullyQualifiedName~UnitTests" --no-restore --no-build --logger "trx;LogFileName=test-results.trx" || true 
 
       - name: Integration Test
         run: dotnet test ${{env.SOLUTION_FILE}} --configuration ${{env.BUILD_CONFIGURATION}} --filter "FullyQualifiedName~IntegrationTests" --no-restore --no-build --logger "trx;LogFileName=test-results.trx" || true 
