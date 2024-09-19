@@ -17,6 +17,7 @@ public class MigrationManager
         {
             if (_context.Database.GetPendingMigrations().Any())
             {
+                _context.Database.EnsureCreated();
                 await _context.Database.MigrateAsync();
             }
         }

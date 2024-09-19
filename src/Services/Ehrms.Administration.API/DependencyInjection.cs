@@ -19,7 +19,8 @@ public static class DependencyInjection
 
 	private static IServiceCollection AddAssemblyTypes(this IServiceCollection services)
 	{
-		services.AddScoped<DbContext, AdministrationDbContext>();
+        services.AddScoped<MigrationManager>();
+        services.AddScoped<DbContext, AdministrationDbContext>();
 		services.AddScoped<GlobalExceptionHandlingMiddleware>();
 
 		return services;

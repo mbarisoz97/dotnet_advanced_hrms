@@ -10,7 +10,9 @@ services:
     networks:
         - proxybackend
     depends_on: 
+        - ehrms.authentication.api
         - ehrms.employeeinfo.api
+        - ehrms.administration.api
         - ehrms.projectmanagement.api
         - ehrms.trainingmanagement.api
 
@@ -37,6 +39,7 @@ services:
     networks:
         - proxybackend
     depends_on:
+       - ehrms.mq
        - ehrms.authentication.api.db
     ports:
         - "9888:8080"
@@ -61,6 +64,7 @@ services:
       dockerfile: src/Services/Ehrms.EmployeeInfo.API/Dockerfile
     depends_on: 
         - ehrms.mq
+        - ehrms.employeeinfo.api.db
     ports:
         - "5100:8080"
         - "5101:8081"
@@ -109,6 +113,7 @@ services:
       dockerfile: src/Services/Ehrms.TrainingManagement.API/Dockerfile
     depends_on: 
         - ehrms.mq
+        - ehrms.trainingmanagement.api.db
     networks:
         - proxybackend
 
@@ -139,13 +144,21 @@ services:
     build:
       context: .
       dockerfile: src/Services/Ehrms.Administration.API/Dockerfile
-
+    depends_on: 
+        - ehrms.mq
+        - ehrms.administration.api.db
+    ports:
+        - "5200:8080"
+        - "5201:8081"
+    networks:
+        - proxybackend
+ 
   ehrms.administration.api.db:
     image: mcr.microsoft.com/mssql/server
     ports:
-      - 1437:1433
+      - 1438:1433
     volumes:
-      - ./.container/db/administrationManagementDb/data:/var/opt/mssql/data
+      - ./.container/db/AdministrationDb/data:/var/opt/mssql/data
     environment:
       - SA_PASSWORD=yourStrong(!)Password
       - ACCEPT_EULA=Y
