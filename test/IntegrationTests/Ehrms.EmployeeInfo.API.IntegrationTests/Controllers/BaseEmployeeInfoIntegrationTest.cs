@@ -1,12 +1,11 @@
-﻿using Ehrms.EmployeeInfo.API.Database.Context;
-using Ehrms.EmployeeInfo.API.IntegrationTests.TestHelpers.Configurations;
+﻿using Ehrms.EmployeeInfo.API.IntegrationTests.TestHelpers.Configurations;
 using Ehrms.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Headers;
 
 namespace Ehrms.EmployeeInfo.API.IntegrationTests.Controllers;
 
-public abstract class BaseEmployeeInfoIntegrationTest : IClassFixture<EmployeeInfoWebApplicationFactory>
+public abstract class BaseEmployeeInfoIntegrationTest : IClassFixture<EmployeeInfoWebApplicationFactory>, IAsyncLifetime
 {
     protected readonly EmployeeInfoDbContext dbContext;
     protected readonly EmployeeInfoWebApplicationFactory factory;
@@ -27,5 +26,15 @@ public abstract class BaseEmployeeInfoIntegrationTest : IClassFixture<EmployeeIn
         var jwt = new JwtTokenHandler().Generate(request);
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.AccessToken);
         this.factory = factory;
+    }
+
+    public async Task DisposeAsync()
+    {
+        await dbContext.Database.EnsureDeletedAsync();
+    }
+
+    public async Task InitializeAsync()
+    {
+        await dbContext.Database.EnsureCreatedAsync();
     }
 }
