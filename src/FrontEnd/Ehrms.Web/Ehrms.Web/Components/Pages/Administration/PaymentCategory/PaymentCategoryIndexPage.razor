@@ -28,7 +28,7 @@
         <MudTd DataLabel="Category Name">@context.Name</MudTd>
         <MudTd Class="d-flex justify-center flex-grow-1">
             <MudTooltip Text="Edit">
-                <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
+                <MudIconButton  OnClick="()=>(ShowUpdatePaymentCategoryDialog(context))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
             </MudTooltip>
             <MudTooltip Text="Delete">
                 <MudIconButton OnClick="()=>(ShowDeletePaymentCategoryDialog(context))" Color=" Color.Error" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />
@@ -95,6 +95,22 @@
         };
 
         var dialogReference = await DialogService.ShowAsync<PaymentCategoryDeletePage>("Delete Payment Category", dialogParameters);
+        var dialogResult = await dialogReference.Result;
+
+        if (!dialogResult.Canceled)
+        {
+            await LoadPaymentCategories();
+        }
+    }
+
+    private async Task ShowUpdatePaymentCategoryDialog(PaymentCategoryModel paymentCategoryModel)
+    {
+        var dialogParameters = new DialogParameters()
+        {
+            { nameof(PaymentCategoryUpdatePage.Id), paymentCategoryModel.Id}
+        };
+
+        var dialogReference = await DialogService.ShowAsync<PaymentCategoryUpdatePage>("Update Payment Category", dialogParameters);
         var dialogResult = await dialogReference.Result;
 
         if (!dialogResult.Canceled)

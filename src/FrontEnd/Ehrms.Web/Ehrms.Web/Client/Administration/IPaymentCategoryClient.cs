@@ -8,6 +8,7 @@ public interface IPaymentCategoryClient
     Task<Response<IEnumerable<PaymentCategoryModel>>> GetPaymentCategories();
     Task<Response<PaymentCategoryModel>> GetPaymentCategoryById(Guid id);
     Task<Response<PaymentCategoryModel>> CreatePaymentCategory(PaymentCategoryModel paymentCategory);
+    Task<Response<PaymentCategoryModel>> UpdatePaymentCategory(PaymentCategoryModel paymentCategory);
 }
 
 public class PaymentCategoryClient : IPaymentCategoryClient
@@ -61,6 +62,18 @@ public class PaymentCategoryClient : IPaymentCategoryClient
     {
         var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
         var response = await client.GetAsync($"{PaymentCategoryEndpoint}/{id}");
+
+        return new Response<PaymentCategoryModel>
+        {
+            StatusCode = response.StatusCode,
+            Content = await response.GetContentAs<PaymentCategoryModel>()
+        };
+    }
+
+    public async Task<Response<PaymentCategoryModel>> UpdatePaymentCategory(PaymentCategoryModel paymentCategory)
+    {
+        var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
+        var response = await client.PostAsJsonAsync(PaymentCategoryEndpoint, paymentCategory);
 
         return new Response<PaymentCategoryModel>
         {

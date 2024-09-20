@@ -1,0 +1,33 @@
+﻿@attribute [Authorize]
+
+@inject IToastService ToastService
+@inject IPaymentCategoryClient PaymentCategoryClient
+
+<MudDialog>
+    <DialogContent>
+        <PaymentCategoryForm IsEditMode="true" Id="Id" OnValidSubmit="UpdatePaymentCategory" />
+    </DialogContent>
+</MudDialog>
+
+@code {
+
+    [Parameter]
+    public Guid Id { get; set; }
+
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; }
+
+    protected async Task UpdatePaymentCategory(PaymentCategoryModel paymentCategory)
+    {
+        var response = await PaymentCategoryClient.UpdatePaymentCategory(paymentCategory);
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            ToastService.ShowSuccess("Payment category updated successfully.");
+            MudDialog?.Close();
+        }
+        else
+        {
+            ToastService.ShowError($"Could not update payment category. Service returned {response.StatusCode}");
+        }
+    }
+}
