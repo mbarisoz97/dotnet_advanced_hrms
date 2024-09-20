@@ -12,7 +12,8 @@ internal static class MapperFactory
 				new TrainingMappingProfile(),
 				new SkillMappingProfile(),
 				new ProjectMappingProfile(),
-				new EmployeeMappingProfile()
+				new EmployeeMappingProfile(),
+				new TitleMappingProfile()
 			]);
 		}));
 	}

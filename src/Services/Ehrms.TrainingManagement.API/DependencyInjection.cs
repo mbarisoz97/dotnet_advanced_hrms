@@ -6,6 +6,7 @@ using Ehrms.TrainingManagement.API.MessageQueue.Consumers.SkillEvent;
 using Ehrms.TrainingManagement.API.MessageQueue.Consumers.TrainingEvents;
 using Ehrms.TrainingManagement.API.Middleware;
 using Ehrms.TrainingManagement.API.PipelineBehaviors;
+using Ehrms.TrainingManagement.API.MessageQueue.Consumers.TitleEvent;
 
 namespace Ehrms.TrainingManagement.API;
 
@@ -49,7 +50,9 @@ internal static class DependencyInjection
 
         busConfigurator.AddConsumer<TrainingRecommendationCompletedEventConsumer>();
         busConfigurator.AddConsumer<TrainingRecommendationRequestAcceptedEventConsumer>();
-        
+
+        busConfigurator.AddConsumer<TitleCreatedEventConsumer>();
+
         return busConfigurator;
     }
 }
