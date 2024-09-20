@@ -2,5 +2,5 @@
 
 public sealed class Title : BaseEntity
 {
-    public string Name { get; set } = string.Empty;
+    public string Name { get; set; } = string.Empty;
 }

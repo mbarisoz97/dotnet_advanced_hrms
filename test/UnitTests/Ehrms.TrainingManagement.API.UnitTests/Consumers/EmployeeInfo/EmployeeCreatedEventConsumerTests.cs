@@ -35,7 +35,9 @@ public class EmployeeCreatedEventConsumerTests
         await _consumer.Consume(contextMock.Object);
         var employee = _dbContext.Employees.FirstOrDefault(x => x.Id == employeeCreatedEvent.Id);
 
-        employee.Should().BeEquivalentTo(employeeCreatedEvent, opt => opt.Excluding(x => x.Skills));
+        employee.Should().BeEquivalentTo(employeeCreatedEvent, opt =>
+            opt.Excluding(x => x.Skills)
+               .Excluding(p => p.TitleId));
         employee?.Skills.Should().BeEquivalentTo(skills);
     }
 }

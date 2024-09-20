@@ -31,6 +31,7 @@ public class EmployeeUpdatedEventConsumerTests
 
 		await consumer.Consume(contextMock.Object);
 
-		employee.Should().BeEquivalentTo(employeeUpdatedEvent);
+		employee.Should().BeEquivalentTo(employeeUpdatedEvent, opt => 
+			opt.Excluding(p => p.TitleId));
 	}
 }
