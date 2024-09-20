@@ -23,4 +23,5 @@ public class TrainingDbContext : DbContext
     public DbSet<TrainingRecommendationRequest> RecommendationRequests { get; set; }
     public DbSet<TrainingRecommendationResult> RecommendationResults { get; set; }
     public DbSet<TrainingRecommendationSagaData> RecommendationSagaData { get; set; }
+    public DbSet<TrainingRecommendationPreferences> TrainingRecommendationPreferences { get; set; } 
 }
