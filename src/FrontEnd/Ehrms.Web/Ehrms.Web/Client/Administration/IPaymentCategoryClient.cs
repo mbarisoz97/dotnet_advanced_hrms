@@ -4,6 +4,7 @@ namespace Ehrms.Web.Client.Administration;
 
 public interface IPaymentCategoryClient
 {
+    Task<Response<Guid>> DeletePaymentRecordById(Guid id);
     Task<Response<IEnumerable<PaymentCategoryModel>>> GetPaymentCategories();
     Task<Response<PaymentCategoryModel>> GetPaymentCategoryById(Guid id);
     Task<Response<PaymentCategoryModel>> CreatePaymentCategory(PaymentCategoryModel paymentCategory);
@@ -29,6 +30,18 @@ public class PaymentCategoryClient : IPaymentCategoryClient
         {
             StatusCode = response.StatusCode,
             Content = await response.GetContentAs<PaymentCategoryModel>()
+        };
+    }
+
+    public async Task<Response<Guid>> DeletePaymentRecordById(Guid id)
+    {
+        var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
+        var response = await client.DeleteAsync($"{PaymentCategoryEndpoint}/{id}");
+
+        return new Response<Guid>
+        {
+            StatusCode = response.StatusCode,
+            Content = await response.GetContentAs<Guid>()
         };
     }
 

@@ -1,0 +1,68 @@
+﻿@attribute [Authorize()]
+
+@inject IToastService ToastService
+@inject IPaymentCategoryClient PaymentCategoryClient
+
+@if (PaymentCategoryModel == null)
+{
+    <Loading></Loading>
+    return;
+}
+
+<MudDialog>
+    <DialogContent>
+        <div class="form-group">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td>Category Name</td>
+                        <td>@PaymentCategoryModel.Name</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="form-group">
+            <button @onclick="Remove" class="btn btn-danger">Delete</button>
+            <button @onclick="Cancel" class="btn btn-warning">Cancel</button>
+        </div>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+    [CascadingParameter] private MudDialogInstance? MudDialog { get; set; }
+
+    private PaymentCategoryModel? PaymentCategoryModel;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await PaymentCategoryClient.GetPaymentCategoryById(Id);
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            PaymentCategoryModel = response.Content;
+        }
+        else
+        {
+            ToastService.ShowError($"Could not load payment category. Service returned {response.StatusCode}");
+        }
+    }
+
+    private async Task Remove()
+    {
+        var response = await PaymentCategoryClient.DeletePaymentRecordById(Id);
+        if (response.StatusCode == HttpStatusCode.NoContent)
+        {
+            ToastService.ShowSuccess("Delete payment category succesfully.");
+            MudDialog?.Close();
+        }
+        else
+        {
+            ToastService.ShowError($"Could not delete payment category. Service returned {response.StatusCode}");
+        }
+    }
+
+    private void Cancel()
+    {
+        MudDialog?.Close(DialogResult.Cancel);
+    }
+}
