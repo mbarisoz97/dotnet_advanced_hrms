@@ -1,5 +1,7 @@
-using Ehrms.TrainingManagement.API.Handlers.Training.Queries;
 using Microsoft.AspNetCore.Authorization;
+using Ehrms.TrainingManagement.API.Handlers.Training.Queries;
+using Ehrms.TrainingManagement.API.Dtos.RecommendationPreference;
+using Ehrms.TrainingManagement.API.Handlers.Recommendation.Commands;
 
 namespace Ehrms.TrainingManagement.API.Controllers;
 
@@ -22,10 +24,10 @@ public class TrainingRecommendationController : ControllerBase
     {
         var command = new DeleteTrainingRecommendationRequestCommand { Id = id };
         await _mediator.Send(command);
-        
+
         return Ok();
     }
-    
+
     [HttpGet("Recommendation/{id:guid}")]
     public async Task<IActionResult> GetRecommendationResult(Guid id)
     {
@@ -70,5 +72,16 @@ public class TrainingRecommendationController : ControllerBase
         var recommendationResultDto = _mapper.ProjectTo<ReadTrainingRecommendationResultDto>(recommendationResult);
 
         return Ok(recommendationResultDto);
+    }
+
+    [HttpPost("RecommendationPreferences")]
+    public async Task<IActionResult> SetTrainingRecommendationPreferences(CreateTrainingRecommendationPreferenceCommand command)
+    {
+        var commandResult = await _mediator.Send(command);
+        var actionResult = commandResult.Match<IActionResult>(
+            Succ: s => Ok(_mapper.Map<ReadRecommendationPreferenceDto>(s)),
+            Fail: f => BadRequest(f.Message));
+
+        return actionResult;
     }
 }

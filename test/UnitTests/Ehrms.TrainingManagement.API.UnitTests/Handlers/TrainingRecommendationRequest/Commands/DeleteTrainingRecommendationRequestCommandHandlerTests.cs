@@ -1,3 +1,4 @@
+using Ehrms.TrainingManagement.API.Handlers.Recommendation.Commands;
 using Ehrms.TrainingManagement.API.UnitTests.Consumers.Training;
 
 namespace Ehrms.TrainingManagement.API.UnitTests.Handlers.TrainingRecommendationRequest.Commands;
