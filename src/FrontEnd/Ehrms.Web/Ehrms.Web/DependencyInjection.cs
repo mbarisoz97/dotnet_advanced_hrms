@@ -1,5 +1,6 @@
 ﻿using Ehrms.Shared;
 using Ehrms.Web.Client;
+using Ehrms.Web.Client.Administration;
 using Ehrms.Web.Client.AuthApi;
 using Ehrms.Web.Client.AuthApi.Account;
 using Ehrms.Web.Client.EmployeeApi.Info;
@@ -29,6 +30,7 @@ internal static class DependencyInjection
         services.AddScoped<IAccountServiceClient, AccountServiceClient>();
         services.AddScoped<IEmployeeTitleClient, EmployeeTitleClient>();
         services.AddScoped<ITrainingPreferenceClient, TrainingPreferenceClient>();
+        services.AddScoped<IPaymentCategoryClient, PaymentCategoryClient>();
 
         services.AddScoped<IUserServiceClient, UserServiceClient>();
         services.AddScoped<IUserRoleServiceClient, UserRoleServiceClient>();

@@ -1,0 +1,101 @@
+﻿@attribute [Route(PageRouting.Administration.PaymentCategory)]
+@attribute [Authorize()]
+
+@inject IToastService ToastService
+@inject IDialogService DialogService
+@inject IPaymentCategoryClient PaymentCategoryClient
+
+<MudTable Items="@_paymentCategories"
+          Dense="true"
+          Hover="true"
+          Loading="@_isLoading"
+          Bordered="true"
+          Striped="true"
+          Filter="new Func<PaymentCategoryModel, bool>(SearchFilter)">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Payment Categories</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchString" Placeholder="Search Payment Category" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudTooltip Text="Add Payment Category">
+            <MudIconButton Size="Size.Medium" Color="Color.Success" Icon="@Icons.Material.Filled.Add" OnClick="ShowCreatePaymentCategoryDialog" />
+        </MudTooltip>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>First Name</MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Category Name">@context.Name</MudTd>
+        <MudTd Class="d-flex justify-center flex-grow-1">
+            <MudTooltip Text="Edit">
+                <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
+            </MudTooltip>
+            <MudTooltip Text="Delete">
+                <MudIconButton Color=" Color.Error" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />
+            </MudTooltip>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code {
+    private bool _isLoading;
+    private string _searchString = "";
+    private IEnumerable<PaymentCategoryModel>? _paymentCategories;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPaymentCategories();
+    }
+
+    private async Task LoadPaymentCategories()
+    {
+        ShowLoadingAnimation();
+
+        var response = await PaymentCategoryClient.GetPaymentCategories();
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            _paymentCategories = response.Content ?? [];
+        }
+        else
+        {
+            ToastService.ShowError($"Could not load payment categories. Service returned {response.StatusCode}");
+        }
+
+        HideLoadingAnimation();
+    }
+
+    private void ShowLoadingAnimation()
+    {
+        _isLoading = true;
+    }
+    private void HideLoadingAnimation()
+    {
+        _isLoading = false;
+    }
+
+    private async Task ShowCreatePaymentCategoryDialog()
+    {
+        var dialogReference = await DialogService.ShowAsync<PaymentCategoryCreatePage>("Create Payment Category");
+        var dialogResult = await dialogReference.Result;
+
+        if (!dialogResult.Canceled)
+        {
+            await LoadPaymentCategories();
+        }
+    }
+
+    private bool SearchFilter(PaymentCategoryModel element) => Search(element, _searchString);
+    private bool Search(PaymentCategoryModel element, string searchString)
+    {
+        if (element == null)
+        {
+            return false;
+        }
+
+        return (string.IsNullOrWhiteSpace(searchString) ||
+                element.Name!.Contains(searchString, StringComparison.OrdinalIgnoreCase));
+    }
+}

@@ -1,48 +1,61 @@
-﻿@page "/test"
-@attribute [Authorize()]
-@layout EmptyLayout
+﻿@attribute [Authorize()]
+@attribute [Route(PageRouting.Administration.Index)]
 
-<MudLayout>
-    <MudAppBar Elevation="1" Dense="@_isDense">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@ToggleDrawer" />
-    </MudAppBar>
-    <MudDrawer @bind-Open="@_isOpen" ClipMode="_clipMode" Breakpoint="@_breakpoint" Elevation="1" Variant="@DrawerVariant.Mini">
-        <MudNavMenu>
-            <AuthorizeView Roles="Admin">
-                <MudNavLink 
-                    Href="@PageRouting.User.Index" 
-                    Match="NavLinkMatch.All" 
-                    Icon="@Icons.Material.Filled.ManageAccounts">Users</MudNavLink>
-            </AuthorizeView>
-            <AuthorizeView>
-                <MudNavLink Href="@PageRouting.Employee.Index"
-                            Match="NavLinkMatch.All"
-                            Icon="@Icons.Material.Filled.PeopleAlt">Employees</MudNavLink>
-                <MudNavLink Href="@PageRouting.Title.Index"
-                            Match="NavLinkMatch.All"
-                            Icon="@Icons.Material.Filled.AccountTree">Titles</MudNavLink>
-                <MudNavLink Href="@PageRouting.Skill.Index"
-                            Match="NavLinkMatch.All"
-                            Icon="@Icons.Material.Filled.School">Skills</MudNavLink>
-                <MudNavLink Href="@PageRouting.Training.Index"
-                            Match="NavLinkMatch.All"
-                            Icon="@Icons.Material.Filled.ModelTraining">Trainings</MudNavLink>
-            </AuthorizeView>
-        </MudNavMenu>
-    </MudDrawer>
-    <MudMainContent Class="pt-16 px-16">
-    </MudMainContent>
-</MudLayout>
+<MudGrid>
+    <MudItem xs="3">
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.body1">Payment Category</MudText>
+                </CardHeaderContent>
+                <CardHeaderActions>
+                    <MudIconButton Icon="@Icons.Material.Filled.Add" />
+                    <MudIconButton Icon="@Icons.Material.Filled.ArrowOutward" />
+                </CardHeaderActions>
+            </MudCardHeader>
+        </MudCard>
+    </MudItem>
+    <MudItem xs="3">
+        <MudCard>
+            <MudCardHeader>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.body1">Payments</MudText>
+                </CardHeaderContent>
+                <CardHeaderActions>
+                    <MudTooltip Text="">
+                        <MudIconButton Icon="@Icons.Material.Filled.ArrowForward" Color="Color.Default" />
+                    </MudTooltip>
+                    <MudTooltip>
+                        <MudIconButton Icon="@Icons.Material.Filled.Add" Color="Color.Default" />
+                    </MudTooltip>
+                </CardHeaderActions>
+            </MudCardHeader>
+        </MudCard>
+    </MudItem>
+    <MudItem xs="12">
+        <MudTable Items="@_employees"
+                  Dense="true"
+                  Hover="true"
+                  Bordered="true"
+                  Striped="true">
+            <ToolBarContent>
+                <MudText Typo="Typo.h6">Payment Records</MudText>
+            </ToolBarContent>
+            <HeaderContent>
+            </HeaderContent>
+            <RowTemplate>
+            </RowTemplate>
+            <PagerContent>
+                <MudTablePager />
+            </PagerContent>
+        </MudTable>
+    </MudItem>
+</MudGrid>
+
+
+
+
 
 @code {
-    private bool _isOpen = false;
-    private bool _isDense = false;
-
-    private Breakpoint _breakpoint = Breakpoint.Xxl;
-    private DrawerClipMode _clipMode = DrawerClipMode.Always;
-
-    private void ToggleDrawer()
-    {
-        _isOpen = !_isOpen;
-    }
+    private IEnumerable<string> _employees = [];
 }

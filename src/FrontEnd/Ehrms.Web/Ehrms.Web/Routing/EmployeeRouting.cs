@@ -27,6 +27,12 @@ internal partial class PageRouting
         internal const string Index = "/Project";
     }
 
+    internal class Administration
+    {
+        internal const string Index = "/Administration";
+        internal const string PaymentCategory = "/PaymentCategory";
+    }
+    
     internal class User
     {
         internal const string Index = "/User";

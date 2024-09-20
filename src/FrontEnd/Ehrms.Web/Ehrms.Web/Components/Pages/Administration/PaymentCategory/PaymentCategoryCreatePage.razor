@@ -1,0 +1,29 @@
+﻿@attribute [Authorize]
+
+@inject IToastService ToastService
+@inject IPaymentCategoryClient PaymentCategoryClient
+
+<MudDialog>
+    <DialogContent>
+        <PaymentCategoryForm IsEditMode="false" OnValidSubmit="CreatePaymentCategory" />
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; }
+
+    protected async Task CreatePaymentCategory(PaymentCategoryModel paymentCategory)
+    {
+        var response = await PaymentCategoryClient.CreatePaymentCategory(paymentCategory);
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            ToastService.ShowSuccess("Payment category created successfully.");
+            MudDialog?.Close();
+        }
+        else
+        {
+            ToastService.ShowError($"Could not create payment category. Service returned {response.StatusCode}");
+        }
+    }
+}
