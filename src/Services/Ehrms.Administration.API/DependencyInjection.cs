@@ -19,7 +19,8 @@ public static class DependencyInjection
 
 	private static IServiceCollection AddAssemblyTypes(this IServiceCollection services)
 	{
-		services.AddScoped<DbContext, AdministrationDbContext>();
+        services.AddScoped<MigrationManager>();
+        services.AddScoped<DbContext, AdministrationDbContext>();
 		services.AddScoped<GlobalExceptionHandlingMiddleware>();
 
 		return services;
@@ -41,6 +42,16 @@ public static class DependencyInjection
 
 		return services;
 	}
+
+    internal static async Task CheckDatabase(this WebApplication app)
+    {
+        using var scope = app.Services.CreateScope();
+
+        var services = scope.ServiceProvider;
+        var migrationManager = services.GetRequiredService<MigrationManager>();
+
+        await migrationManager.Init();
+    }
 
     internal static IBusRegistrationConfigurator AddEventConsumers(this IBusRegistrationConfigurator busConfigurator)
     {
