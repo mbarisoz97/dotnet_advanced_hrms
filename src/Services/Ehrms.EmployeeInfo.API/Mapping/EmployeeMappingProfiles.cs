@@ -31,7 +31,9 @@ public class EmployeeMappingProfiles : Profile
     private void AddModelToMessageQueueEventMappings()
     {
         CreateMap<Employee, EmployeeCreatedEvent>()
-            .ForMember(dest => dest.Skills, opt => opt.MapFrom(x => x.Skills.Select(y => y.Id).ToList()));
+            .ForMember(dest => dest.Skills, opt => opt.MapFrom(x => x.Skills.Select(y => y.Id).ToList()))
+            .ForMember(dest => dest.TitleId, opt => opt.MapFrom(x=>x.Title!.Id));
+
         CreateMap<Employee, EmployeeUpdatedEvent>()
              .ForMember(dest => dest.Skills, opt => opt.MapFrom(x => x.Skills.Select(y => y.Id).ToList()));
     }
