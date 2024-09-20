@@ -41,4 +41,8 @@
 		<InternalsVisibleTo Include="$(AssemblyName).UnitTests" />
 		<InternalsVisibleTo Include="$(AssemblyName).IntegrationTests" />
 	</ItemGroup>
+	
+	<ItemGroup>
+	  <Folder Include="MessageQueue\Consumers\TitleEvent\" />
+	</ItemGroup>
 </Project>
