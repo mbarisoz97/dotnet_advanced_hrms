@@ -45,7 +45,7 @@ public class TitleCreateEventConsumerTests
         contextMock.Setup(x => x.Message).Returns(titleCreatedEvent);
 
         await _consumer.Consume(contextMock.Object);
-    
+
         _dbContext.Titles.Count().Should().Be(1);
     }
 }

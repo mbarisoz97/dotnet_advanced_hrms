@@ -17,10 +17,10 @@ public class TitleCreatedEventConsumer : IConsumer<TitleCreatedEvent>
 
     public async Task Consume(ConsumeContext<TitleCreatedEvent> context)
     {
-        var existingTitle = _dbContext.Titles.FirstOrDefault(x=>x.Name == context.Message.TitleName);
+        var existingTitle = _dbContext.Titles.FirstOrDefault(x=>x.Name == context.Message.Name);
         if (existingTitle != null)
         {
-            _logger.LogError("Ignored title created event. A title with same name : {name} already exists", context.Message.TitleName);
+            _logger.LogError("Ignored title created event. A title with same name : {name} already exists", context.Message.Name);
             return;
         }
 

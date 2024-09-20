@@ -7,5 +7,6 @@ public class TitleMappingProfile : Profile
     public TitleMappingProfile()
     {
         CreateMap<TitleCreatedEvent, Title>();
+        CreateMap<TitleUpdatedEvent, Title>();
     }
 }
