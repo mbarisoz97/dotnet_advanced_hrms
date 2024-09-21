@@ -75,12 +75,23 @@ public class TrainingRecommendationController : ControllerBase
         return Ok(recommendationResultDto);
     }
 
-    [HttpPost("RecommendationPreferences")]
+    [HttpPut("RecommendationPreferences")]
     public async Task<IActionResult> SetTrainingRecommendationPreferences(CreateTrainingRecommendationPreferenceCommand command)
     {
         var commandResult = await _mediator.Send(command);
         var actionResult = commandResult.Match<IActionResult>(
             Succ: s => Ok(_mapper.Map<ReadRecommendationPreferenceDto>(s)),
+            Fail: f => BadRequest(f.Message));
+
+        return actionResult;
+    }
+
+    [HttpPost("RecommendationPreferences")]
+    public async Task<IActionResult> UpdateTrainingRecommendationPreferences(UpdateTrainingRecommendationPreferenceCommand command)
+    {
+        var commandResult = await _mediator.Send(command);
+        var actionResult = commandResult.Match<IActionResult>(
+            Succ: s => NoContent(),
             Fail: f => BadRequest(f.Message));
 
         return actionResult;
