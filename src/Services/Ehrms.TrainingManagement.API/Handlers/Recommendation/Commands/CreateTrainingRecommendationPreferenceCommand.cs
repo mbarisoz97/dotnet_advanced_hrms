@@ -1,7 +1,6 @@
 ﻿using LanguageExt.Common;
 
 namespace Ehrms.TrainingManagement.API.Handlers.Recommendation.Commands;
-
 public class CreateTrainingRecommendationPreferenceCommand : IRequest<Result<TrainingRecommendationPreferences>>
 {
     public Guid ProjectId { get; set; }

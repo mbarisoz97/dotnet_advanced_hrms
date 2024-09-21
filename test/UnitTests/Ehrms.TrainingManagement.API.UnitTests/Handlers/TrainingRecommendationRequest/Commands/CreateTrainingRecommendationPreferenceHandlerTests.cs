@@ -1,7 +1,6 @@
 ﻿using Ehrms.TrainingManagement.API.Handlers.Recommendation.Commands;
 
 namespace Ehrms.TrainingManagement.API.UnitTests.Handlers.TrainingRecommendationRequest.Commands;
-
 public class CreateTrainingRecommendationPreferenceHandlerTests
 {
     private readonly TrainingDbContext _dbContext;
