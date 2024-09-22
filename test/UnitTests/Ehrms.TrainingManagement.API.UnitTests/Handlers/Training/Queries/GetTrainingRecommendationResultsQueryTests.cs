@@ -30,16 +30,16 @@ public class GetTrainingRecommendationResultsQueryTests : UnitTestsBase<Training
     {
         var skills = new SkillFaker().Generate(3);
         await dbContext.Skills.AddRangeAsync(skills);
-        
+
         var employees = new EmployeeFaker().Generate(2);
         await dbContext.AddRangeAsync(employees);
-        
+
         var project = new ProjectFaker()
             .WithEmployees(employees)
             .WithRequiredSkills(skills)
             .Generate();
         await dbContext.AddRangeAsync(project);
-        
+
         var request = new TrainingRecommendationRequestFaker()
             .WithProject(project)
             .Generate();
@@ -51,7 +51,7 @@ public class GetTrainingRecommendationResultsQueryTests : UnitTestsBase<Training
             .Generate(2);
         await dbContext.AddRangeAsync(trainingRecommendations);
         await dbContext.SaveChangesAsync();
-        
+
         var query = new GetTrainingRecommendationResultsQuery() { RecommendationRequestId = request.Id };
         var returnedRecommendationResults = await _handler.Handle(query, default);
 

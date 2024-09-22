@@ -3,6 +3,7 @@ using Ehrms.TrainingManagement.API.Handlers.Training.Queries;
 using Ehrms.TrainingManagement.API.Dtos.RecommendationPreference;
 using Ehrms.TrainingManagement.API.Handlers.Recommendation.Commands;
 using LanguageExt;
+using Ehrms.TrainingManagement.API.Handlers.Recommendation.Queries;
 
 namespace Ehrms.TrainingManagement.API.Controllers;
 
@@ -107,5 +108,15 @@ public class TrainingRecommendationController : ControllerBase
             Fail: f => BadRequest(f.Message));
 
         return actionResult;
+    }
+
+    [HttpGet("RecommendationPreferences")]
+    public async Task<IActionResult> GetTrainingRecommendationPreferences()
+    {
+        var query = new GetRecommendationPreferencesQuery();
+        var preferences = await _mediator.Send(query);
+        var preferenceDtos = _mapper.ProjectTo<ReadRecommendationPreferenceDto>(preferences);
+
+        return Ok(preferenceDtos);
     }
 }
