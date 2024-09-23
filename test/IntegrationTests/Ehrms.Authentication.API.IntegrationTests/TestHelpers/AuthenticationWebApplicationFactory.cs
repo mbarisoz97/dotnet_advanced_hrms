@@ -9,26 +9,26 @@ using Ehrms.Shared.TestHepers;
 using Docker.DotNet;
 using Polly.Retry;
 using Polly;
+using Respawn;
+using System.Data.Common;
 using Microsoft.Data.SqlClient;
 
 namespace Ehrms.Administration.API.IntegrationTests.TestHelpers.Configurations;
+
+[CollectionDefinition(nameof(AuthenticationWebApplicationFactory))]
+public class SharedTestCollection : ICollectionFixture<AuthenticationWebApplicationFactory>
+{
+}
 
 public class AuthenticationWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private readonly int Port = PortNumberProvider.GetPortNumber();
     private readonly MsSqlContainer _msSqlContainer;
-    
+    private DbConnection _dbConnection = default!;
+    private Respawner _respawner = default!;
+
     private readonly AsyncRetryPolicy _retryPolicy = Policy.Handle<DockerApiException>()
     .WaitAndRetryAsync(
-        retryCount: 3,
-        sleepDurationProvider: attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)),
-        onRetry: (response, timespan, retryCount, context) =>
-        {
-            Console.WriteLine($"Retry {retryCount} after {timespan.Seconds}");
-        });
-
-    private readonly RetryPolicy _databaseCreationRetryPolicy = Policy.Handle<SqlException>()
-    .WaitAndRetry(
         retryCount: 3,
         sleepDurationProvider: attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)),
         onRetry: (response, timespan, retryCount, context) =>
@@ -53,12 +53,6 @@ public class AuthenticationWebApplicationFactory : WebApplicationFactory<Program
             {
                 options.UseSqlServer(_msSqlContainer.GetConnectionString(), options => options.EnableRetryOnFailure());
             });
-
-            var dbContext = CreateDbContext(services);
-            _databaseCreationRetryPolicy.Execute(() =>
-            {
-                dbContext.Database.EnsureCreated();
-            });
         });
     }
 
@@ -70,6 +64,21 @@ public class AuthenticationWebApplicationFactory : WebApplicationFactory<Program
 
         return dbContext ?? throw new NullReferenceException("DbContext is null");
     }
+    private async Task InitializeRespawner()
+    {
+        _dbConnection = new SqlConnection(_msSqlContainer.GetConnectionString());
+        await _dbConnection.OpenAsync();
+        _respawner = await Respawner.CreateAsync(_dbConnection, new RespawnerOptions
+        {
+            DbAdapter = DbAdapter.SqlServer,
+            SchemasToInclude = ["dbo"]
+        });
+    }
+
+    public async Task ResetDatabaseAsync()
+    {
+        await _respawner.ResetAsync(_dbConnection);
+    }
 
     public async Task InitializeAsync()
     {
@@ -77,6 +86,7 @@ public class AuthenticationWebApplicationFactory : WebApplicationFactory<Program
         {
             await _msSqlContainer.StartAsync();
         });
+        await InitializeRespawner();
     }
 
     public async new Task DisposeAsync()
