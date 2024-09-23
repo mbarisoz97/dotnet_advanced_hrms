@@ -1,21 +1,23 @@
 ﻿using System.Net.Http.Headers;
 using Ehrms.Shared;
 using Ehrms.Training.TestHelpers.Fakers.Models;
-using Ehrms.TrainingManagement.API.Database.Models;
 
 namespace Ehrms.TrainingManagement.API.IntegrationTests.Controller.TrainingController;
 
-public abstract class TrainingManagementBaseIntegrationTest : IClassFixture<TrainingManagementWebApplicationFactory>
+[Collection(nameof(TrainingManagementWebApplicationFactory))]
+public abstract class TrainingManagementBaseIntegrationTest : IAsyncLifetime
 {
-	private readonly TrainingManagementWebApplicationFactory _factory;
+    private readonly Func<Task> _resetDatabase;
+    private readonly TrainingManagementWebApplicationFactory _factory;
 	protected readonly HttpClient client;
 
 	protected TrainingManagementBaseIntegrationTest(TrainingManagementWebApplicationFactory factory)
 	{
 		_factory = factory;
 		client = this._factory.CreateClient();
+        _resetDatabase = factory.ResetDatabaseAsync;
 
-		var request = new GenerateJwtRequest
+        var request = new GenerateJwtRequest
 		{
 			Username = "TestUser",
 		};
@@ -31,4 +33,7 @@ public abstract class TrainingManagementBaseIntegrationTest : IClassFixture<Trai
 		await dbContext.SaveChangesAsync();
 		return training;
 	}
+
+    public Task InitializeAsync() => _resetDatabase();
+    public Task DisposeAsync() => Task.CompletedTask;
 }
