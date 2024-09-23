@@ -12,6 +12,7 @@ using Polly;
 using Respawn;
 using System.Data.Common;
 using Microsoft.Data.SqlClient;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Ehrms.Administration.API.IntegrationTests.TestHelpers.Configurations;
 
@@ -97,6 +98,7 @@ public class AuthenticationWebApplicationFactory : WebApplicationFactory<Program
         }
         finally
         {
+            await _dbConnection.CloseAsync();
             PortNumberProvider.ReleasePortNumber(Port);
         }
     }

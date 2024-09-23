@@ -13,6 +13,7 @@ using Ehrms.Administration.API.Database.Context;
 using MassTransit;
 using System.Data.Common;
 using Respawn;
+using Xunit.Abstractions;
 
 namespace Ehrms.Administration.API.IntegrationTests.TestHelpers.Configurations;
 

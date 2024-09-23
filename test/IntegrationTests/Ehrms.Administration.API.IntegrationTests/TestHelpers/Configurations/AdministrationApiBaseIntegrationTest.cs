@@ -18,7 +18,7 @@ public abstract class AdministrationApiBaseIntegrationTest : IAsyncLifetime
         dbContext = scope.ServiceProvider.GetRequiredService<AdministrationDbContext>();
     }
 
+    public Task InitializeAsync() => Task.CompletedTask;
+    public Task DisposeAsync() => _resetDatabase();  
 
-    public Task InitializeAsync() => _resetDatabase();
-    public Task DisposeAsync() => Task.CompletedTask;
 }
