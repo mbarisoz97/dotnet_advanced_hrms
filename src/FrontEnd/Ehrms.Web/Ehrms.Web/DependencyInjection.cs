@@ -5,6 +5,9 @@ using Ehrms.Web.Client.AuthApi.Account;
 using Ehrms.Web.Client.EmployeeApi.Info;
 using Ehrms.Web.Client.EmployeeApi.Skill;
 using Ehrms.Web.Client.EmployeeApi.Title;
+using Ehrms.Web.Client.TrainingApi.Info;
+using Ehrms.Web.Client.TrainingApi.Preference;
+using Ehrms.Web.Client.TrainingApi.Recommendation;
 using Ehrms.Web.Routing;
 
 namespace Ehrms.Web;
@@ -22,7 +25,8 @@ internal static class DependencyInjection
         services.AddScoped<ISkillServiceClient, SkillServiceClient>();
         services.AddScoped<ITrainingServiceClient, TrainingServiceClient>();
         services.AddScoped<IAccountServiceClient, AccountServiceClient>();
-        services.AddScoped<IEmployeeTitleClient, EmployeeTitleClient>();    
+        services.AddScoped<IEmployeeTitleClient, EmployeeTitleClient>();
+        services.AddScoped<ITrainingPreferenceClient, TrainingPreferenceClient>();
 
         services.AddScoped<IUserServiceClient, UserServiceClient>();
         services.AddScoped<IUserRoleServiceClient, UserRoleServiceClient>();

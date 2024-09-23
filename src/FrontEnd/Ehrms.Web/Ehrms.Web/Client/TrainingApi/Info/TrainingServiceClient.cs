@@ -1,6 +1,6 @@
 ﻿using Ehrms.Web.Routing;
 
-namespace Ehrms.Web.Client;
+namespace Ehrms.Web.Client.TrainingApi.Info;
 
 internal sealed class TrainingServiceClient : ITrainingServiceClient
 {
