@@ -1,7 +1,5 @@
 ﻿using Ehrms.Training.TestHelpers.Fakers.Events;
 using Ehrms.Training.TestHelpers.Fakers.Models;
-using Ehrms.TrainingManagement.API.Database.Models;
-using Microsoft.EntityFrameworkCore;
 using System.Net;
 
 namespace Ehrms.TrainingManagement.API.IntegrationTests.Controller.TrainingController;

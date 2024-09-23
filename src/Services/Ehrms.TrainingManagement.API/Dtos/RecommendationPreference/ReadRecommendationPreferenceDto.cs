@@ -2,6 +2,7 @@
 
 public class ReadRecommendationPreferenceDto
 {
+    public Guid Id { get; set; }    
     public TitleDto? Title { get; set; }
     public ProjectDto? Project { get; set; }
     public ICollection<SkillDto> Skills { get; set; } = [];

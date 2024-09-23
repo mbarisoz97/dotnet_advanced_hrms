@@ -12,10 +12,11 @@ using Docker.DotNet;
 using Polly.Retry;
 using Polly;
 using Microsoft.Data.SqlClient;
-using Respawn;
 using System.Data.Common;
+using Respawn;
 
 namespace Ehrms.TrainingManagement.API.IntegrationTests.TestHelpers.Configurators;
+
 
 [CollectionDefinition(nameof(TrainingManagementWebApplicationFactory))]
 public class SharedTestCollection : ICollectionFixture<TrainingManagementWebApplicationFactory>
@@ -30,13 +31,12 @@ public class TrainingManagementWebApplicationFactory : WebApplicationFactory<Pro
     private Respawner _respawner = default!;
 
     private readonly AsyncRetryPolicy _retryPolicy = Policy.Handle<DockerApiException>()
-        .WaitAndRetryAsync(
-        retryCount: 3,
-        sleepDurationProvider: attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)),
-        onRetry: (response, timespan, retryCount, context) =>
-        {
-            Console.WriteLine($"Retry {retryCount} after {timespan.Seconds}");
-        });
+        .WaitAndRetryAsync(retryCount: 3,
+            sleepDurationProvider: attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)),
+            onRetry: (response, timespan, retryCount, context) =>
+            {
+                Console.WriteLine($"Retry {retryCount} after {timespan.Seconds}");
+            });
 
     public TrainingManagementWebApplicationFactory()
     {
@@ -50,8 +50,6 @@ public class TrainingManagementWebApplicationFactory : WebApplicationFactory<Pro
         builder.ConfigureTestServices(services =>
         {
             services.RemoveAll(typeof(DbContextOptions<TrainingDbContext>));
-            services.AddTrainingManagementApi();
-
             services.AddDbContext<TrainingDbContext>(options =>
             {
                 options.UseSqlServer(_msSqlContainer.GetConnectionString(),
@@ -78,7 +76,6 @@ public class TrainingManagementWebApplicationFactory : WebApplicationFactory<Pro
         return dbContext ?? throw new NullReferenceException("DbContext is null");
     }
 
-
     private async Task InitializeRespawner()
     {
         _dbConnection = new SqlConnection(_msSqlContainer.GetConnectionString());
@@ -94,7 +91,7 @@ public class TrainingManagementWebApplicationFactory : WebApplicationFactory<Pro
     {
         await _respawner.ResetAsync(_dbConnection);
     }
-    
+
     public async Task InitializeAsync()
     {
         await _retryPolicy.ExecuteAsync(async () =>

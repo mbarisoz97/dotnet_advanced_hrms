@@ -13,11 +13,11 @@ public abstract class TrainingManagementBaseIntegrationTest : IAsyncLifetime
     protected readonly HttpClient client;
     protected readonly TrainingDbContext dbContext;
 
-	protected TrainingManagementBaseIntegrationTest(TrainingManagementWebApplicationFactory factory)
-	{
-		client = factory.CreateClient();
+    protected TrainingManagementBaseIntegrationTest(TrainingManagementWebApplicationFactory factory)
+    {
+        client = factory.CreateClient();
+        dbContext = factory.CreateDbContext();
         _resetDatabase = factory.ResetDatabaseAsync;
-         dbContext = factory.CreateDbContext();
 
         var request = new GenerateJwtRequest
 		{

@@ -1,9 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Ehrms.TrainingManagement.API.Handlers.Training.Queries;
 using Ehrms.TrainingManagement.API.Dtos.RecommendationPreference;
-using Ehrms.TrainingManagement.API.Handlers.Recommendation.Commands;
-using LanguageExt;
 using Ehrms.TrainingManagement.API.Handlers.Recommendation.Queries;
+using Ehrms.TrainingManagement.API.Handlers.Recommendation.Commands;
 
 namespace Ehrms.TrainingManagement.API.Controllers;
 
@@ -118,5 +117,17 @@ public class TrainingRecommendationController : ControllerBase
         var preferenceDtos = _mapper.ProjectTo<ReadRecommendationPreferenceDto>(preferences);
 
         return Ok(preferenceDtos);
+    }
+
+    [HttpGet("RecommendationPreferences/{id:guid}")]
+    public async Task<IActionResult> GetTrainingRecommendationPreferences(Guid id)
+    {
+        var query = new GetRecommendationPreferencesByIdQuery() { Id = id};
+        var queryResult = await _mediator.Send(query);
+        var actionResult = queryResult.Match<IActionResult>(
+            Succ: s => Ok(_mapper.Map<ReadRecommendationPreferenceDto>(s)),
+            Fail: f => BadRequest(f.Message));
+
+        return actionResult;
     }
 }
