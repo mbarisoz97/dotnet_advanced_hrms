@@ -1,0 +1,63 @@
+﻿@attribute [Route(TrainingRouting.Preference)]
+@attribute [Authorize]
+@attribute [StreamRendering]
+
+@inject IToastService ToastService
+@inject ITrainingPreferenceClient TrainingPreferenceClient
+
+<MudTable Dense="true" Hover="true" Bordered="true" Striped="true" Loading="@_isLoading" Items="@_trainingPreferences">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Training Recommendation Preferences</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudTooltip Text="Add Training Recommendation Preference">
+            <MudIconButton Size="Size.Medium" Color="Color.Success" Icon="@Icons.Material.Filled.AddBox" />
+        </MudTooltip>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Project</MudTh>
+        <MudTh>Title</MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Project">@context.Project?.Name</MudTd>
+        <MudTd DataLabel="Title">@context.Title?.Name</MudTd>
+        <MudTd>
+            <MudTooltip Text="Delete">
+                <MudIconButton Size="Size.Small" Color="Color.Error" Icon="@Icons.Material.Filled.Delete" />
+            </MudTooltip>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code {
+    private IEnumerable<TrainingPreferenceModel>? _trainingPreferences;
+
+    private bool _isLoading;
+    private string _searchString = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        ShowLoadingBar();
+        await GetTrainingPreferencesAsync();
+        HideLoadingBar();
+    }
+
+    private async Task GetTrainingPreferencesAsync()
+    {
+        var response = await TrainingPreferenceClient.GetTrainingPreferenceAsync();
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            _trainingPreferences = response.Content ?? [];
+        }
+        else
+        {
+            ToastService.ShowError($"Could not load training preferences. Service returned {response.StatusCode}");
+        }
+    }
+    private void ShowLoadingBar() => _isLoading = true;
+    private void HideLoadingBar() => _isLoading = false;
+}

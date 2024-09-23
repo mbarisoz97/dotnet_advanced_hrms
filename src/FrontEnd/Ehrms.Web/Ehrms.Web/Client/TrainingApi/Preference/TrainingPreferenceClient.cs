@@ -7,9 +7,9 @@ internal class TrainingPreferenceClient : ITrainingPreferenceClient
     private const string RecommendationPreferences = "RecommendationPreferences";
 
     private readonly IEndpointProvider _endpointProvider;
-    private readonly HttpClientFactoryWrapper _httpClientFactory;
+    private readonly IHttpClientFactoryWrapper _httpClientFactory;
 
-    public TrainingPreferenceClient(IEndpointProvider endpointProvider, HttpClientFactoryWrapper httpClientFactory)
+    public TrainingPreferenceClient(IEndpointProvider endpointProvider, IHttpClientFactoryWrapper httpClientFactory)
     {
         _endpointProvider = endpointProvider;
         _httpClientFactory = httpClientFactory;
