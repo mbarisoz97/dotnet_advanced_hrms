@@ -11,25 +11,25 @@ using Docker.DotNet;
 using Microsoft.Data.SqlClient;
 using Ehrms.Administration.API.Database.Context;
 using MassTransit;
+using System.Data.Common;
+using Respawn;
 
 namespace Ehrms.Administration.API.IntegrationTests.TestHelpers.Configurations;
 
+[CollectionDefinition(nameof(AdministrationWebApplicationFactory))]
+public class SharedTestCollection : ICollectionFixture<AdministrationWebApplicationFactory>
+{
+}
+
 public class AdministrationWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
+    private DbConnection _dbConnection = default!;
+    private Respawner _respawner = default!;
     private readonly int Port = PortNumberProvider.GetPortNumber();
     private readonly MsSqlContainer _msSqlContainer;
 
     private readonly AsyncRetryPolicy _retryPolicy = Policy.Handle<DockerApiException>()
         .WaitAndRetryAsync(
-            retryCount: 3,
-            sleepDurationProvider: attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)),
-            onRetry: (response, timespan, retryCount, context) =>
-            {
-                Console.WriteLine($"Retry {retryCount} after {timespan.Seconds}");
-            });
-
-    private readonly RetryPolicy _databaseCreationRetryPolicy = Policy.Handle<SqlException>()
-        .WaitAndRetry(
             retryCount: 3,
             sleepDurationProvider: attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)),
             onRetry: (response, timespan, retryCount, context) =>
@@ -49,8 +49,6 @@ public class AdministrationWebApplicationFactory : WebApplicationFactory<Program
         builder.ConfigureTestServices(services =>
         {
             services.RemoveAll(typeof(DbContextOptions<AdministrationDbContext>));
-            services.AddAdministrationApi();
-
             services.AddDbContext<AdministrationDbContext>(options =>
             {
                 options.UseSqlServer(_msSqlContainer.GetConnectionString(),
@@ -58,12 +56,6 @@ public class AdministrationWebApplicationFactory : WebApplicationFactory<Program
             });
 
             services.AddMassTransitTestHarness();
-
-            var dbContext = CreateDbContext(services);
-            _databaseCreationRetryPolicy.Execute(() =>
-            {
-                dbContext.Database.EnsureCreated();
-            });
         });
     }
 
@@ -76,12 +68,29 @@ public class AdministrationWebApplicationFactory : WebApplicationFactory<Program
         return dbContext ?? throw new NullReferenceException("DbContext is null");
     }
 
+    private async Task InitializeRespawner()
+    {
+        _dbConnection = new SqlConnection(_msSqlContainer.GetConnectionString());
+        await _dbConnection.OpenAsync();
+        _respawner = await Respawner.CreateAsync(_dbConnection, new RespawnerOptions
+        {
+            DbAdapter = DbAdapter.SqlServer,
+            SchemasToInclude = ["dbo"]
+        });
+    }
+
+    public async Task ResetDatabaseAsync()
+    {
+        await _respawner.ResetAsync(_dbConnection);
+    }
+
     public async Task InitializeAsync()
     {
         await _retryPolicy.ExecuteAsync(async () =>
         {
             await _msSqlContainer.StartAsync();
         });
+        await InitializeRespawner();
     }
 
     public async new Task DisposeAsync()
