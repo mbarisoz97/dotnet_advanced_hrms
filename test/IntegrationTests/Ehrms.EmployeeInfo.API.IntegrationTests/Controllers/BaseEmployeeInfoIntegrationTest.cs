@@ -1,13 +1,15 @@
-﻿using Ehrms.EmployeeInfo.API.Database.Context;
+﻿using Ehrms.Shared;
 using Ehrms.EmployeeInfo.API.IntegrationTests.TestHelpers.Configurations;
-using Ehrms.Shared;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Headers;
 
 namespace Ehrms.EmployeeInfo.API.IntegrationTests.Controllers;
 
-public abstract class BaseEmployeeInfoIntegrationTest : IClassFixture<EmployeeInfoWebApplicationFactory>
+[Collection(nameof(EmployeeInfoWebApplicationFactory))]
+public abstract class BaseEmployeeInfoIntegrationTest : IAsyncLifetime
 {
+    private readonly Func<Task> _resetDatabase;
+
     protected readonly EmployeeInfoDbContext dbContext;
     protected readonly EmployeeInfoWebApplicationFactory factory;
     protected readonly HttpClient client;
@@ -19,6 +21,7 @@ public abstract class BaseEmployeeInfoIntegrationTest : IClassFixture<EmployeeIn
 
         var scope = factory.Services.CreateScope();
         dbContext = scope.ServiceProvider.GetRequiredService<EmployeeInfoDbContext>();
+        _resetDatabase = factory.ResetDatabaseAsync;
 
         var request = new GenerateJwtRequest
         {
@@ -28,4 +31,7 @@ public abstract class BaseEmployeeInfoIntegrationTest : IClassFixture<EmployeeIn
         client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", jwt!.AccessToken);
         this.factory = factory;
     }
+
+    public Task InitializeAsync() => _resetDatabase();
+    public Task DisposeAsync() => Task.CompletedTask;
 }

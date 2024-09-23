@@ -1,5 +1,4 @@
 ﻿using Docker.DotNet;
-using DotNet.Testcontainers.Builders;
 using Ehrms.ProjectManagement.API.Database.Context;
 using Ehrms.Shared.TestHepers;
 using MassTransit;
@@ -12,26 +11,26 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Polly.Retry;
 using Polly;
 using Testcontainers.MsSql;
+using Respawn;
+using System.Data.Common;
 using Microsoft.Data.SqlClient;
 
 namespace Ehrms.ProjectManagement.API.IntegrationTests.TestHelpers.Configurations;
+
+[CollectionDefinition(nameof(ProjectManagementWebApplicationFactory))]
+public class SharedTestCollection : ICollectionFixture<ProjectManagementWebApplicationFactory>
+{
+}
 
 public class ProjectManagementWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private readonly int Port = PortNumberProvider.GetPortNumber();
     private readonly MsSqlContainer _msSqlContainer;
+    private DbConnection _dbConnection = default!;
+    private Respawner _respawner = default!;
 
     private readonly AsyncRetryPolicy _retryPolicy = Policy.Handle<DockerApiException>()
     .WaitAndRetryAsync(
-        retryCount: 3,
-        sleepDurationProvider: attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)),
-        onRetry: (response, timespan, retryCount, context) =>
-        {
-            Console.WriteLine($"Retry {retryCount} after {timespan.Seconds}");
-        });
-
-    private readonly RetryPolicy _databaseCreationRetryPolicy = Policy.Handle<SqlException>()
-    .WaitAndRetry(
         retryCount: 3,
         sleepDurationProvider: attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)),
         onRetry: (response, timespan, retryCount, context) =>
@@ -60,12 +59,6 @@ public class ProjectManagementWebApplicationFactory : WebApplicationFactory<Prog
             });
 
             services.AddMassTransitTestHarness();
-
-            var dbContext = CreateDbContext(services);
-            _databaseCreationRetryPolicy.Execute(() =>
-            {
-                dbContext.Database.EnsureCreated();
-            });
         });
     }
 
@@ -88,6 +81,23 @@ public class ProjectManagementWebApplicationFactory : WebApplicationFactory<Prog
         {
             await _msSqlContainer.StartAsync();
         });
+        await InitializeRespawner();
+    }
+
+    private async Task InitializeRespawner()
+    {
+        _dbConnection = new SqlConnection(_msSqlContainer.GetConnectionString());
+        await _dbConnection.OpenAsync();
+        _respawner = await Respawner.CreateAsync(_dbConnection, new RespawnerOptions
+        {
+            DbAdapter = DbAdapter.SqlServer,
+            SchemasToInclude = ["dbo"]
+        });
+    }
+
+    public async Task ResetDatabaseAsync()
+    {
+        await _respawner.ResetAsync(_dbConnection);
     }
 
     public async new Task DisposeAsync()
