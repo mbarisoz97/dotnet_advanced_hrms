@@ -1,49 +1,48 @@
-# name: Build
+name: Build
 
-# on: 
-#   workflow_dispatch:
-#   push:
-#     branches: [master]
-#   pull_request:
-#     branches: [master]  
+on: 
+  workflow_dispatch:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]  
 
-# env:
-#   DOTNET_VERSION: "8.x"
-#   SOLUTION_FILE: "./Ehrms.sln"
-#   BUILD_CONFIGURATION: "Release"
+env:
+  DOTNET_VERSION: "8.x"
+  SOLUTION_FILE: "./Ehrms.sln"
+  BUILD_CONFIGURATION: "Release"
 
-# permissions:
-#   id-token: write
-#   contents: read  
-#   checks: write
+permissions:
+  id-token: write
+  contents: read  
+  checks: write
 
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-#       - uses: actions/checkout@v3
+jobs:
+  build:
+    runs-on: ubuntu-20.04
 
-#       - name: Setup .NET
-#         uses: actions/setup-dotnet@v3
-#         with:
-#           dotnet-version: ${{env.DOTNET_VERSION}}
+    steps:
+      - uses: actions/checkout@v3
 
-#       - name: Restore
-#         run: dotnet restore ${{env.SOLUTION_FILE}}
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{env.DOTNET_VERSION}}
 
-#       - name: Build
-#         run: dotnet build ${{env.SOLUTION_FILE}} --configuration ${{env.BUILD_CONFIGURATION}} --no-restore
+      - name: Restore
+        run: dotnet restore ${{env.SOLUTION_FILE}}
 
-#       - name: Unit Test
-#         run: dotnet test ${{env.SOLUTION_FILE}} --configuration ${{env.BUILD_CONFIGURATION}} --filter "FullyQualifiedName~UnitTests" --no-restore --no-build --logger "trx;LogFileName=test-results.trx" || true 
+      - name: Build
+        run: dotnet build ${{env.SOLUTION_FILE}} --configuration ${{env.BUILD_CONFIGURATION}} --no-restore
 
-#       - name: Integration Test
-#         run: dotnet test ${{env.SOLUTION_FILE}} --configuration ${{env.BUILD_CONFIGURATION}} --filter "FullyQualifiedName~IntegrationTests" --no-restore --no-build --logger "trx;LogFileName=test-results.trx" || true 
-          
-#       - name: Process Test Results
-#         uses: dorny/test-reporter@v1
-#         if: always()
-#         with:
-#           name: Test Results
-#           path: "**/test-results.trx"
-#           reporter: dotnet-trx
-#           fail-on-error: true
+      - name: Test
+        run: dotnet test ${{env.SOLUTION_FILE}} --configuration ${{env.BUILD_CONFIGURATION}} --no-restore --no-build --logger "trx;LogFileName=test-results.trx" || true 
+
+      - name: Process Test Results
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Test Results
+          path: "**/test-results.trx"
+          reporter: dotnet-trx
+          fail-on-error: true
