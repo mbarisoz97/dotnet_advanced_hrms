@@ -13,25 +13,25 @@ using Polly;
 using Testcontainers.MsSql;
 using Ehrms.Shared.TestHepers;
 using Microsoft.Data.SqlClient;
+using Respawn;
+using System.Data.Common;
 
 namespace Ehrms.EmployeeInfo.API.IntegrationTests.TestHelpers.Configurations;
+
+[CollectionDefinition(nameof(EmployeeInfoWebApplicationFactory))]
+public class SharedTestCollection : ICollectionFixture<EmployeeInfoWebApplicationFactory>
+{
+}
 
 public class EmployeeInfoWebApplicationFactory : WebApplicationFactory<Program>, IAsyncLifetime
 {
     private readonly int Port = PortNumberProvider.GetPortNumber();
     private readonly MsSqlContainer _msSqlContainer;
+    private DbConnection _dbConnection = default!;
+    private Respawner _respawner = default!;
 
     private readonly AsyncRetryPolicy _retryPolicy = Policy.Handle<DockerApiException>()
     .WaitAndRetryAsync(
-        retryCount: 3,
-        sleepDurationProvider: attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)),
-        onRetry: (response, timespan, retryCount, context) =>
-        {
-            Console.WriteLine($"Retry {retryCount} after {timespan.Seconds}");
-        });
-
-    private readonly RetryPolicy _databaseCreationRetryPolicy = Policy.Handle<SqlException>()
-    .WaitAndRetry(
         retryCount: 3,
         sleepDurationProvider: attempt => TimeSpan.FromSeconds(Math.Pow(2, attempt)),
         onRetry: (response, timespan, retryCount, context) =>
@@ -60,12 +60,6 @@ public class EmployeeInfoWebApplicationFactory : WebApplicationFactory<Program>,
             });
 
             services.AddMassTransitTestHarness();
-
-            var dbContext = CreateDbContext(services);
-            _databaseCreationRetryPolicy.Execute(() =>
-            {
-                dbContext.Database.EnsureCreated();
-            });
         });
     }
 
@@ -84,6 +78,23 @@ public class EmployeeInfoWebApplicationFactory : WebApplicationFactory<Program>,
         {
             await _msSqlContainer.StartAsync();
         });
+        await InitializeRespawner();
+    }
+
+    private async Task InitializeRespawner()
+    {
+        _dbConnection = new SqlConnection(_msSqlContainer.GetConnectionString());
+        await _dbConnection.OpenAsync();
+        _respawner = await Respawner.CreateAsync(_dbConnection, new RespawnerOptions
+        {
+            DbAdapter = DbAdapter.SqlServer,
+            SchemasToInclude = ["dbo"]
+        });
+    }
+
+    public async Task ResetDatabaseAsync()
+    {
+        await _respawner.ResetAsync(_dbConnection);
     }
 
     public async new Task DisposeAsync()
