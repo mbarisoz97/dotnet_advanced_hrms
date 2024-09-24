@@ -14,12 +14,14 @@ public class TrainingDbContext : DbContext
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         base.OnModelCreating(modelBuilder);
     }
-    
+
     public DbSet<Training> Trainings { get; set; }
     public DbSet<Employee> Employees { get; set; }
     public DbSet<Skill> Skills { get; set; }
     public DbSet<Project> Projects { get; set; }
+    public DbSet<Title> Titles { get; set; }
     public DbSet<TrainingRecommendationRequest> RecommendationRequests { get; set; }
     public DbSet<TrainingRecommendationResult> RecommendationResults { get; set; }
     public DbSet<TrainingRecommendationSagaData> RecommendationSagaData { get; set; }
+    public DbSet<TrainingRecommendationPreferences> TrainingRecommendationPreferences { get; set; } 
 }

@@ -1,0 +1,82 @@
+﻿@attribute [Authorize]
+@attribute [StreamRendering]
+
+@inject NavigationManager NavigationManager
+@inject IToastService ToastService
+@inject ITrainingPreferenceClient TrainingPreferenceClient
+
+@if (TrainingPreference == null)
+{
+    <Loading></Loading>
+    return;
+}
+
+<MudDialog>
+    <DialogContent>
+        <div class="form-group">
+            <table class="table">
+                <tbody>
+                    <tr>
+                        <td>Id</td>
+                        <td>@TrainingPreference.Id</td>
+                    </tr>
+                    <tr>
+                        <td>Project</td>
+                        <td>@TrainingPreference.Project!.Name</td>
+                    </tr>
+                    <tr>
+                        <td>Title</td>
+                        <td>@TrainingPreference.Title!.Name</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="form-group">
+            <button @onclick="Remove" class="btn btn-danger">Delete</button>
+            <button @onclick="Cancel" class="btn btn-warning">Cancel</button>
+        </div>
+    </DialogContent>
+</MudDialog>
+
+
+@code {
+    [Parameter]
+    public Guid Id { get; set; }
+
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; } = default!;
+
+    private TrainingPreferenceModel? TrainingPreference { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await TrainingPreferenceClient.GetTrainingPreferenceByIdAsync(Id);
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            TrainingPreference = response.Content;
+        }
+        else
+        {
+            ToastService.ShowError($"Could not load preference data. Service returned : {response.StatusCode}");
+        }
+    }
+
+    protected async Task Remove()
+    {
+        var response = await TrainingPreferenceClient.DeleteTrainingPreferenceByIdAsync(Id);
+        if (response.StatusCode == HttpStatusCode.NoContent)
+        {
+            ToastService.ShowSuccess($"Training preference deleted successfully");
+            MudDialog?.Close();
+        }
+        else
+        {
+            ToastService.ShowError($"Could not delete preference. Service returned : {response.StatusCode}");
+        }
+    }
+
+    protected void Cancel()
+    {
+        MudDialog?.Close(DialogResult.Cancel);
+    }
+}

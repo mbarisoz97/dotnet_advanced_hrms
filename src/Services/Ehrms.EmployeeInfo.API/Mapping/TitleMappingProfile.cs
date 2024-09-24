@@ -22,8 +22,10 @@ public class TitleMappingProfile : Profile
 
     private void AddModelToMessageQueueEventMappings()
     {
-        CreateMap<Title, TitleCreatedEvent>();
-        CreateMap<Title, TitleUpdatedEvent>();
+        CreateMap<Title, TitleCreatedEvent>()
+            .ForMember(dest => dest.Name, src => src.MapFrom(p => p.TitleName));
+        CreateMap<Title, TitleUpdatedEvent>()
+            .ForMember(dest => dest.Name, src => src.MapFrom(p => p.TitleName));
     }
 
     private void AddModalToDtoMappings()

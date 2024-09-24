@@ -1,0 +1,37 @@
+﻿@attribute [Authorize()]
+@attribute [StreamRendering]
+
+@inject IToastService ToastService
+@inject ITrainingPreferenceClient TrainingPreferenceClient
+
+<MudDialog>
+    <DialogContent>
+        <TrainingPreferenceForm Id="Id" IsEditMode="true" OnValidSubmit="CreateTrainingPreference"></TrainingPreferenceForm>
+    </DialogContent>
+</MudDialog>
+
+@code {
+
+    [Parameter] public Guid Id { get; set; }
+    [CascadingParameter] private MudDialogInstance? MudDialog { get; set; }
+
+    private async Task CreateTrainingPreference(TrainingPreferenceModel trainingPreference)
+    {
+        UpdateTrainingPreferenceModel updatePreferenceModel = new()
+            {
+                Id = trainingPreference.Id,
+                Skills = trainingPreference.Skills.Select(x => x.Id)
+            };
+
+        var response = await TrainingPreferenceClient.UpdateTrainingPreferenceAsync(updatePreferenceModel);
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            ToastService.ShowSuccess("Training preference created successfully.");
+            MudDialog?.Close();
+        }
+        else
+        {
+            ToastService.ShowError($"Could not create training preference. Service returned : {response.StatusCode}");
+        }
+    }
+}

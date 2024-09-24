@@ -1,4 +1,4 @@
-namespace Ehrms.TrainingManagement.API.Handlers.Training.Commands;
+namespace Ehrms.TrainingManagement.API.Handlers.Recommendation.Commands;
 
 public sealed class CreateTrainingRecommendationRequestCommand : IRequest<Guid>
 {

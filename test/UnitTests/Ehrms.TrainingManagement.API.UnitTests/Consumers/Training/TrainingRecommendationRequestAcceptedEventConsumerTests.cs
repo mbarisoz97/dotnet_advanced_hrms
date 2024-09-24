@@ -90,7 +90,7 @@ public class TrainingRecommendationRequestAcceptedEventConsumerTests : UnitTests
     }
 
     [Fact]
-    public async Task Consume_EmployeesWithoutRequiredSkills_CreatesNewTrainingRecommendationsForEmployees()
+    public async Task Consume_ProjectWithNoTrainingRecommendationPreferences_DoesNotCreateRecommendations()
     {
         var employees = new EmployeeFaker().Generate(2);
         await dbContext.Employees.AddRangeAsync(employees);
@@ -103,7 +103,7 @@ public class TrainingRecommendationRequestAcceptedEventConsumerTests : UnitTests
             .WithRequiredSkills(requiredProjectSkills)
             .Generate();
         await dbContext.Projects.AddAsync(project);
-        
+
         //Create training recommendation request 
         var request = new TrainingRecommendationRequestFaker()
             .WithProject(project)
@@ -119,32 +119,42 @@ public class TrainingRecommendationRequestAcceptedEventConsumerTests : UnitTests
             .Returns(requestAcceptedEvent);
         await _consumer.Consume(contextMock.Object);
 
-        dbContext.RecommendationResults.Count().Should().Be(requiredProjectSkills.Count);
+        dbContext.RecommendationResults.Count().Should().Be(0);
     }
-    
+
     [Fact]
-    public async Task Consume_EmployeesWithRequiredSkills_ShouldCreateNoTrainingRecommendation()
+    public async Task Consume_EmployeesWithoutRequiredSkills_And_ProjectWithTrainingRecommendationPreferences_CreatesRecommendationResults()
     {
-        var requiredProjectSkills = new SkillFaker().Generate(2);
-        await dbContext.Skills.AddRangeAsync(requiredProjectSkills);
+        var title = new TitleFaker().Generate();
+        await dbContext.AddAsync(title);
 
         var employees = new EmployeeFaker()
-            .WithSkills(requiredProjectSkills)
+            .WithTitle(title)
             .Generate(2);
         await dbContext.Employees.AddRangeAsync(employees);
 
         //Create project and required project skills
+        var requiredProjectSkills = new SkillFaker().Generate(2);
+        await dbContext.Skills.AddRangeAsync(requiredProjectSkills);
         var project = new ProjectFaker()
             .WithEmployees(employees)
             .WithRequiredSkills(requiredProjectSkills)
             .Generate();
         await dbContext.Projects.AddAsync(project);
-        
+
         //Create training recommendation request 
         var request = new TrainingRecommendationRequestFaker()
             .WithProject(project)
             .Generate();
         await dbContext.AddRangeAsync(request);
+
+        var trainingPreference = new TrainingRecommendationPreferencesFaker()
+            .WithProject(project)
+            .WithTitle(title)
+            .WithSkills(requiredProjectSkills)
+            .Generate();
+        await dbContext.AddAsync(trainingPreference);
+
         await dbContext.SaveChangesAsync();
 
         var requestAcceptedEvent = new TrainingRecommendationAcceptedEventFaker()
@@ -153,8 +163,56 @@ public class TrainingRecommendationRequestAcceptedEventConsumerTests : UnitTests
         Mock<ConsumeContext<TrainingRecommendationRequestAcceptedEvent>> contextMock = new();
         contextMock.Setup(x => x.Message)
             .Returns(requestAcceptedEvent);
+        
         await _consumer.Consume(contextMock.Object);
 
-        dbContext.RecommendationResults.Should().BeEmpty();
+        dbContext.RecommendationResults.Count().Should().Be(2);
+    }
+
+    [Fact]
+    public async Task Consume_EmployeesWithRequiredSkills_And_ProjectWithTrainingRecommendationPreferences_CreatesRecommendationResults()
+    {
+        var title = new TitleFaker().Generate();
+        await dbContext.AddAsync(title);
+
+        var skills = new SkillFaker().Generate(2);
+        await dbContext.AddRangeAsync(skills);
+
+        var employees = new EmployeeFaker()
+            .WithTitle(title)
+            .WithSkills(skills)
+            .Generate(2);
+        await dbContext.Employees.AddRangeAsync(employees);
+
+        var project = new ProjectFaker()
+            .WithEmployees(employees)
+            .WithRequiredSkills(skills)
+            .Generate();
+        await dbContext.Projects.AddAsync(project);
+
+        var request = new TrainingRecommendationRequestFaker()
+            .WithProject(project)
+            .Generate();
+        await dbContext.AddRangeAsync(request);
+
+        var trainingPreference = new TrainingRecommendationPreferencesFaker()
+            .WithProject(project)
+            .WithTitle(title)
+            .WithSkills(skills)
+            .Generate();
+        await dbContext.AddAsync(trainingPreference);
+
+        await dbContext.SaveChangesAsync();
+
+        var requestAcceptedEvent = new TrainingRecommendationAcceptedEventFaker()
+            .WithRequestId(request.Id)
+            .Generate();
+        Mock<ConsumeContext<TrainingRecommendationRequestAcceptedEvent>> contextMock = new();
+        contextMock.Setup(x => x.Message)
+            .Returns(requestAcceptedEvent);
+
+        await _consumer.Consume(contextMock.Object);
+
+        dbContext.RecommendationResults.Count().Should().Be(0);
     }
 }

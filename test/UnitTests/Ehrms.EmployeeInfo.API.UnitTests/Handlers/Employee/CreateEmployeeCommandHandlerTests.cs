@@ -1,4 +1,5 @@
 ﻿using Ehrms.EmployeeInfo.API.Database.Models;
+using System.Linq.Expressions;
 
 namespace Ehrms.EmployeeInfo.API.UnitTests.Handlers.Employee;
 
@@ -61,7 +62,21 @@ public class CreateEmployeeCommandHandlerTests
             .WithTitleId(title.Id)
             .Generate();
 
+        Expression<Action<IPublishEndpoint>> publishEndpointExpression = x 
+            => x.Publish(It.IsAny<EmployeeCreatedEvent>(), It.IsAny<CancellationToken>());
+
+        EmployeeCreatedEvent ? employeeCreatedEvent = null;
+        _publishEndpointMock.Setup(publishEndpointExpression)
+            .Callback((EmployeeCreatedEvent e, CancellationToken ctx) =>
+            {
+                employeeCreatedEvent = e;
+            });
+
         await _handler.Handle(command, default);
-        _publishEndpointMock.Verify(x => x.Publish(It.IsAny<EmployeeCreatedEvent>(), It.IsAny<CancellationToken>()), Times.Once);
+
+        _publishEndpointMock.Verify(publishEndpointExpression, Times.Once);
+        employeeCreatedEvent.Should().BeEquivalentTo(command,
+            opt => opt.Excluding(p => p.DateOfBirth)
+                      .Excluding(p => p.Title));
     }
 }

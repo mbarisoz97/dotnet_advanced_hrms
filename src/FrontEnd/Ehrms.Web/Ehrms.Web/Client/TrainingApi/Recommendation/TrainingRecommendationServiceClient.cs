@@ -1,6 +1,6 @@
 using Ehrms.Web.Routing;
 
-namespace Ehrms.Web.Client;
+namespace Ehrms.Web.Client.TrainingApi.Recommendation;
 
 internal sealed class TrainingRecommendationServiceClient : ITrainingRecommendationServiceClient
 {
@@ -12,7 +12,7 @@ internal sealed class TrainingRecommendationServiceClient : ITrainingRecommendat
         _endpointProvider = endpointProvider;
         _httpClientFactoryWrapper = httpClientFactoryWrapper;
     }
-    
+
     public async Task<Response<ReadTrainingRecommendationResultModel>> GetRecommendationResult(Guid id)
     {
         var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
@@ -83,5 +83,4 @@ internal sealed class TrainingRecommendationServiceClient : ITrainingRecommendat
             StatusCode = response.StatusCode,
         };
     }
-
 }

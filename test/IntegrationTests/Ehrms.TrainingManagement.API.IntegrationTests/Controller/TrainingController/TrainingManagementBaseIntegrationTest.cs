@@ -1,6 +1,7 @@
-﻿using System.Net.Http.Headers;
-using Ehrms.Shared;
+﻿using Ehrms.Shared;
+using System.Net.Http.Headers;
 using Ehrms.Training.TestHelpers.Fakers.Models;
+using Ehrms.TrainingManagement.API.Database.Context;
 
 namespace Ehrms.TrainingManagement.API.IntegrationTests.Controller.TrainingController;
 
@@ -8,13 +9,14 @@ namespace Ehrms.TrainingManagement.API.IntegrationTests.Controller.TrainingContr
 public abstract class TrainingManagementBaseIntegrationTest : IAsyncLifetime
 {
     private readonly Func<Task> _resetDatabase;
-    private readonly TrainingManagementWebApplicationFactory _factory;
-	protected readonly HttpClient client;
 
-	protected TrainingManagementBaseIntegrationTest(TrainingManagementWebApplicationFactory factory)
-	{
-		_factory = factory;
-		client = this._factory.CreateClient();
+    protected readonly HttpClient client;
+    protected readonly TrainingDbContext dbContext;
+
+    protected TrainingManagementBaseIntegrationTest(TrainingManagementWebApplicationFactory factory)
+    {
+        client = factory.CreateClient();
+        dbContext = factory.CreateDbContext();
         _resetDatabase = factory.ResetDatabaseAsync;
 
         var request = new GenerateJwtRequest
@@ -27,7 +29,6 @@ public abstract class TrainingManagementBaseIntegrationTest : IAsyncLifetime
 
 	protected async Task<Database.Models.Training> InsertRandomTraningRecord()
 	{
-		var dbContext = _factory.CreateDbContext();
 		var training = new TrainingFaker().Generate();
 		await dbContext.AddAsync(training);
 		await dbContext.SaveChangesAsync();

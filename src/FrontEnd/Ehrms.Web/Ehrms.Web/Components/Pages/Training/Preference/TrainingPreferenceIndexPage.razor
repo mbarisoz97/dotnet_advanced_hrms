@@ -1,0 +1,111 @@
+﻿@attribute [Route(TrainingRouting.Preference)]
+@attribute [Authorize]
+@attribute [StreamRendering]
+
+@inject IToastService ToastService
+@inject IDialogService DialogService
+@inject ITrainingPreferenceClient TrainingPreferenceClient
+
+<MudTable Dense="true" Hover="true" Bordered="true" Striped="true" Loading="@_isLoading" Items="@_trainingPreferences">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Training Recommendation Preferences</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudTooltip Text="Add Training Recommendation Preference">
+            <MudIconButton OnClick="ShowCreatePreferenceDialog" Size="Size.Medium" Color="Color.Success" Icon="@Icons.Material.Filled.AddBox" />
+        </MudTooltip>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Project</MudTh>
+        <MudTh>Title</MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Project">@context.Project?.Name</MudTd>
+        <MudTd DataLabel="Title">@context.Title?.Name</MudTd>
+        <MudTd>
+            <MudTooltip Text="Edit">
+                <MudIconButton OnClick="(()=> ShowUpdatePreferenceDialog(context))" Size="Size.Small" Color="Color.Default" Icon="@Icons.Material.Filled.Edit" />
+            </MudTooltip>
+            <MudTooltip Text="Delete">
+                <MudIconButton OnClick="(()=> ShowDeletePreferenceDialog(context))" Size="Size.Small" Color="Color.Error" Icon="@Icons.Material.Filled.Delete" />
+            </MudTooltip>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code {
+    private IEnumerable<TrainingPreferenceModel>? _trainingPreferences;
+
+    private bool _isLoading;
+    private string _searchString = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetTrainingPreferencesAsync();
+    }
+
+    private async Task GetTrainingPreferencesAsync()
+    {
+        ShowLoadingBar();
+        var response = await TrainingPreferenceClient.GetTrainingPreferenceAsync();
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            _trainingPreferences = response.Content ?? [];
+        }
+        else
+        {
+            ToastService.ShowError($"Could not load training preferences. Service returned {response.StatusCode}");
+        }
+        HideLoadingBar();
+    }
+
+    private void ShowLoadingBar() => _isLoading = true;
+    private void HideLoadingBar() => _isLoading = false;
+
+    private async Task ShowCreatePreferenceDialog()
+    {
+        var dialogReference = await DialogService.ShowAsync<TrainingPreferenceCreatePage>("Create new training preference");
+        var dialogResult = await dialogReference.Result;
+
+        if (dialogResult != null && !dialogResult.Canceled)
+        {
+            await GetTrainingPreferencesAsync();
+        }
+    }
+
+    private async Task ShowUpdatePreferenceDialog(TrainingPreferenceModel trainingPreference)
+    {
+        var dialogParameters = new DialogParameters
+        {
+            {nameof(TrainingPreferenceUpdatePage.Id), trainingPreference.Id}
+        };
+
+        var dialogReference = await DialogService.ShowAsync<TrainingPreferenceUpdatePage>("Update training preference", dialogParameters);
+        var dialogResult = await dialogReference.Result;
+
+        if (dialogResult != null && !dialogResult.Canceled)
+        {
+            await GetTrainingPreferencesAsync();
+        }
+    }
+
+    private async Task ShowDeletePreferenceDialog(TrainingPreferenceModel trainingPreference)
+    {
+        var dialogParameters = new DialogParameters
+        {
+            {nameof(TrainingPreferenceDeletePage.Id), trainingPreference.Id}
+        };
+
+        var dialogReference = await DialogService.ShowAsync<TrainingPreferenceDeletePage>("Delete training preference", dialogParameters);
+        var dialogResult = await dialogReference.Result;
+
+        if (dialogResult != null && !dialogResult.Canceled)
+        {
+            await GetTrainingPreferencesAsync();
+        }
+    }
+}

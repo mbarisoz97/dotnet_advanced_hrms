@@ -2,7 +2,8 @@
 
 public sealed class Project : BaseEntity
 {
-	public string Name { get; set; } = string.Empty;
-	public ICollection<Employee> Employees { get; set; } = [];
-	public ICollection<Skill> RequiredSkills { get; set; } = [];
+    public string Name { get; set; } = string.Empty;
+    public ICollection<Employee> Employees { get; set; } = [];
+    public ICollection<Skill> RequiredSkills { get; set; } = [];
+    public ICollection<TrainingRecommendationPreferences> TrainingRecommendationPreferences { get; set; } = [];
 }

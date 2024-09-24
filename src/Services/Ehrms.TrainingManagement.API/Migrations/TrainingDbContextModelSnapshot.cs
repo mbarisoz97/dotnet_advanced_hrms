@@ -41,9 +41,14 @@ namespace Ehrms.TrainingManagement.API.Migrations
                     b.Property<Guid?>("ProjectId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("TitleId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.HasKey("Id");
 
                     b.HasIndex("ProjectId");
+
+                    b.HasIndex("TitleId");
 
                     b.ToTable("Employees");
                 });
@@ -78,6 +83,22 @@ namespace Ehrms.TrainingManagement.API.Migrations
                     b.ToTable("Skills");
                 });
 
+            modelBuilder.Entity("Ehrms.TrainingManagement.API.Database.Models.Title", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Titles");
+                });
+
             modelBuilder.Entity("Ehrms.TrainingManagement.API.Database.Models.Training", b =>
                 {
                     b.Property<Guid>("Id")
@@ -105,6 +126,27 @@ namespace Ehrms.TrainingManagement.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Trainings");
+                });
+
+            modelBuilder.Entity("Ehrms.TrainingManagement.API.Database.Models.TrainingRecommendationPreferences", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("ProjectId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid?>("TitleId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProjectId");
+
+                    b.HasIndex("TitleId");
+
+                    b.ToTable("TrainingRecommendationPreferences");
                 });
 
             modelBuilder.Entity("Ehrms.TrainingManagement.API.Database.Models.TrainingRecommendationRequest", b =>
@@ -241,11 +283,47 @@ namespace Ehrms.TrainingManagement.API.Migrations
                     b.ToTable("ProjectSkill");
                 });
 
+            modelBuilder.Entity("SkillTrainingRecommendationPreferences", b =>
+                {
+                    b.Property<Guid>("SkillsId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("TrainingRecommendationPreferencesId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("SkillsId", "TrainingRecommendationPreferencesId");
+
+                    b.HasIndex("TrainingRecommendationPreferencesId");
+
+                    b.ToTable("SkillTrainingRecommendationPreferences");
+                });
+
             modelBuilder.Entity("Ehrms.TrainingManagement.API.Database.Models.Employee", b =>
                 {
                     b.HasOne("Ehrms.TrainingManagement.API.Database.Models.Project", null)
                         .WithMany("Employees")
                         .HasForeignKey("ProjectId");
+
+                    b.HasOne("Ehrms.TrainingManagement.API.Database.Models.Title", "Title")
+                        .WithMany()
+                        .HasForeignKey("TitleId");
+
+                    b.Navigation("Title");
+                });
+
+            modelBuilder.Entity("Ehrms.TrainingManagement.API.Database.Models.TrainingRecommendationPreferences", b =>
+                {
+                    b.HasOne("Ehrms.TrainingManagement.API.Database.Models.Project", "Project")
+                        .WithMany("TrainingRecommendationPreferences")
+                        .HasForeignKey("ProjectId");
+
+                    b.HasOne("Ehrms.TrainingManagement.API.Database.Models.Title", "Title")
+                        .WithMany("TrainingRecommendationPreferences")
+                        .HasForeignKey("TitleId");
+
+                    b.Navigation("Project");
+
+                    b.Navigation("Title");
                 });
 
             modelBuilder.Entity("Ehrms.TrainingManagement.API.Database.Models.TrainingRecommendationRequest", b =>
@@ -334,9 +412,31 @@ namespace Ehrms.TrainingManagement.API.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("SkillTrainingRecommendationPreferences", b =>
+                {
+                    b.HasOne("Ehrms.TrainingManagement.API.Database.Models.Skill", null)
+                        .WithMany()
+                        .HasForeignKey("SkillsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Ehrms.TrainingManagement.API.Database.Models.TrainingRecommendationPreferences", null)
+                        .WithMany()
+                        .HasForeignKey("TrainingRecommendationPreferencesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Ehrms.TrainingManagement.API.Database.Models.Project", b =>
                 {
                     b.Navigation("Employees");
+
+                    b.Navigation("TrainingRecommendationPreferences");
+                });
+
+            modelBuilder.Entity("Ehrms.TrainingManagement.API.Database.Models.Title", b =>
+                {
+                    b.Navigation("TrainingRecommendationPreferences");
                 });
 
             modelBuilder.Entity("Ehrms.TrainingManagement.API.Database.Models.TrainingRecommendationRequest", b =>

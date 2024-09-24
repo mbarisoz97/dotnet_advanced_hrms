@@ -73,6 +73,7 @@ internal static class ProjectRouting
 internal static class TrainingRouting
 {
     internal const string Index = "/Training";
+    internal const string Preference = $"{Index}/Preference";
     internal const string Recommendation = $"{Index}/Recommendation";
 }
 

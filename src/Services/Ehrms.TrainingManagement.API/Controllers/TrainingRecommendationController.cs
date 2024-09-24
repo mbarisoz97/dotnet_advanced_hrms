@@ -1,5 +1,8 @@
-using Ehrms.TrainingManagement.API.Handlers.Training.Queries;
 using Microsoft.AspNetCore.Authorization;
+using Ehrms.TrainingManagement.API.Handlers.Training.Queries;
+using Ehrms.TrainingManagement.API.Dtos.RecommendationPreference;
+using Ehrms.TrainingManagement.API.Handlers.Recommendation.Queries;
+using Ehrms.TrainingManagement.API.Handlers.Recommendation.Commands;
 
 namespace Ehrms.TrainingManagement.API.Controllers;
 
@@ -22,10 +25,10 @@ public class TrainingRecommendationController : ControllerBase
     {
         var command = new DeleteTrainingRecommendationRequestCommand { Id = id };
         await _mediator.Send(command);
-        
+
         return Ok();
     }
-    
+
     [HttpGet("Recommendation/{id:guid}")]
     public async Task<IActionResult> GetRecommendationResult(Guid id)
     {
@@ -70,5 +73,61 @@ public class TrainingRecommendationController : ControllerBase
         var recommendationResultDto = _mapper.ProjectTo<ReadTrainingRecommendationResultDto>(recommendationResult);
 
         return Ok(recommendationResultDto);
+    }
+
+    [HttpPut("RecommendationPreferences")]
+    public async Task<IActionResult> SetTrainingRecommendationPreferences(CreateTrainingRecommendationPreferenceCommand command)
+    {
+        var commandResult = await _mediator.Send(command);
+        var actionResult = commandResult.Match<IActionResult>(
+            Succ: s => Ok(_mapper.Map<ReadRecommendationPreferenceDto>(s)),
+            Fail: f => BadRequest(f.Message));
+
+        return actionResult;
+    }
+
+    [HttpPost("RecommendationPreferences")]
+    public async Task<IActionResult> UpdateTrainingRecommendationPreferences(UpdateTrainingRecommendationPreferenceCommand command)
+    {
+        var commandResult = await _mediator.Send(command);
+        var actionResult = commandResult.Match<IActionResult>(
+            Succ: s => NoContent(),
+            Fail: f => BadRequest(f.Message));
+
+        return actionResult;
+    }
+
+    [HttpDelete("RecommendationPreferences/{id:guid}")]
+    public async Task<IActionResult> DeleteTrainingRecommendationPreferences(Guid id)
+    {
+        var command = new DeleteTrainingRecommendationPreferenceCommand() { Id = id };
+        var commandResult = await _mediator.Send(command);
+        var actionResult = commandResult.Match<IActionResult>(
+            Succ: s => NoContent(),
+            Fail: f => BadRequest(f.Message));
+
+        return actionResult;
+    }
+
+    [HttpGet("RecommendationPreferences")]
+    public async Task<IActionResult> GetTrainingRecommendationPreferences()
+    {
+        var query = new GetRecommendationPreferencesQuery();
+        var preferences = await _mediator.Send(query);
+        var preferenceDtos = _mapper.ProjectTo<ReadRecommendationPreferenceDto>(preferences);
+
+        return Ok(preferenceDtos);
+    }
+
+    [HttpGet("RecommendationPreferences/{id:guid}")]
+    public async Task<IActionResult> GetTrainingRecommendationPreferences(Guid id)
+    {
+        var query = new GetRecommendationPreferencesByIdQuery() { Id = id};
+        var queryResult = await _mediator.Send(query);
+        var actionResult = queryResult.Match<IActionResult>(
+            Succ: s => Ok(_mapper.Map<ReadRecommendationPreferenceDto>(s)),
+            Fail: f => BadRequest(f.Message));
+
+        return actionResult;
     }
 }

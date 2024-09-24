@@ -1,4 +1,4 @@
-namespace Ehrms.Web.Client;
+namespace Ehrms.Web.Client.TrainingApi.Recommendation;
 
 internal interface ITrainingRecommendationServiceClient
 {

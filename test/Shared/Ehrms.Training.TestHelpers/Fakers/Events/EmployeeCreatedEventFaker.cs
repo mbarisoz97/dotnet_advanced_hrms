@@ -15,4 +15,10 @@ public sealed class EmployeeCreatedEventFaker : Faker<EmployeeCreatedEvent>
         RuleFor(x => x.Skills, skillIdCollection);
         return this;
     }
+
+    public EmployeeCreatedEventFaker WithTitle(Title title)
+    {
+        RuleFor(x => x.TitleId, title.Id);
+        return this;
+    }
 }

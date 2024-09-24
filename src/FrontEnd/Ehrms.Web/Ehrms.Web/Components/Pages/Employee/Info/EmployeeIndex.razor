@@ -57,6 +57,11 @@
 
     protected override async Task OnParametersSetAsync()
     {
+        await LoadEmployees();
+    }
+
+    private async Task LoadEmployees()
+    {
         Loading = true;
         var response = await EmployeeServiceServiceClient.GetEmployeesAsync();
         if (response.StatusCode == HttpStatusCode.OK)
@@ -68,7 +73,12 @@
 
     private async Task ShowCreateEmployeeDialog()
     {
-        await DialogService.ShowAsync<CreateEmployee>("Create new employee");
+        var dialogReference = await DialogService.ShowAsync<CreateEmployee>("Create new employee");
+        var dialogResult = await dialogReference.Result;
+        if (dialogResult != null && !dialogResult.Canceled)
+        {
+            await LoadEmployees();
+        }
     }
 
     private async Task ShowUpdateEmployeeDialog(EmployeeModel employee)
@@ -77,7 +87,12 @@
         {
             {x => x.Id, employee.Id}
         };
-        await DialogService.ShowAsync<EmployeeUpdate>("Update employee", dialogParameters);
+        var dialogReference = await DialogService.ShowAsync<EmployeeUpdate>("Update employee", dialogParameters);
+        var dialogResult = await dialogReference.Result;
+        if (dialogResult != null && !dialogResult.Canceled)
+        {
+            await LoadEmployees();
+        }
     }
 
     private async Task ShowDeleteEmployeeDialog(EmployeeModel employee)
@@ -86,7 +101,13 @@
         {
             {x => x.Id, employee.Id}
         };
-        await DialogService.ShowAsync<EmployeeDelete>("Delete employee");
+
+        var dialogReference = await DialogService.ShowAsync<EmployeeDelete>("Delete employee", dialogParameters);
+        var dialogResult = await dialogReference.Result;
+        if (dialogResult != null && !dialogResult.Canceled)
+        {
+            await LoadEmployees();
+        }
     }
 
     private bool SearchFilter(EmployeeModel element) => Search(element, SearchString);

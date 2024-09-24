@@ -22,10 +22,14 @@ public class EmployeeCreatedEventConsumerTests
     {
         var skills = new SkillFaker().Generate(2);
         await _dbContext.Skills.AddRangeAsync(skills);
+        var title = new TitleFaker().Generate();
+        await _dbContext.AddAsync(title);
+
         await _dbContext.SaveChangesAsync();
 
         var employeeCreatedEvent = new EmployeeCreatedEventFaker()
             .WithSkills(skills)
+            .WithTitle(title)
             .Generate();
 
         Mock<ConsumeContext<EmployeeCreatedEvent>> contextMock = new();
@@ -35,7 +39,9 @@ public class EmployeeCreatedEventConsumerTests
         await _consumer.Consume(contextMock.Object);
         var employee = _dbContext.Employees.FirstOrDefault(x => x.Id == employeeCreatedEvent.Id);
 
-        employee.Should().BeEquivalentTo(employeeCreatedEvent, opt => opt.Excluding(x => x.Skills));
+        employee.Should().BeEquivalentTo(employeeCreatedEvent, opt =>
+            opt.Excluding(x => x.Skills)
+               .Excluding(p => p.TitleId));
         employee?.Skills.Should().BeEquivalentTo(skills);
     }
 }

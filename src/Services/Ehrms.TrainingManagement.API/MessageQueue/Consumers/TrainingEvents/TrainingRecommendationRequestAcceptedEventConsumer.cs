@@ -1,7 +1,9 @@
+using LanguageExt;
+
 namespace Ehrms.TrainingManagement.API.MessageQueue.Consumers.TrainingEvents;
 
-public sealed class
-    TrainingRecommendationRequestAcceptedEventConsumer : IConsumer<TrainingRecommendationRequestAcceptedEvent>
+public sealed class TrainingRecommendationRequestAcceptedEventConsumer
+    : IConsumer<TrainingRecommendationRequestAcceptedEvent>
 {
     private readonly TrainingDbContext _dbContext;
     private readonly ILogger<TrainingRecommendationRequestAcceptedEventConsumer> _logger;
@@ -15,8 +17,7 @@ public sealed class
 
     public async Task Consume(ConsumeContext<TrainingRecommendationRequestAcceptedEvent> context)
     {
-        var request =
-            await _dbContext.RecommendationRequests.FirstOrDefaultAsync(x => x.Id == context.Message.RequestId);
+        var request = await _dbContext.RecommendationRequests.FirstOrDefaultAsync(x => x.Id == context.Message.RequestId);
         if (request == null)
         {
             _logger.LogError("Ignored null event : <{event}>", nameof(TrainingRecommendationRequestAcceptedEvent));
@@ -50,35 +51,79 @@ public sealed class
 
     private async Task CreateTrainingRecommendations(TrainingRecommendationRequest request, Project project)
     {
-        foreach (var requiredSkill in project.RequiredSkills)
+        var preferences = _dbContext.TrainingRecommendationPreferences
+            .Include(x => x.Project)
+            .Include(x => x.Title)
+            .Include(x => x.Skills)
+            .AsSplitQuery()
+            .Where(x => x.Project!.Id == project.Id);
+
+        if (!preferences.Any())
         {
-            TrainingRecommendationResult recommendationResult = new()
-            {
-                Skill = requiredSkill,
-                RecommendationRequest = request,
-            };
-
-            var employees = _dbContext.Employees
-                .Include(x=>x.Skills)
-                .Where(x => project.Employees.Contains(x));
-            foreach (var employee in employees)
-            {
-                if (!employee.Skills.Contains(requiredSkill))
-                {
-                    recommendationResult.Employees.Add(employee);
-                }
-            }
-
-            if (recommendationResult.Employees.Count > 0)
-            {
-                await _dbContext.AddAsync(recommendationResult);
-                await _dbContext.SaveChangesAsync();
-            }
+            //ToDo: Add log message
+            return;
         }
+
+        Dictionary<Title, List<Skill>> titleSkillMapping = CreateTitleSkillMatrix(preferences);
+        Dictionary<Skill, TrainingRecommendationResult> recommendationMapping = CreateTrainingRecommendationMatrix(request, project, titleSkillMapping);
+
+        await _dbContext.AddRangeAsync(recommendationMapping.Values);
+        await _dbContext.SaveChangesAsync();
     }
 
-    private static async Task PublishRecommendationCompletedEvent(
-        ConsumeContext<TrainingRecommendationRequestAcceptedEvent> context)
+    private Dictionary<Skill, TrainingRecommendationResult> CreateTrainingRecommendationMatrix(TrainingRecommendationRequest request, Project project, Dictionary<Title, List<Skill>> titleSkillMapping)
+    {
+        var employees = _dbContext.Employees
+            .Include(x => x.Title)
+            .Include(x => x.Skills)
+            .Where(x => project.Employees.Contains(x));
+
+        Dictionary<Skill, TrainingRecommendationResult> recommendationMapping = [];
+        foreach (var employee in employees)
+        {
+            if (!titleSkillMapping.TryGetValue(employee.Title!, out var skills))
+            {
+                //No preference found for given title.
+                continue;
+            }
+
+            foreach (var skill in skills)
+            {
+                if (employee.Skills.Contains(skill))
+                {
+                    continue;
+                }
+
+                if (!recommendationMapping.TryGetValue(skill, out TrainingRecommendationResult? recommendationResult))
+                {
+                    recommendationResult = new TrainingRecommendationResult() { Skill = skill, RecommendationRequest = request };
+                    recommendationMapping[skill] = recommendationResult;
+                }
+
+                recommendationResult.Employees.Add(employee);
+            }
+        }
+
+        return recommendationMapping;
+    }
+
+    private static Dictionary<Title, List<Skill>> CreateTitleSkillMatrix(IQueryable<TrainingRecommendationPreferences> preferences)
+    {
+        Dictionary<Title, List<Skill>> titleSkillMapping = [];
+        foreach (var preference in preferences)
+        {
+            if (!titleSkillMapping.TryGetValue(preference.Title!, out var skills))
+            {
+                skills = [];
+                titleSkillMapping[preference.Title!] = skills;
+            }
+            skills.AddRange(preference.Skills);
+        }
+
+        return titleSkillMapping;
+    }
+
+    private static async Task PublishRecommendationCompletedEvent(ConsumeContext<TrainingRecommendationRequestAcceptedEvent> context)
     {
         TrainingRecommendationCompletedEvent recommendationCompletedEvent = new()
         {
@@ -86,12 +131,12 @@ public sealed class
         };
         await context.Publish(recommendationCompletedEvent);
     }
-
-    private static async Task PublishRecommendationCancelledEvent(
-        ConsumeContext<TrainingRecommendationRequestAcceptedEvent> context)
+    private static async Task PublishRecommendationCancelledEvent(ConsumeContext<TrainingRecommendationRequestAcceptedEvent> context)
     {
-        TrainingRecommendationCancelledEvent recommendationCancelledEvent =
-            new() { RequestId = context.Message.RequestId };
+        TrainingRecommendationCancelledEvent recommendationCancelledEvent = new()
+        {
+            RequestId = context.Message.RequestId
+        };
         await context.Publish(recommendationCancelledEvent);
     }
 }

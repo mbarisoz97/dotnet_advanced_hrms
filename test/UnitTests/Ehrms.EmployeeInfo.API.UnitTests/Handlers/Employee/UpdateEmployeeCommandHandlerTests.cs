@@ -42,11 +42,7 @@ public class UpdateEmployeeCommandHandlerTests
         await _handler.Handle(command, default);
 
         _publishEndpointMock.Verify(x => x.Publish(It.IsAny<EmployeeUpdatedEvent>(), It.IsAny<CancellationToken>()), Times.Once);
-
-        employeeUpdatedEvent.Should().NotBeNull();
-        employeeUpdatedEvent?.Id.Should().Be(command.Id);
-        employeeUpdatedEvent?.FirstName.Should().Be(command.FirstName);
-        employeeUpdatedEvent?.LastName.Should().Be(command.LastName);
+        employeeUpdatedEvent.Should().BeEquivalentTo(employeeUpdatedEvent);
     }
 
     [Fact]
