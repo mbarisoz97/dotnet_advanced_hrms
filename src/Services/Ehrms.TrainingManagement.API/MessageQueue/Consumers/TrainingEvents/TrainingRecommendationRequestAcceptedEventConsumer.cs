@@ -56,7 +56,7 @@ public sealed class TrainingRecommendationRequestAcceptedEventConsumer
             .Include(x => x.Title)
             .Include(x => x.Skills)
             .AsSplitQuery()
-            .Where(x => x.Project.Id == project.Id);
+            .Where(x => x.Project!.Id == project.Id);
 
         if (!preferences.Any())
         {
@@ -81,7 +81,7 @@ public sealed class TrainingRecommendationRequestAcceptedEventConsumer
         Dictionary<Skill, TrainingRecommendationResult> recommendationMapping = [];
         foreach (var employee in employees)
         {
-            if (!titleSkillMapping.TryGetValue(employee.Title, out var skills))
+            if (!titleSkillMapping.TryGetValue(employee.Title!, out var skills))
             {
                 //No preference found for given title.
                 continue;
@@ -112,10 +112,10 @@ public sealed class TrainingRecommendationRequestAcceptedEventConsumer
         Dictionary<Title, List<Skill>> titleSkillMapping = [];
         foreach (var preference in preferences)
         {
-            if (!titleSkillMapping.TryGetValue(preference.Title, out var skills))
+            if (!titleSkillMapping.TryGetValue(preference.Title!, out var skills))
             {
                 skills = [];
-                titleSkillMapping[preference.Title] = skills;
+                titleSkillMapping[preference.Title!] = skills;
             }
             skills.AddRange(preference.Skills);
         }

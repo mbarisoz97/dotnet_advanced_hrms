@@ -19,8 +19,8 @@
     {
         CreateTrainingPreferenceModel createPreferenceModel = new()
         {
-            ProjectId = trainingPreference.Project.Id,
-            TitleId = trainingPreference.Title.Id,
+            ProjectId = trainingPreference.Project!.Id,
+            TitleId = trainingPreference.Title!.Id,
             Skills = trainingPreference.Skills.Select(x=>x.Id)
         };
 

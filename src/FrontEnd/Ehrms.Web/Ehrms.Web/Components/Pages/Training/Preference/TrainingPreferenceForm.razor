@@ -90,7 +90,7 @@
 
             TrainingPreference = response.Content;
 
-            var selectedSkills = TrainingPreference.Skills.Select(ps => ps.Id);
+            var selectedSkills = TrainingPreference!.Skills.Select(ps => ps.Id);
             SelectedSkills = Skills.Where(s => selectedSkills.Contains(s.Id))
                                    .Select(s => s.Name);
         }
@@ -105,7 +105,7 @@
             return;
         }
 
-        Projects = response.Content
+        Projects = response.Content!
             .Select(x => new ProjectSummary
                 {
                     Id = x.Id,
@@ -121,7 +121,7 @@
             return;
         }
 
-        Titles = response.Content
+        Titles = response.Content!
             .Select(x => new TitleSummary
                 {
                     Id = x.Id,
@@ -137,7 +137,7 @@
             return;
         }
 
-        Skills = response.Content
+        Skills = response.Content!
             .Select(x => new SkillSummary
                 {
                     Id = x.Id,
@@ -147,7 +147,11 @@
 
     protected async Task ValidSubmit()
     {
-        TrainingPreference.Skills = Skills.Where(x => SelectedSkills.Contains(x.Name));
+        if (TrainingPreference != null)
+        {
+            TrainingPreference.Skills = Skills.Where(x => SelectedSkills.Contains(x.Name));
+        }
+        
         await OnValidSubmit.InvokeAsync(TrainingPreference);
     }
 }
