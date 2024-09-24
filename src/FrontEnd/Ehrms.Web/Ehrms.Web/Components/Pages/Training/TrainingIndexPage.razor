@@ -4,6 +4,7 @@
 
 @inject IToastService ToastService
 @inject IModalService ModalService
+@inject IDialogService DialogService
 @inject ITrainingServiceClient TrainingServiceClient
 
 <MudTable Items="@TrainingModels" Dense="true" Hover="true" Loading="@_loading" Bordered="true" Striped="true">
@@ -25,6 +26,21 @@
                     Create
                 </MudMenuItem>
                 <MudMenuItem Href="@(TrainingRouting.Recommendation)">
+                    Show
+                </MudMenuItem>
+            </ChildContent>
+        </MudMenu>
+        <MudMenu ActivationEvent="@MouseEvent.MouseOver" AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
+            <ActivatorContent>
+                <MudTooltip Text="Training Preferences" Placement="Placement.Left">
+                    <MudIconButton Size="Size.Small" Color="Color.Primary" Icon="@Icons.Material.Filled.Settings" @onclick="@(ShowCreatePreferenceDialog)"></MudIconButton>
+                </MudTooltip>
+            </ActivatorContent>
+            <ChildContent>
+                <MudMenuItem @onclick="@(ShowCreatePreferenceDialog)">
+                    Create
+                </MudMenuItem>
+                <MudMenuItem Href="@(TrainingRouting.Preference)">
                     Show
                 </MudMenuItem>
             </ChildContent>
@@ -127,4 +143,8 @@
         _loading = false;
     }
 
+    private async Task ShowCreatePreferenceDialog()
+    {
+        await DialogService.ShowAsync<TrainingPreferenceCreatePage>("Create new training preference");
+    }
 }
