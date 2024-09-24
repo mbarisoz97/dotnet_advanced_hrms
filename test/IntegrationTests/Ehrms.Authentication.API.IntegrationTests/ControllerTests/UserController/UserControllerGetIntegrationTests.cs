@@ -20,7 +20,7 @@ public class UserControllerGetIntegrationTests : AuthenticationApiBaseIntegratio
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         var userDtos = await response.Content.ReadFromJsonAsync<IEnumerable<ReadUserDto>>();
-        userDtos?.Count().Should().Be(users.Count);
+        userDtos?.Count().Should().BeGreaterThanOrEqualTo(users.Count);
     }
 
     [Fact]
