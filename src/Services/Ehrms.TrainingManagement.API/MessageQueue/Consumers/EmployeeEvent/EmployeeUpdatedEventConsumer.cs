@@ -31,6 +31,9 @@ public class EmployeeUpdatedEventConsumer : IConsumer<EmployeeUpdatedEvent>
 
         employee = _mapper.Map(context.Message, employee);
         await UpdateEmployeeSkills(updateEvent, employee);
+        employee.Title = _dbContext.Titles
+            .FirstOrDefault(x=>x.Id == context.Message.TitleId);
+        
         await _dbContext.SaveChangesAsync();
 
         _logger.LogInformation("Updated employee with id {id}", updateEvent.Id);

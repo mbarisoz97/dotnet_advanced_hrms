@@ -14,4 +14,16 @@ public sealed class EmployeeUpdatedEventFaker : Faker<EmployeeUpdatedEvent>
 		RuleFor(e => e.Id, id);
 		return this;
 	}
+
+    public EmployeeUpdatedEventFaker WithTitle(Title title)
+    {
+        RuleFor(e => e.TitleId, title.Id);
+        return this;
+    }
+
+    public EmployeeUpdatedEventFaker WithTitleId(Guid id)
+    {
+        RuleFor(e => e.TitleId, id);
+        return this;
+    }
 }

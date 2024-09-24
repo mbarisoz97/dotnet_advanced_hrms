@@ -17,12 +17,20 @@ public class EmployeeUpdatedEventConsumerTests
 		var dbContext = TestDbContextFactory.CreateDbContext($"{Guid.NewGuid()}");
 		EmployeeUpdatedEventConsumer consumer = new(_mapper, dbContext, _loggerMock.Object);
 
-		var employee = new EmployeeFaker().Generate();
+        var titleBeforeUpdate = new TitleFaker().Generate();
+        var titleAfterUpdate = new TitleFaker().Generate();
+        await dbContext.AddRangeAsync(titleAfterUpdate, titleAfterUpdate);
+
+        var employee = new EmployeeFaker()
+			.WithTitle(titleBeforeUpdate)
+			.Generate();
 		await dbContext.Employees.AddAsync(employee);
+
 		await dbContext.SaveChangesAsync();
 
 		var employeeUpdatedEvent = new EmployeeUpdatedEventFaker()
 			.WithId(employee.Id)
+			.WithTitle(titleAfterUpdate)
 			.Generate();
 
 		Mock<ConsumeContext<EmployeeUpdatedEvent>> contextMock = new();

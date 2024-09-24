@@ -22,10 +22,14 @@ public class EmployeeCreatedEventConsumerTests
     {
         var skills = new SkillFaker().Generate(2);
         await _dbContext.Skills.AddRangeAsync(skills);
+        var title = new TitleFaker().Generate();
+        await _dbContext.AddAsync(title);
+
         await _dbContext.SaveChangesAsync();
 
         var employeeCreatedEvent = new EmployeeCreatedEventFaker()
             .WithSkills(skills)
+            .WithTitle(title)
             .Generate();
 
         Mock<ConsumeContext<EmployeeCreatedEvent>> contextMock = new();
