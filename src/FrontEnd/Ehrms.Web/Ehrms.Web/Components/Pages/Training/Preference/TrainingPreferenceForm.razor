@@ -1,0 +1,153 @@
+﻿@attribute [Authorize]
+@attribute [StreamRendering]
+
+@inject IToastService ToastService
+@inject ISkillServiceClient SkillServiceClient
+@inject IEmployeeTitleClient TitleServiceClient
+@inject IProjectServiceClient ProjectServiceClient
+@inject ITrainingPreferenceClient TrainingPreferenceClient
+
+@if (TrainingPreference == null)
+{
+    return;
+}
+
+<EditForm Model="@TrainingPreference" OnValidSubmit="ValidSubmit" FormName="TrainingPreferenceForm">
+    <DataAnnotationsValidator></DataAnnotationsValidator>
+    @if (!IsEditMode)
+    {
+        <div class="mt-3">
+            <MudSelect T="ProjectSummary" @bind-Value="TrainingPreference.Project" ToStringFunc="@((e)=> e?.Name)" Disabled="IsEditMode"
+                       Label="Project" Placeholder="Select Project" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Clearable>
+                @foreach (var project in Projects)
+                {
+                    <MudSelectItem T="ProjectSummary" Value="@project">@(project.Name)</MudSelectItem>
+                }
+            </MudSelect>
+            <ValidationMessage class="text-danger" For="(()=> TrainingPreference.Project)"></ValidationMessage>
+        </div>
+        <div class="mt-3">
+            <MudSelect T="TitleSummary" @bind-Value="TrainingPreference.Title" ToStringFunc="@((e)=> e?.Name)" Disabled="IsEditMode"
+                       Label="Title" Placeholder="Select Title" AnchorOrigin="Origin.BottomCenter" Variant="Variant.Outlined" Clearable>
+                @foreach (var title in Titles)
+                {
+                    <MudSelectItem T="TitleSummary" Value="@title">@(title.Name)</MudSelectItem>
+                }
+            </MudSelect>
+            <ValidationMessage class="text-danger" For="(()=> TrainingPreference.Title)"></ValidationMessage>
+        </div>
+    }
+    <div class="mt-3">
+        <MudSelect T="string" @bind-SelectedValues="SelectedSkills"
+                   Label="Skills" Placeholder="Select Skills" MultiSelection="true" AnchorOrigin="Origin.BottomCenter">
+            @foreach (var skill in Skills.Select(x => x.Name))
+            {
+                <MudSelectItem T="string" Value="@skill">@skill</MudSelectItem>
+            }
+        </MudSelect>
+        <ValidationMessage class="text-danger" For="(()=> TrainingPreference.Skills)"></ValidationMessage>
+    </div>
+    <div class="mt-3">
+        <button class="btn btn-primary" type="submit">
+            <i class="bi bi-floppy"></i> Save
+        </button>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+    [Parameter] public bool IsEditMode { get; set; }
+    [Parameter] public EventCallback<TrainingPreferenceModel> OnValidSubmit { get; set; }
+    [SupplyParameterFromForm] public TrainingPreferenceModel? TrainingPreference { get; set; }
+
+    private IEnumerable<string> SelectedSkills = new HashSet<string>();
+    private IEnumerable<SkillSummary> Skills { get; set; } = [];
+    private IEnumerable<TitleSummary> Titles { get; set; } = [];
+    private IEnumerable<ProjectSummary> Projects { get; set; } = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        await GetSkillData();
+
+        if (!IsEditMode)
+        {
+            await GetTitleData();
+            await GetProjectData();
+
+            TrainingPreference = new()
+                {
+                    Project = new(),
+                    Title = new()
+                };
+        }
+        else
+        {
+            var response = await TrainingPreferenceClient.GetTrainingPreferenceByIdAsync(Id);
+            if (response.StatusCode != HttpStatusCode.OK)
+            {
+                ToastService.ShowError($"Could not load preference data. Service returned {response.StatusCode}");
+            }
+
+            TrainingPreference = response.Content;
+
+            var selectedSkills = TrainingPreference.Skills.Select(ps => ps.Id);
+            SelectedSkills = Skills.Where(s => selectedSkills.Contains(s.Id))
+                                   .Select(s => s.Name);
+        }
+    }
+
+    private async Task GetProjectData()
+    {
+        var response = await ProjectServiceClient.GetProjectsAsync();
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            ToastService.ShowError($"Could not load training preference. Service returned {response.StatusCode}");
+            return;
+        }
+
+        Projects = response.Content
+            .Select(x => new ProjectSummary
+                {
+                    Id = x.Id,
+                    Name = x.Name
+                });
+    }
+    private async Task GetTitleData()
+    {
+        var response = await TitleServiceClient.GetAllTitles();
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            ToastService.ShowError($"Could not load employee titles. Service returned {response.StatusCode}");
+            return;
+        }
+
+        Titles = response.Content
+            .Select(x => new TitleSummary
+                {
+                    Id = x.Id,
+                    Name = x.TitleName
+                });
+    }
+    private async Task GetSkillData()
+    {
+        var response = await SkillServiceClient.GetSkillsAsync();
+        if (response.StatusCode != HttpStatusCode.OK)
+        {
+            ToastService.ShowError($"Could not load employee skills. Service returned {response.StatusCode}");
+            return;
+        }
+
+        Skills = response.Content
+            .Select(x => new SkillSummary
+                {
+                    Id = x.Id,
+                    Name = x.Name
+                });
+    }
+
+    protected async Task ValidSubmit()
+    {
+        TrainingPreference.Skills = Skills.Where(x => SelectedSkills.Contains(x.Name));
+        await OnValidSubmit.InvokeAsync(TrainingPreference);
+    }
+}

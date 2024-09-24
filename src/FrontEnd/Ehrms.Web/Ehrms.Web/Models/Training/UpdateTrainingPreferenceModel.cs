@@ -3,5 +3,5 @@
 public class UpdateTrainingPreferenceModel
 {
     public Guid Id { get; set; }
-    public ICollection<Guid> Skills { get; set; } = [];
+    public IEnumerable<Guid> Skills { get; set; } = [];
 }

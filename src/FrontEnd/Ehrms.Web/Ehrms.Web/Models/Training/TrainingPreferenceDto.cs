@@ -4,7 +4,7 @@ public class CreateTrainingPreferenceModel
 {
     public Guid ProjectId { get; set; }
     public Guid TitleId { get; set; }
-    public ICollection<Guid> Skills { get; set; } = [];
+    public IEnumerable<Guid> Skills { get; set; } = [];
 }
 
 public class TrainingPreferenceModel
@@ -12,7 +12,7 @@ public class TrainingPreferenceModel
     public Guid Id { get; set; }
     public TitleSummary? Title { get; set; }
     public ProjectSummary? Project { get; set; }
-    public ICollection<SkillSummary> Skills { get; set; } = [];
+    public IEnumerable<SkillSummary> Skills { get; set; } = [];
 }
 
 public class ProjectSummary
