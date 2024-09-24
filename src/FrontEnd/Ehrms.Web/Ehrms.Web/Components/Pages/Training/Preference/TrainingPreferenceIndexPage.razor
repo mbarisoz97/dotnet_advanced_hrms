@@ -28,7 +28,7 @@
                 <MudIconButton OnClick="(()=> ShowUpdatePreferenceDialog(context))" Size="Size.Small" Color="Color.Default" Icon="@Icons.Material.Filled.Edit" />
             </MudTooltip>
             <MudTooltip Text="Delete">
-                <MudIconButton Size="Size.Small" Color="Color.Error" Icon="@Icons.Material.Filled.Delete" />
+                <MudIconButton OnClick="(()=> ShowDeletePreferenceDialog(context))" Size="Size.Small" Color="Color.Error" Icon="@Icons.Material.Filled.Delete" />
             </MudTooltip>
         </MudTd>
     </RowTemplate>
@@ -85,6 +85,22 @@
         };
 
         var dialogReference = await DialogService.ShowAsync<TrainingPreferenceUpdatePage>("Update training preference", dialogParameters);
+        var dialogResult = await dialogReference.Result;
+
+        if (dialogResult != null && !dialogResult.Canceled)
+        {
+            await GetTrainingPreferencesAsync();
+        }
+    }
+
+    private async Task ShowDeletePreferenceDialog(TrainingPreferenceModel trainingPreference)
+    {
+        var dialogParameters = new DialogParameters
+        {
+            {nameof(TrainingPreferenceDeletePage.Id), trainingPreference.Id}
+        };
+
+        var dialogReference = await DialogService.ShowAsync<TrainingPreferenceDeletePage>("Delete training preference", dialogParameters);
         var dialogResult = await dialogReference.Result;
 
         if (dialogResult != null && !dialogResult.Canceled)
