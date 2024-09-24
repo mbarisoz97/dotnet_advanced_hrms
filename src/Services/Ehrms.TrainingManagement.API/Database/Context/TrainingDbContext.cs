@@ -14,7 +14,7 @@ public class TrainingDbContext : DbContext
         modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
         base.OnModelCreating(modelBuilder);
     }
-    
+
     public DbSet<Training> Trainings { get; set; }
     public DbSet<Employee> Employees { get; set; }
     public DbSet<Skill> Skills { get; set; }
