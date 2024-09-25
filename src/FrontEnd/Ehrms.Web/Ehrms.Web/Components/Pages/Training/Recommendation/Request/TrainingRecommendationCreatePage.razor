@@ -18,12 +18,14 @@
         <ValidationMessage class="text-danger" For="(() => RecommendationRequestModel.Title)"></ValidationMessage>
     </div>
     <div class="mt-3">
-        <MudSelect T="Guid" @bind-Value="RecommendationRequestModel.ProjectId" Label="Select a project" OpenIcon="@Icons.Material.Filled.Folder" AdornmentColor="Color.Secondary">
-            @foreach (var item in _projects)
+        <MudSelect T="ProjectModel" @bind-Value="SelectedProject" ToStringFunc="ProjectModelToStringFunc"
+                   Label="Select a project" OpenIcon="@Icons.Material.Filled.Folder" AdornmentColor="Color.Secondary">
+            @foreach (var project in _projects)
             {
-                <MudSelectItem Value="@item.Id">@item.Name</MudSelectItem>
+                <MudSelectItem Value="@project">@project.Name</MudSelectItem>
             }
         </MudSelect>
+        <ValidationMessage class="text-danger" For="(() => RecommendationRequestModel.ProjectId)"></ValidationMessage>
     </div>
     <div class="mt-3">
     </div>
@@ -35,10 +37,14 @@
 </EditForm>
 
 @code {
-    private IEnumerable<ProjectModel>? _projects;
+    [SupplyParameterFromForm]
+    private CreateTrainingRecommendationRequestModel RecommendationRequestModel { get; set; } = new();
 
-    [SupplyParameterFromForm] private CreateTrainingRecommendationRequestModel RecommendationRequestModel { get; set; } = new();
-    [CascadingParameter] BlazoredModalInstance ModalInstance { get; set; } = default!;
+    [CascadingParameter]
+    BlazoredModalInstance ModalInstance { get; set; } = default!;
+
+    private IEnumerable<ProjectModel>? _projects;
+    private ProjectModel? SelectedProject { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -55,6 +61,7 @@
 
     private async Task ValidSubmit()
     {
+        RecommendationRequestModel.ProjectId = SelectedProject!.Id;
         var response = await TrainingRecommendationServiceClient.CreateTrainingRecommendationRequest(RecommendationRequestModel);
         if (response.StatusCode == HttpStatusCode.OK)
         {
@@ -66,4 +73,12 @@
             ToastService.ShowError($"Could create training recommendation request. Service returned {response.StatusCode}");
         }
     }
+
+    private string ProjectModelToStringFunc(ProjectModel projectModel)
+    {
+        return projectModel != null
+            ? projectModel.Name
+            : string.Empty;
+    }
+
 }
