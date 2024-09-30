@@ -16,7 +16,7 @@ internal class UserServiceClient : IUserServiceClient
 
     public async Task<Response<ReadUserModel>> GetUserByNameAsync(string? username)
     {
-        var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
+        var client = await _httpClientFactoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.GetAsync($"{_endpointProvider.UserEndpoint}/GetByName/{username}");
 
         return new()
@@ -28,7 +28,7 @@ internal class UserServiceClient : IUserServiceClient
 
     public async Task<Response<IEnumerable<ReadUserModel>>> GetUsersAsync()
     {
-        var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
+        var client = await _httpClientFactoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.GetAsync(_endpointProvider.UserEndpoint);
 
         return new()
@@ -40,7 +40,7 @@ internal class UserServiceClient : IUserServiceClient
 
     public async Task<Response<ReadUserModel>> GetUserByIdAsync(Guid id)
     {
-        var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
+        var client = await _httpClientFactoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.GetAsync($"{_endpointProvider.UserEndpoint}/{id}");
 
         return new()
@@ -52,7 +52,7 @@ internal class UserServiceClient : IUserServiceClient
 
     public async Task<Response<ReadUserModel>> UpdateUserAsync(ReadUserModel model)
     {
-        var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
+        var client = await _httpClientFactoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.PostAsJsonAsync(_endpointProvider.UserEndpoint + "/Update", model);
 
         return new()
@@ -64,7 +64,7 @@ internal class UserServiceClient : IUserServiceClient
 
     public async Task<Response<ReadUserModel>> RegisterUserAsync(RegisterUserModel model)
     {
-        var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
+        var client = await _httpClientFactoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.PutAsJsonAsync(_endpointProvider.UserEndpoint + "/Register", model);
 
         return new()

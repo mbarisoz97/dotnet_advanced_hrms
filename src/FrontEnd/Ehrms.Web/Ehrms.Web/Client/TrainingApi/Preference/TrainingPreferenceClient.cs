@@ -17,7 +17,7 @@ internal class TrainingPreferenceClient : ITrainingPreferenceClient
 
     public async Task<Response<TrainingPreferenceModel>> CreateTrainingPreferenceAsync(CreateTrainingPreferenceModel createTrainingPreference)
     {
-        var client = await _httpClientFactory.CreateClient("ApiGateway");
+        var client = await _httpClientFactory.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.PutAsJsonAsync($"{_endpointProvider.TrainingRecommendationServiceEndpoint}/{RecommendationPreferences}", createTrainingPreference);
 
         return new()
@@ -29,7 +29,7 @@ internal class TrainingPreferenceClient : ITrainingPreferenceClient
 
     public async Task<Response<IEnumerable<TrainingPreferenceModel>>> GetTrainingPreferenceAsync()
     {
-        var client = await _httpClientFactory.CreateClient("ApiGateway");
+        var client = await _httpClientFactory.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.GetAsync($"{_endpointProvider.TrainingRecommendationServiceEndpoint}/{RecommendationPreferences}");
 
         return new()
@@ -41,7 +41,7 @@ internal class TrainingPreferenceClient : ITrainingPreferenceClient
 
     public async Task<Response<TrainingPreferenceModel>> GetTrainingPreferenceByIdAsync(Guid id)
     {
-        var client = await _httpClientFactory.CreateClient("ApiGateway");
+        var client = await _httpClientFactory.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.GetAsync($"{_endpointProvider.TrainingRecommendationServiceEndpoint}/{RecommendationPreferences}/{id}");
 
         return new()
@@ -53,7 +53,7 @@ internal class TrainingPreferenceClient : ITrainingPreferenceClient
 
     public async Task<Response<Guid>> DeleteTrainingPreferenceByIdAsync(Guid id)
     {
-        var client = await _httpClientFactory.CreateClient("ApiGateway");
+        var client = await _httpClientFactory.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.DeleteAsync($"{_endpointProvider.TrainingRecommendationServiceEndpoint}/{RecommendationPreferences}/{id}");
 
         return new()
@@ -65,7 +65,7 @@ internal class TrainingPreferenceClient : ITrainingPreferenceClient
 
     public async Task<Response<TrainingPreferenceModel>> UpdateTrainingPreferenceAsync(UpdateTrainingPreferenceModel updateTrainingPreferenceModel)
     {
-        var client = await _httpClientFactory.CreateClient("ApiGateway");
+        var client = await _httpClientFactory.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.PostAsJsonAsync($"{_endpointProvider.TrainingRecommendationServiceEndpoint}/{RecommendationPreferences}", updateTrainingPreferenceModel);
 
         return new()

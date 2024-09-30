@@ -15,7 +15,7 @@ internal sealed class TrainingServiceClient : ITrainingServiceClient
 
     public async Task<Response<Guid>> CreateTrainingAsync(TrainingModel training)
     {
-        var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
+        var client = await _httpClientFactoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.PutAsJsonAsync(_endpointProvider.TrainingManagementServiceEndpoint, training);
 
         return new()
@@ -27,7 +27,7 @@ internal sealed class TrainingServiceClient : ITrainingServiceClient
 
     public async Task<Response<Guid>> DeleteTrainingAsync(Guid id)
     {
-        var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
+        var client = await _httpClientFactoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.DeleteAsync($"{_endpointProvider.TrainingManagementServiceEndpoint}/{id}");
 
         return new()
@@ -39,7 +39,7 @@ internal sealed class TrainingServiceClient : ITrainingServiceClient
 
     public async Task<Response<TrainingModel>> GetTrainingAsync(Guid id)
     {
-        var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
+        var client = await _httpClientFactoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.GetAsync($"{_endpointProvider.TrainingManagementServiceEndpoint}/{id}");
 
         return new()
@@ -51,7 +51,7 @@ internal sealed class TrainingServiceClient : ITrainingServiceClient
 
     public async Task<Response<IEnumerable<TrainingModel>>> GetTrainings()
     {
-        var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
+        var client = await _httpClientFactoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.GetAsync(_endpointProvider.TrainingManagementServiceEndpoint);
 
         return new()
@@ -63,7 +63,7 @@ internal sealed class TrainingServiceClient : ITrainingServiceClient
 
     public async Task<Response<TrainingModel>> UpdateTrainingAsync(TrainingModel training)
     {
-        var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
+        var client = await _httpClientFactoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.PostAsJsonAsync(_endpointProvider.TrainingManagementServiceEndpoint, training);
 
         return new()

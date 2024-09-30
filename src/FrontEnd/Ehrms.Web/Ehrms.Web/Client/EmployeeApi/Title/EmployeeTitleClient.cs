@@ -18,7 +18,7 @@ internal class EmployeeTitleClient : IEmployeeTitleClient
 
     public async Task<Response<EmployeeTitleModel>> CreateTitle(EmployeeTitleModel employeeTitle)
     {
-        var client = await _httpClientFactory.CreateClient("ApiGateway");
+        var client = await _httpClientFactory.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.PutAsJsonAsync(BaseEndpoint, employeeTitle);
 
         return new Response<EmployeeTitleModel>
@@ -30,7 +30,7 @@ internal class EmployeeTitleClient : IEmployeeTitleClient
 
     public async Task<Response<Guid>> DeleteById(Guid Id)
     {
-        var client = await _httpClientFactory.CreateClient("ApiGateway");
+        var client = await _httpClientFactory.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.DeleteAsync($"{BaseEndpoint}/{Id}");
 
         return new Response<Guid>
@@ -42,7 +42,7 @@ internal class EmployeeTitleClient : IEmployeeTitleClient
 
     public async Task<Response<IEnumerable<EmployeeTitleModel>>> GetAllTitles()
     {
-        var client = await _httpClientFactory.CreateClient("ApiGateway");
+        var client = await _httpClientFactory.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.GetAsync(BaseEndpoint);
 
         return new Response<IEnumerable<EmployeeTitleModel>>
@@ -54,7 +54,7 @@ internal class EmployeeTitleClient : IEmployeeTitleClient
 
     public async Task<Response<EmployeeTitleModel>> GetTitleById(Guid Id)
     {
-        var client = await _httpClientFactory.CreateClient("ApiGateway");
+        var client = await _httpClientFactory.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.GetAsync($"{BaseEndpoint}/{Id}");
 
         return new Response<EmployeeTitleModel>
@@ -66,7 +66,7 @@ internal class EmployeeTitleClient : IEmployeeTitleClient
 
     public async Task<Response<EmployeeTitleModel>> UpdateTitle(EmployeeTitleModel employeeTitle)
     {
-        var client = await _httpClientFactory.CreateClient("ApiGateway");
+        var client = await _httpClientFactory.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.PostAsJsonAsync(BaseEndpoint, employeeTitle);
 
         return new Response<EmployeeTitleModel>

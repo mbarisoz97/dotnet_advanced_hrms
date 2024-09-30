@@ -16,7 +16,7 @@ internal sealed class SkillServiceClient : ISkillServiceClient
 
     public async Task<Response<IEnumerable<SkillModel>>> GetSkillsAsync()
     {
-        var client = await _clientFactoryWrapper.CreateClient("ApiGateway");
+        var client = await _clientFactoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.GetAsync(_endpointProvider.EmployeeSkillServiceEndpoint);
 
         return new Response<IEnumerable<SkillModel>>()
@@ -28,7 +28,7 @@ internal sealed class SkillServiceClient : ISkillServiceClient
 
     public async Task<Response<SkillModel>> CreateSkillAsync(SkillModel skill)
     {
-        var client = await _clientFactoryWrapper.CreateClient("ApiGateway");
+        var client = await _clientFactoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.PutAsJsonAsync(_endpointProvider.EmployeeSkillServiceEndpoint, skill);
 
         return new Response<SkillModel>()
@@ -40,7 +40,7 @@ internal sealed class SkillServiceClient : ISkillServiceClient
 
     public async Task<Response<SkillModel>> GetSkillAsync(Guid id)
     {
-        var client = await _clientFactoryWrapper.CreateClient("ApiGateway");
+        var client = await _clientFactoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.GetAsync($"{_endpointProvider.EmployeeSkillServiceEndpoint}/{id}");
 
         return new Response<SkillModel>()
@@ -52,7 +52,7 @@ internal sealed class SkillServiceClient : ISkillServiceClient
 
     public async Task<Response<Guid>> DeleteEmployeeAsync(Guid id)
     {
-        var client = await _clientFactoryWrapper.CreateClient("ApiGateway");
+        var client = await _clientFactoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.DeleteAsync($"{_endpointProvider.EmployeeSkillServiceEndpoint}/{id}");
 
         return new Response<Guid>()
@@ -64,7 +64,7 @@ internal sealed class SkillServiceClient : ISkillServiceClient
 
     public async Task<Response<SkillModel>> UpdateSkillAsync(SkillModel skill)
     {
-        var client = await _clientFactoryWrapper.CreateClient("ApiGateway");
+        var client = await _clientFactoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.PostAsJsonAsync(_endpointProvider.EmployeeSkillServiceEndpoint, skill);
 
         return await response.AsCustomResponse<SkillModel>();

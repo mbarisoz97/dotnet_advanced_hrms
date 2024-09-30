@@ -5,6 +5,8 @@ using Ehrms.Web.Client.AuthApi.Account;
 using Ehrms.Web.Client.EmployeeApi.Info;
 using Ehrms.Web.Client.EmployeeApi.Skill;
 using Ehrms.Web.Client.EmployeeApi.Title;
+using Ehrms.Web.Client.ProjectApi.Employment;
+using Ehrms.Web.Client.ProjectApi.ProjectInfo;
 using Ehrms.Web.Client.TrainingApi.Info;
 using Ehrms.Web.Client.TrainingApi.Preference;
 using Ehrms.Web.Client.TrainingApi.Recommendation;

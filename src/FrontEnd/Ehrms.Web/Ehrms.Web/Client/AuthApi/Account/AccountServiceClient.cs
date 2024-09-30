@@ -16,7 +16,7 @@ internal sealed class AccountServiceClient : IAccountServiceClient
 
     public async Task<Response<LoginResponseModel>> Login(LoginRequestModel? loginRequest)
     {
-        var client = await _clientFactoryWrapper.CreateClient("ApiGateway");
+        var client = await _clientFactoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.PostAsJsonAsync(_endpointProvider.AutheticationEndpoint, loginRequest);
         
         return new()
@@ -28,7 +28,7 @@ internal sealed class AccountServiceClient : IAccountServiceClient
 
     public async Task<Response<LoginResponseModel>> RefreshSession(LoginRefreshModel? loginRefreshRequest)
     {
-        var client = await _clientFactoryWrapper.CreateClient("ApiGateway");
+        var client = await _clientFactoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.PostAsJsonAsync(_endpointProvider.RefreshEndpoint, loginRefreshRequest);
         
         return new()
@@ -40,7 +40,7 @@ internal sealed class AccountServiceClient : IAccountServiceClient
 
     public async Task<Response<ReadUserModel>> ResetPassword(PasswordResetModel? resetPasswordRequest)
     {
-        var client = await _clientFactoryWrapper.CreateClient("ApiGateway");
+        var client = await _clientFactoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.PostAsJsonAsync($"{_endpointProvider.UserEndpoint}/Reset", resetPasswordRequest);
         
         return new()

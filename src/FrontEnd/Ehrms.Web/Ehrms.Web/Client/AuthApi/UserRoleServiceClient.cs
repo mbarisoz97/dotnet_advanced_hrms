@@ -16,7 +16,7 @@ internal class UserRoleServiceClient : IUserRoleServiceClient
 
     public async Task<Response<IEnumerable<UserRoleModel>>> GetAllUserRoles()
     {
-        var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
+        var client = await _httpClientFactoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.GetAsync(_endpointProvider.UserRoleEndpoint);
 
         return new()

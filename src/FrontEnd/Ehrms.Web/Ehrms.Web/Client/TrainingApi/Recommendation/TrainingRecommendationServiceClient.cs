@@ -15,7 +15,7 @@ internal sealed class TrainingRecommendationServiceClient : ITrainingRecommendat
 
     public async Task<Response<ReadTrainingRecommendationResultModel>> GetRecommendationResult(Guid id)
     {
-        var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
+        var client = await _httpClientFactoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.GetAsync($"{_endpointProvider.TrainingRecommendationServiceEndpoint}/RecommendationResult/{id}");
 
         return new()
@@ -27,7 +27,7 @@ internal sealed class TrainingRecommendationServiceClient : ITrainingRecommendat
 
     public async Task<Response<IEnumerable<ReadTrainingRecommendationResultModel>>> GetRecommendationResults(Guid id)
     {
-        var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
+        var client = await _httpClientFactoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.GetAsync($"{_endpointProvider.TrainingRecommendationServiceEndpoint}/RecommendationResults/{id}");
 
         return new()
@@ -39,7 +39,7 @@ internal sealed class TrainingRecommendationServiceClient : ITrainingRecommendat
 
     public async Task<Response<Guid>> CreateTrainingRecommendationRequest(CreateTrainingRecommendationRequestModel createTrainingRecommendationRequest)
     {
-        var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
+        var client = await _httpClientFactoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.PostAsJsonAsync($"{_endpointProvider.TrainingRecommendationServiceEndpoint}/Recommendation", createTrainingRecommendationRequest);
 
         return new()
@@ -51,7 +51,7 @@ internal sealed class TrainingRecommendationServiceClient : ITrainingRecommendat
 
     public async Task<Response<IEnumerable<ReadTrainingRecommendationRequestModel>>> GetTrainingRecommendationRequests()
     {
-        var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
+        var client = await _httpClientFactoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.GetAsync($"{_endpointProvider.TrainingRecommendationServiceEndpoint}/RecommendationRequests");
 
         return new()
@@ -63,7 +63,7 @@ internal sealed class TrainingRecommendationServiceClient : ITrainingRecommendat
 
     public async Task<Response<ReadTrainingRecommendationRequestModel>> GetTrainingRecommendationRequest(Guid id)
     {
-        var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
+        var client = await _httpClientFactoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.GetAsync($"{_endpointProvider.TrainingRecommendationServiceEndpoint}/Recommendation/{id}");
 
         return new()
@@ -75,7 +75,7 @@ internal sealed class TrainingRecommendationServiceClient : ITrainingRecommendat
 
     public async Task<Response<Guid>> DeleteTrainingRecommendationRequest(Guid id)
     {
-        var client = await _httpClientFactoryWrapper.CreateClient("ApiGateway");
+        var client = await _httpClientFactoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.DeleteAsync($"{_endpointProvider.TrainingRecommendationServiceEndpoint}/Recommendation/{id}");
 
         return new()
