@@ -1,28 +1,36 @@
 ﻿@inject IToastService ToastService
 @inject ISkillServiceClient SkillService
 
-<SkillForm IsEditMode="true" Id="Id" OnValidSubmit="UpdateSkill" />
+<MudDialog>
+    <DialogContent>
+        <SkillForm IsEditMode="true" Id="Id" OnValidSubmit="UpdateSkill" />
+    </DialogContent>
+</MudDialog>
 
 @code {
-	[Parameter]
-	public Guid Id { get; set; }
+    [Parameter]
+    public Guid Id { get; set; }
 
-	private async Task UpdateSkill(SkillModel skill)
-	{
-		var response = await SkillService.UpdateSkillAsync(skill);
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; }
 
-		if (response.StatusCode == HttpStatusCode.OK)
-		{
-			ToastService.ShowSuccess("Skill updated succesfully");
-			return;
-		}
+    private async Task UpdateSkill(SkillModel skill)
+    {
+        var response = await SkillService.UpdateSkillAsync(skill);
 
-		if (response.StatusCode == HttpStatusCode.Conflict)
-		{
-			ToastService.ShowError("A record with this name has already been created");
-			return;
-		}
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            ToastService.ShowSuccess("Skill updated succesfully");
+            MudDialog?.Close();
+            return;
+        }
 
-		ToastService.ShowError($"Skill service returned : {response.StatusCode}");
-	}
+        if (response.StatusCode == HttpStatusCode.Conflict)
+        {
+            ToastService.ShowError("A record with this name has already been created");
+            return;
+        }
+
+        ToastService.ShowError($"Skill service returned : {response.StatusCode}");
+    }
 }
