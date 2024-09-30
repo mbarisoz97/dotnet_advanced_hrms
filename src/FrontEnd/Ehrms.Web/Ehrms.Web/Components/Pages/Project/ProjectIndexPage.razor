@@ -1,126 +1,136 @@
 ﻿@attribute [Route(ProjectRouting.Index)]
 @attribute [StreamRendering]
 
-@inject IModalService ModalService
+@inject IDialogService DialogService
 @inject IToastService ToastService
 @inject IProjectServiceClient ProjectServiceClient
 @inject NavigationManager NavigationManager
 
 <MudTable Items="@Projects"
-		  Dense="true"
-		  Hover="true"
-		  Loading="@Loading"
-		  Bordered="true"
-		  Striped="true"
-		  Filter="new Func<ProjectModel, bool>(SearchFilter)">
-	<ToolBarContent>
-		<MudText Typo="Typo.h6">Projects</MudText>
-		<MudSpacer />
-		<MudTextField @bind-Value="SearchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-		<MudTooltip Text="Add Project">
-			<MudIconButton Size="Size.Large" Color="Color.Success" Icon="@Icons.Material.Filled.AddBox" @onclick="ShowCreateProjectDialog" />
-		</MudTooltip>
-	</ToolBarContent>
-	<HeaderContent>
-		<MudTh>Name</MudTh>
-		<MudTh></MudTh>
-	</HeaderContent>
-	<RowTemplate>
-		<MudTd DataLabel="Name">@context.Name</MudTd>
-		<MudTd Class="d-flex justify-center flex-grow-1">
-			<MudTooltip Text="Edit">
-				<MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.ModeEdit" @onclick="@(()=>ShowUpdateProjectDialog(context))" />
-			</MudTooltip>
-			<MudTooltip Text="Delete">
-				<MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.Delete" @onclick="@(()=>ShowDeleteConfirmationDialog(context))" />
-			</MudTooltip>
-			<MudTooltip Text="Read More">
-				<MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.ReadMore" Href=@($"{ProjectRouting.Details}/{context.Id}") />
-			</MudTooltip>
-		</MudTd>
-	</RowTemplate>
-	<PagerContent>
-		<MudTablePager />
-	</PagerContent>
+          Dense="true"
+          Hover="true"
+          Loading="@Loading"
+          Bordered="true"
+          Striped="true"
+          Filter="new Func<ProjectModel, bool>(SearchFilter)">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Projects</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="SearchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudTooltip Text="Add Project">
+            <MudIconButton Size="Size.Large" Color="Color.Success" Icon="@Icons.Material.Filled.AddBox" @onclick="ShowCreateProjectDialog" />
+        </MudTooltip>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd Class="d-flex justify-center flex-grow-1">
+            <MudTooltip Text="Edit">
+                <MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.ModeEdit" @onclick="@(()=>ShowUpdateProjectDialog(context))" />
+            </MudTooltip>
+            <MudTooltip Text="Delete">
+                <MudIconButton Size="Size.Small" Color="Color.Error" Icon="@Icons.Material.Filled.Delete" @onclick="@(()=>ShowDeleteConfirmationDialog(context))" />
+            </MudTooltip>
+            <MudTooltip Text="Read More">
+                <MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.ReadMore" Href=@($"{ProjectRouting.Details}/{context.Id}") />
+            </MudTooltip>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
 </MudTable>
 
 @code {
-	private IEnumerable<ProjectModel>? Projects { get; set; }
+    private IEnumerable<ProjectModel>? Projects { get; set; }
 
-	private bool Loading { get; set; } = true;
-	private string SearchString { get; set; } = string.Empty;
+    private bool Loading { get; set; } = true;
+    private string SearchString { get; set; } = string.Empty;
 
-	protected override async Task OnInitializedAsync()
-	{
-		await UpdateProjects();
-	}
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdateProjects();
+    }
 
-	private void ShowLoadingBar()
-	{
-		Loading = true;
-	}
-	private void HideLoadingBar()
-	{
-		Loading = false;
-	}
+    private void ShowLoadingBar()
+    {
+        Loading = true;
+    }
+    private void HideLoadingBar()
+    {
+        Loading = false;
+    }
 
-	private async Task UpdateProjects()
-	{
-		ShowLoadingBar();
-		var response = await ProjectServiceClient.GetProjectsAsync();
-		if (response.StatusCode == HttpStatusCode.OK)
-		{
-			Projects = response.Content;
-		}
-		else
-		{
-			ToastService.ShowError($"Service returned : {response.StatusCode}");
-		}
-		HideLoadingBar();
-	}
+    private async Task UpdateProjects()
+    {
+        ShowLoadingBar();
+        var response = await ProjectServiceClient.GetProjectsAsync();
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            Projects = response.Content;
+        }
+        else
+        {
+            ToastService.ShowError($"Service returned : {response.StatusCode}");
+        }
+        HideLoadingBar();
+    }
 
-	private async Task ShowUpdateProjectDialog(ProjectModel project)
-	{
-		var modalParameters = new ModalParameters()
-			.Add(nameof(ProjectModel.Id), project.Id);
+    private async Task ShowCreateProjectDialog()
+    {
+        var dialog = DialogService.Show<ProjectCreatePage>("Create a new project");
+        var result = await dialog.Result;
 
-		var modalReference = ModalService.Show<ProjectUpdatePage>("Update project", modalParameters);
-		var result = await modalReference.Result;
+        if (result != null && !result.Canceled)
+        {
+            await UpdateProjects();
+        }
+    }
+    private async Task ShowUpdateProjectDialog(ProjectModel project)
+    {
+        var dialogParameters = new DialogParameters
+        {
+            {nameof(ProjectUpdatePage.Id), project.Id}
+        };
 
-		await UpdateProjects();
-	}
+        var dialog = DialogService.Show<ProjectUpdatePage>("Update project", dialogParameters);
+        var result = await dialog.Result;
 
-	private async Task ShowCreateProjectDialog()
-	{
-		var modalReference = ModalService.Show<ProjectCreatePage>("Create a new project");
-		await UpdateProjects();
-	}
+        if (result != null && !result.Canceled)
+        {
+            await UpdateProjects();
+        }
+    }
+    private async Task ShowDeleteConfirmationDialog(ProjectModel project)
+    {
+        var dialogParameters = new DialogParameters
+        {
+            {nameof(ProjectDeletePage.Id), project.Id }
+        };
 
-	private async Task ShowDeleteConfirmationDialog(ProjectModel project)
-	{
-		var modalParameters = new ModalParameters()
-			.Add(nameof(ProjectModel.Id), project.Id);
+        var modalReference = DialogService.Show<ProjectDeletePage>("Delete a project", dialogParameters);
+        var result = await modalReference.Result;
 
-		var modalReference = ModalService.Show<ProjectDeletePage>("Delete a project", modalParameters);
-		var result = await modalReference.Result;
+        if (result != null && !result.Canceled)
+        {
+            ToastService.ShowSuccess("Project deleted successfully.");
+            await UpdateProjects();
+        }
+    }
 
-		if (result.Confirmed)
-		{
-			ToastService.ShowSuccess("Project deleted successfully.");
-			await UpdateProjects();
-		}
-	}
+    private bool SearchFilter(ProjectModel element) => Search(element, SearchString);
+    private bool Search(ProjectModel element, string searchString)
+    {
+        if (element == null)
+        {
+            return false;
+        }
 
-	private bool SearchFilter(ProjectModel element) => Search(element, SearchString);
-	private bool Search(ProjectModel element, string searchString)
-	{
-		if (element == null)
-		{
-			return false;
-		}
-
-		return (string.IsNullOrWhiteSpace(searchString) ||
-			element.Name!.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
-			element.Description!.Contains(searchString, StringComparison.OrdinalIgnoreCase));
-	}
+        return (string.IsNullOrWhiteSpace(searchString) ||
+            element.Name!.Contains(searchString, StringComparison.OrdinalIgnoreCase) ||
+            element.Description!.Contains(searchString, StringComparison.OrdinalIgnoreCase));
+    }
 }

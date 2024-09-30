@@ -4,6 +4,7 @@
 
 @inject IModalService ModalService
 @inject IToastService ToastService
+@inject IDialogService DialogService
 @inject IUserServiceClient UserServiceClient
 
 @if (_users == null)
@@ -92,6 +93,7 @@
     private async Task UpdateUsers()
     {
         _loading = true;
+
         var response = await UserServiceClient.GetUsersAsync();
         if (response.StatusCode == HttpStatusCode.OK)
         {
@@ -107,23 +109,31 @@
 
     private async Task ShowUserUpdatePage(ReadUserModel user)
     {
-        var modalParameters = new ModalParameters()
-            .Add(nameof(UserForm.Id), user.Id);
+        var dialogParameters = new DialogParameters
+        {
+            { nameof(UserForm.Id), user.Id }
+        };
+        var dialog = DialogService.Show<UserForm>("Update User", dialogParameters);
+        var result = await dialog.Result;
 
-        var modalReference = ModalService.Show<UserForm>("Update User", modalParameters);
-        var result = await modalReference.Result;
-        await UpdateUsers();
+        if (result != null && !result.Canceled)
+        {
+            await UpdateUsers();
+        }
     }
 
     private async Task ShowCreateUserDialog()
     {
-        var modalReference = ModalService.Show<UserRegisterPage>("Create New User");
-        var result = await modalReference.Result;
-        await UpdateUsers();
+        var dialog = DialogService.Show<UserRegisterPage>("Create New User");
+        var result = await dialog.Result;
+
+        if (result != null && !result.Canceled)
+        {
+            await UpdateUsers();
+        }
     }
 
     private bool SearchFilter(ReadUserModel element) => Search(element, _searchString);
-
     private bool Search(ReadUserModel element, string searchString)
     {
         if (element == null)

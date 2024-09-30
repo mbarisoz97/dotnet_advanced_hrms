@@ -2,26 +2,34 @@
 @inject IProjectServiceClient ProjectServiceClient
 @inject NavigationManager NavigationManager
 
-<ProjectForm IsEditMode="true" Id="Id" OnValidSubmit="UpdateProject" />
+<MudDialog>
+    <DialogContent>
+        <ProjectForm IsEditMode="true" Id="Id" OnValidSubmit="UpdateProject" />
+    </DialogContent>
+</MudDialog>
 
 @code {
-	[Parameter]
-	public Guid Id { get; set; }
+    [Parameter]
+    public Guid Id { get; set; }
 
-	private async Task UpdateProject(ProjectModel project)
-	{
-		var response = await ProjectServiceClient.UpdateProjectAsync(project);
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; }
 
-		if (response.StatusCode == HttpStatusCode.OK)
-		{
-			ToastService.ShowSuccess($"Project updated successfully");
-			return;
-		}
+    private async Task UpdateProject(ProjectModel project)
+    {
+        var response = await ProjectServiceClient.UpdateProjectAsync(project);
 
-		if (response.StatusCode == HttpStatusCode.Conflict)
-		{
-			ToastService.ShowError($"A record with this name has already been created");
-			return;
-		}
-	}
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            ToastService.ShowSuccess($"Project updated successfully");
+            MudDialog?.Close();
+            return;
+        }
+
+        if (response.StatusCode == HttpStatusCode.Conflict)
+        {
+            ToastService.ShowError($"A record with this name has already been created");
+            return;
+        }
+    }
 }

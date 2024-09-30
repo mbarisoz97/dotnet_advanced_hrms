@@ -4,112 +4,117 @@
 
 @inject IToastService ToastService
 @inject IModalService ModalService
+@inject IDialogService DialogService
 @inject ISkillServiceClient SkillServiceClient
 @inject NavigationManager NavigationManager
 
 <MudTable Items="@Skills" Dense="true" Hover="true" Loading="@Loading" Bordered="true" Striped="true" Filter="new Func<SkillModel, bool>(SearchFilter)">
-	<ToolBarContent>
-		<MudText Typo="Typo.h6">Skills</MudText>
-		<MudSpacer />
-		<MudTextField @bind-Value="SearchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
-		<MudTooltip Text="Add Skill">
-			<MudIconButton Size="Size.Large" Color="Color.Success" Icon="@Icons.Material.Filled.AddBox" @onclick="@(()=>ShowCreateSkillDialog())" />
-		</MudTooltip>
-	</ToolBarContent>
-	<HeaderContent>
-		<MudTh>Name</MudTh>
-		<MudTh></MudTh>
-	</HeaderContent>
-	<RowTemplate>
-		<MudTd DataLabel="Name">@context.Name</MudTd>
-		<MudTd>
-			<MudTooltip Text="Edit">
-				<MudIconButton @onclick="@(()=>ShowUpdateSkillDialog(context))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
-			</MudTooltip>
-			<MudTooltip Text="Delete">
-				<MudIconButton @onclick="@(()=>ShowDeleteConfirmationDialog(context))" Color=" Color.Error" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />
-			</MudTooltip>
-		</MudTd>
-	</RowTemplate>
-	<PagerContent>
-		<MudTablePager />
-	</PagerContent>
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Skills</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="SearchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
+        <MudTooltip Text="Add Skill">
+            <MudIconButton Size="Size.Large" Color="Color.Success" Icon="@Icons.Material.Filled.AddBox" @onclick="@(()=>ShowCreateSkillDialog())" />
+        </MudTooltip>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Name</MudTh>
+        <MudTh></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Name">@context.Name</MudTd>
+        <MudTd>
+            <MudTooltip Text="Edit">
+                <MudIconButton @onclick="@(()=>ShowUpdateSkillDialog(context))" Icon="@Icons.Material.Filled.Edit" Size="Size.Small" />
+            </MudTooltip>
+            <MudTooltip Text="Delete">
+                <MudIconButton @onclick="@(()=>ShowDeleteConfirmationDialog(context))" Color=" Color.Error" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />
+            </MudTooltip>
+        </MudTd>
+    </RowTemplate>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
 </MudTable>
 
 @code {
-	private ICollection<SkillModel>? Skills { get; set; } = [];
-	private bool Loading { get; set; } = true;
-	private string SearchString { get; set; } = "";
+    private ICollection<SkillModel>? Skills { get; set; } = [];
+    private bool Loading { get; set; } = true;
+    private string SearchString { get; set; } = "";
 
-	protected override async Task OnInitializedAsync()
-	{
-		await UpdateSkills();
-	}
+    protected override async Task OnInitializedAsync()
+    {
+        await UpdateSkills();
+    }
 
-	private void ShowLoadingBar()
-	{
-		Loading = true;
-	}
+    private void ShowLoadingBar()
+    {
+        Loading = true;
+    }
 
-	private void HideLoadingBar()
-	{
-		Loading = false;
-	}
+    private void HideLoadingBar()
+    {
+        Loading = false;
+    }
 
-	private async Task UpdateSkills()
-	{
-		ShowLoadingBar();
-		var response = await SkillServiceClient.GetSkillsAsync();
-		if (response.StatusCode == HttpStatusCode.OK)
-		{
-			Skills = response.Content!.ToList();
-		}
-		HideLoadingBar();
-	}
+    private async Task UpdateSkills()
+    {
+        ShowLoadingBar();
+        var response = await SkillServiceClient.GetSkillsAsync();
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            Skills = response.Content!.ToList();
+        }
+        HideLoadingBar();
+    }
 
-	private async Task ShowUpdateSkillDialog(SkillModel skill)
-	{
-		var parameters = new ModalParameters()
-			.Add(nameof(DeleteSkillPage.Id), skill.Id);
+    private async Task ShowUpdateSkillDialog(SkillModel skill)
+    {
+        var parameters = new DialogParameters()
+        {
+            { nameof(SkillUpdatePage.Id), skill.Id }
+        };
 
-		var modalReference = ModalService.Show<SkillUpdatePage>("Update skill information", parameters);
-		var result = await modalReference.Result;
+        var modalReference = DialogService.Show<SkillUpdatePage>("Update skill information", parameters);
+        var result = await modalReference.Result;
 
-		await UpdateSkills();
-	}
+        await UpdateSkills();
+    }
 
-	private async Task ShowCreateSkillDialog()
-	{
-		var modalReference = ModalService.Show<SkillCreatePage>("Create a new skill");
-		var result = await modalReference.Result;
+    private async Task ShowCreateSkillDialog()
+    {
+        var modalReference = DialogService.Show<SkillCreatePage>("Create a new skill");
+        var result = await modalReference.Result;
 
-		await UpdateSkills();
-	}
+        await UpdateSkills();
+    }
 
-	private async Task ShowDeleteConfirmationDialog(SkillModel skill)
-	{
-		var parameters = new ModalParameters()
-			.Add(nameof(DeleteSkillPage.Id), skill.Id);
+    private async Task ShowDeleteConfirmationDialog(SkillModel skill)
+    {
+        var parameters = new DialogParameters()
+        {
+            { nameof(DeleteSkillPage.Id), skill.Id }
+        };
 
-		var modalReference = ModalService.Show<DeleteSkillPage>("Confirm", parameters);
-		var result = await modalReference.Result;
+        var modalReference = DialogService.Show<DeleteSkillPage>("Confirm", parameters);
+        var result = await modalReference.Result;
 
-		if (result.Confirmed)
-		{
-			Skills?.Remove(skill);
-			ToastService.ShowSuccess("Skill deleted successfully");
-		}
-	}
+        if (result != null && !result.Canceled)
+        {
+            Skills?.Remove(skill);
+            ToastService.ShowSuccess("Skill deleted successfully");
+        }
+    }
 
-	private bool SearchFilter(SkillModel element) => Search(element, SearchString);
-	private bool Search(SkillModel element, string searchString)
-	{
-		if (element == null)
-		{
-			return false;
-		}
+    private bool SearchFilter(SkillModel element) => Search(element, SearchString);
+    private bool Search(SkillModel element, string searchString)
+    {
+        if (element == null)
+        {
+            return false;
+        }
 
-		return (string.IsNullOrWhiteSpace(searchString) ||
-				element.Name!.Contains(searchString, StringComparison.OrdinalIgnoreCase));
-	}
+        return (string.IsNullOrWhiteSpace(searchString) ||
+                element.Name!.Contains(searchString, StringComparison.OrdinalIgnoreCase));
+    }
 }

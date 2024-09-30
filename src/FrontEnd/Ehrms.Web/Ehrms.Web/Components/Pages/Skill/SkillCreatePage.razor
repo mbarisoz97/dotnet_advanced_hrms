@@ -4,21 +4,29 @@
 @inject ISkillServiceClient SkillServiceClient
 @inject NavigationManager NavigationManager
 
-<SkillForm IsEditMode="false" OnValidSubmit="CreateSkill"/>
-<BlazoredToasts Position="ToastPosition.TopRight" ShowProgressBar="true" Timeout="5"></BlazoredToasts>
+<MudDialog>
+    <DialogContent>
+        <SkillForm IsEditMode="false" OnValidSubmit="CreateSkill" />
+    </DialogContent>
+</MudDialog>
 
 @code {
-	private async Task CreateSkill(SkillModel skill)
-	{
-		var response = await SkillServiceClient.CreateSkillAsync(skill);
-		if (response.StatusCode == HttpStatusCode.OK)
-		{
-			ToastService.ShowSuccess($"New skill created successfully");
-		}
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; } = default!;
 
-		if (response.StatusCode == HttpStatusCode.Conflict)
-		{
-			ToastService.ShowError($"A record with this name has already been created");
-		}
-	}
+    private async Task CreateSkill(SkillModel skill)
+    {
+        var response = await SkillServiceClient.CreateSkillAsync(skill);
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            ToastService.ShowSuccess($"New skill created successfully");
+            MudDialog?.Close();
+            return;
+        }
+
+        if (response.StatusCode == HttpStatusCode.Conflict)
+        {
+            ToastService.ShowError($"A record with this name has already been created");
+        }
+    }
 }

@@ -3,17 +3,26 @@
 @inject IToastService ToastService
 @inject IEmployeeTitleClient EmployeeTitleClient
 
-<TitleForm IsEditMode="true" TitleId="TitleId" OnValidSubmit="Update"></TitleForm>
+<MudDialog>
+    <DialogContent>
+        <TitleForm IsEditMode="true" TitleId="TitleId" OnValidSubmit="Update"></TitleForm>
+    </DialogContent>
+</MudDialog>
 
 @code {
-    [Parameter] public Guid TitleId { get; set; }
+    [Parameter] 
+    public Guid TitleId { get; set; }
+
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; }
 
     private async Task Update(EmployeeTitleModel title)
     {
-        var response = await EmployeeTitleClient.CreateTitle(title);
+        var response = await EmployeeTitleClient.UpdateTitle(title);
         if (response.StatusCode == HttpStatusCode.OK)
         {
             ToastService.ShowSuccess($"Title updated successfully");
+            MudDialog?.Close();
             return;
         }
 

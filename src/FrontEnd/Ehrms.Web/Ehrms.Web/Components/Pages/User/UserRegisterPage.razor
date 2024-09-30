@@ -5,61 +5,65 @@
 @inject IUserServiceClient UserServiceClient
 @inject IUserRoleServiceClient UserRoleServiceClient
 
-@if (UserRoles == null)
-{
-    <Loading></Loading>
-    return;
-}
-
-<EditForm Model="@RegisterUserModel" OnValidSubmit="ValidSubmit" FormName="UserUpdateForm">
-    <DataAnnotationsValidator></DataAnnotationsValidator>
-    <div class="mt-3">
-        <MudTextField @bind-Value="@RegisterUserModel.Username" Label="Username" Variant="Variant.Filled"/>
-        <ValidationMessage class="text-danger" For="(() => RegisterUserModel.Username)"></ValidationMessage>
-    </div>
-    <div class="mt-3">
-        <MudTextField @bind-Value="@RegisterUserModel.Email" Label="Email" Variant="Variant.Filled"/>
-        <ValidationMessage class="text-danger" For="(() => RegisterUserModel.Email)"></ValidationMessage>
-    </div>
-    <div class="mt-3">
-        <MudTextField @bind-Value="@RegisterUserModel.Password"
-                      Label="Password"
-                      InputType="InputType.Password"
-                      Variant="Variant.Filled"/>
-        <ValidationMessage class="text-danger" For="(() => RegisterUserModel.Password)"></ValidationMessage>
-    </div>
-    <div class="mt-3">
-        <MudTextField @bind-Value="@RegisterUserModel.PasswordConfirmation"
-                      InputType="InputType.Password"
-                      Label="Confirm Password"
-                      Variant="Variant.Filled"/>
-        <ValidationMessage class="text-danger" For="(() => RegisterUserModel.PasswordConfirmation)"></ValidationMessage>
-    </div>
-    <div class="mt-3">
-        <MudSelect T="string" Label="User Roles" MultiSelection="true" @bind-SelectedValues="@RegisterUserModel.Roles" AdornmentIcon="@Icons.Material.Filled.Add" AnchorOrigin="Origin.BottomCenter">
-            @foreach (var role in UserRoles)
-            {
-                <MudSelectItem T="string" Value="@role.Name">@(role.Name)</MudSelectItem>
-            }
-        </MudSelect>
-        <ValidationMessage class="text-danger" For="(() => RegisterUserModel.Roles)"></ValidationMessage>
-    </div>
-    <div class="mt-3">
-        <MudCheckBox Label="Activate User Account" @bind-Value="@RegisterUserModel.IsActive" Color="Color.Secondary"></MudCheckBox>
-        <ValidationMessage class="text-danger" For="(() => RegisterUserModel.IsActive)"></ValidationMessage>
-    </div>
-    <div class="mt-3">
-        <MudTooltip Text="Save">
-            <MudFab Color="Color.Primary"
-                    Disabled="@_isSaveButtonDisabled"
-                    StartIcon="@Icons.Material.Filled.Save"
-                    ButtonType="ButtonType.Submit"/>
-        </MudTooltip>
-    </div>
-</EditForm>
+<MudDialog>
+    <DialogContent>
+        @if (UserRoles == null)
+        {
+            <Loading></Loading>
+            return;
+        }
+        <EditForm Model="@RegisterUserModel" OnValidSubmit="ValidSubmit" FormName="UserUpdateForm">
+            <DataAnnotationsValidator></DataAnnotationsValidator>
+            <div class="mt-3">
+                <MudTextField @bind-Value="@RegisterUserModel.Username" Label="Username" Variant="Variant.Filled" />
+                <ValidationMessage class="text-danger" For="(() => RegisterUserModel.Username)"></ValidationMessage>
+            </div>
+            <div class="mt-3">
+                <MudTextField @bind-Value="@RegisterUserModel.Email" Label="Email" Variant="Variant.Filled" />
+                <ValidationMessage class="text-danger" For="(() => RegisterUserModel.Email)"></ValidationMessage>
+            </div>
+            <div class="mt-3">
+                <MudTextField @bind-Value="@RegisterUserModel.Password"
+                              Label="Password"
+                              InputType="InputType.Password"
+                              Variant="Variant.Filled" />
+                <ValidationMessage class="text-danger" For="(() => RegisterUserModel.Password)"></ValidationMessage>
+            </div>
+            <div class="mt-3">
+                <MudTextField @bind-Value="@RegisterUserModel.PasswordConfirmation"
+                              InputType="InputType.Password"
+                              Label="Confirm Password"
+                              Variant="Variant.Filled" />
+                <ValidationMessage class="text-danger" For="(() => RegisterUserModel.PasswordConfirmation)"></ValidationMessage>
+            </div>
+            <div class="mt-3">
+                <MudSelect T="string" Label="User Roles" MultiSelection="true" @bind-SelectedValues="@RegisterUserModel.Roles" AdornmentIcon="@Icons.Material.Filled.Add" AnchorOrigin="Origin.BottomCenter">
+                    @foreach (var role in UserRoles)
+                    {
+                        <MudSelectItem T="string" Value="@role.Name">@(role.Name)</MudSelectItem>
+                    }
+                </MudSelect>
+                <ValidationMessage class="text-danger" For="(() => RegisterUserModel.Roles)"></ValidationMessage>
+            </div>
+            <div class="mt-3">
+                <MudCheckBox Label="Activate User Account" @bind-Value="@RegisterUserModel.IsActive" Color="Color.Secondary"></MudCheckBox>
+                <ValidationMessage class="text-danger" For="(() => RegisterUserModel.IsActive)"></ValidationMessage>
+            </div>
+            <div class="mt-3">
+                <MudTooltip Text="Save">
+                    <MudFab Color="Color.Primary"
+                            Disabled="@_isSaveButtonDisabled"
+                            StartIcon="@Icons.Material.Filled.Save"
+                            ButtonType="ButtonType.Submit" />
+                </MudTooltip>
+            </div>
+        </EditForm>
+    </DialogContent>
+</MudDialog>
 
 @code {
-    [SupplyParameterFromForm] public RegisterUserModel RegisterUserModel { get; set; } = new();
+    [SupplyParameterFromForm] 
+    public RegisterUserModel RegisterUserModel { get; set; } = new();
 
     private IEnumerable<UserRoleModel>? UserRoles { get; set; }
 

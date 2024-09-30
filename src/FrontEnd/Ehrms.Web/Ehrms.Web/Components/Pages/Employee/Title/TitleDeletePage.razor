@@ -5,67 +5,72 @@
 @inject IToastService ToastService
 @inject IEmployeeTitleClient EmployeeTitleServiceClient
 
-@if (Skill == null)
-{
-	<h1>Loading..</h1>
-}
-else
-{
-	<div class="form-group">
-		<table class="table">
-			<tbody>
-				<tr>
-					<td>Title Name</td>
-					<td>@Skill.TitleName</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-	<div class="form-group">
-		<button @onclick="Remove" class="btn btn-danger">Delete</button>
-		<button @onclick="Cancel" class="btn btn-warning">Cancel</button>
-	</div>
-}
+<MudDialog>
+    <DialogContent>
+        @if (Skill == null)
+        {
+            <h1>Loading..</h1>
+        }
+        else
+        {
+            <div class="form-group">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td>Title Name</td>
+                            <td>@Skill.TitleName</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="form-group">
+                <button @onclick="Remove" class="btn btn-danger">Delete</button>
+                <button @onclick="Cancel" class="btn btn-warning">Cancel</button>
+            </div>
+        }
+    </DialogContent>
+</MudDialog>
 
 
 @code {
-	[Parameter]
-	public Guid TitleId { get; set; }
+    [Parameter]
+    public Guid TitleId { get; set; }
 
-	[CascadingParameter]
-	BlazoredModalInstance BlazoredModal { get; set; } = default!;
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; } = default!;
 
-	private EmployeeTitleModel? Skill { get; set; }
+    private EmployeeTitleModel? Skill { get; set; }
 
-	protected override async Task OnInitializedAsync()
-	{
-		var response = await EmployeeTitleServiceClient.GetTitleById(TitleId);
-		if (response.StatusCode == HttpStatusCode.OK)
-		{
-			Skill = response.Content;
-		}
-		else
-		{
-			ToastService.ShowError($"Could not load title. Service returned : {response.StatusCode}");
-		}
-	}
+    protected override async Task OnInitializedAsync()
+    {
+        var response = await EmployeeTitleServiceClient.GetTitleById(TitleId);
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            Skill = response.Content;
+        }
+        else
+        {
+            ToastService.ShowError($"Could not load title. Service returned : {response.StatusCode}");
+        }
+    }
 
-	protected async Task Remove()
-	{
-		var response = await EmployeeTitleServiceClient.DeleteById(TitleId);
-		if (response.StatusCode == HttpStatusCode.OK)
-		{
-			await BlazoredModal.CloseAsync(ModalResult.Ok());
-		}
-		else
-		{
-			ToastService.ShowError($"Could not delete title. Service returned : {response.StatusCode}");
-		}
+    protected async Task Remove()
+    {
+        var response = await EmployeeTitleServiceClient.DeleteById(TitleId);
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            ToastService.ShowSuccess("Deleted title successfully");
+            MudDialog?.Close();
+        }
+        else
+        {
+            ToastService.ShowError($"Could not delete title. Service returned : {response.StatusCode}");
+        }
 
-	}
+    }
 
-	protected async Task Cancel()
-	{
-		await BlazoredModal.CloseAsync(ModalResult.Cancel());
-	}
+    protected void Cancel()
+    {
+        MudDialog?.Close(DialogResult.Cancel);
+    }
 }

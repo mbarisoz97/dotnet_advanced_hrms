@@ -65,9 +65,6 @@
             <MudTooltip Text="Delete">
                 <MudIconButton @onclick="@(() => ShowDeleteTrainingDialog(context))" Color=" Color.Error" Icon="@Icons.Material.Filled.Delete" Size="Size.Small" />
             </MudTooltip>
-            <MudTooltip Text="More">
-                <MudIconButton Icon="@Icons.Material.Filled.ReadMore" Size="Size.Small" />
-            </MudTooltip>
         </MudTd>
     </RowTemplate>
     <PagerContent>
@@ -85,46 +82,7 @@
     {
         await UpdateTrainings();
     }
-
-    private async Task ShowCreateTrainingDialog()
-    {
-        var modalReference = ModalService.Show<TrainingCreatePage>("Create new training");
-        await modalReference.Result;
-        await UpdateTrainings();
-    }
-
-    private async Task ShowUpdateTrainingDialog(TrainingModel training)
-    {
-        var modalParameters = new ModalParameters()
-            .Add(nameof(ProjectModel.Id), training.Id);
-
-        var modalReference = ModalService.Show<TrainingUpdatePage>("Update training", modalParameters);
-        await modalReference.Result;
-
-        await UpdateTrainings();
-    }
-
-    private async Task ShowDeleteTrainingDialog(TrainingModel trainingModel)
-    {
-        var modalParameters = new ModalParameters()
-            .Add(nameof(trainingModel.Id), trainingModel.Id);
-
-        var modalReference = ModalService.Show<TrainingDeletePage>("Delete a training", modalParameters);
-        var modalResult = await modalReference.Result;
-
-        if (modalResult.Confirmed)
-        {
-            ToastService.ShowSuccess("Training deleted successfully.");
-            await UpdateTrainings();
-        }
-    }
-
-    private async Task ShowTrainingRecommendationDialog()
-    {
-        var modalReference = ModalService.Show<TrainingRecommendationCreatePage>("Recommend Training");
-        await modalReference.Result;
-    }
-
+ 
     private async Task UpdateTrainings()
     {
         _loading = true;
@@ -143,6 +101,52 @@
         _loading = false;
     }
 
+    private async Task ShowCreateTrainingDialog()
+    {
+        var dialog = DialogService.Show<TrainingCreatePage>("Create new training");
+        var result = await dialog.Result;
+
+        if (result != null && !result.Canceled)
+        {
+            await UpdateTrainings();
+        }
+    }
+    private async Task ShowUpdateTrainingDialog(TrainingModel training)
+    {
+        var dialogParameters = new DialogParameters
+        {
+            {nameof(ProjectModel.Id), training.Id}
+        };
+
+        var dialog = DialogService.Show<TrainingUpdatePage>("Update training", dialogParameters);
+        var result = await dialog.Result;
+
+        if (result != null && !result.Canceled)
+        {
+            await UpdateTrainings();
+        }
+    }
+    private async Task ShowDeleteTrainingDialog(TrainingModel trainingModel)
+    {
+        var dialogParameters = new DialogParameters
+        {
+            { nameof(trainingModel.Id), trainingModel.Id }
+        };
+
+        var dialog = DialogService.Show<TrainingDeletePage>("Delete a training", dialogParameters);
+        var result = await dialog.Result;
+
+        if (result != null && !result.Canceled)
+        {
+            await UpdateTrainings();
+        }
+    }
+
+    private async Task ShowTrainingRecommendationDialog()
+    {
+        var modalReference = DialogService.Show<TrainingRecommendationCreatePage>("Recommend Training");
+        await modalReference.Result;
+    }
     private async Task ShowCreatePreferenceDialog()
     {
         await DialogService.ShowAsync<TrainingPreferenceCreatePage>("Create new training preference");

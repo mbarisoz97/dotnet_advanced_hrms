@@ -1,14 +1,21 @@
 ﻿@inject IToastService ToastService
 @inject ITrainingServiceClient TrainingServiceClient
 
-<TrainingForm IsEditMode="false"
-              Description="@Description"
-              SelectedEmployees="@SelectedEmployees"
-              OnValidSubmit="CreateTraining"></TrainingForm>
+<MudDialog>
+    <DialogContent>
+        <TrainingForm IsEditMode="false"
+                      Description="@Description"
+                      SelectedEmployees="@SelectedEmployees"
+                      OnValidSubmit="CreateTraining"></TrainingForm>
+    </DialogContent>
+</MudDialog>
 
 @code {
     [Parameter] public string Description { get; set; } = string.Empty;
     [Parameter] public IEnumerable<Guid>? SelectedEmployees { get; set; }
+
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog { get; set; }
 
     private async Task CreateTraining(TrainingModel training)
     {
@@ -17,6 +24,7 @@
         if (response.StatusCode == HttpStatusCode.OK)
         {
             ToastService.ShowSuccess($"New training created successfully");
+            MudDialog?.Close();
             return;
         }
 

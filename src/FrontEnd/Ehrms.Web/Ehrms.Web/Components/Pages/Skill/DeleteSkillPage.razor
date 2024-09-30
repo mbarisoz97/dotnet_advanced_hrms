@@ -1,40 +1,41 @@
-﻿@using Blazored.Toast.Configuration
-@attribute [Authorize]
+﻿@attribute [Authorize]
 @attribute [StreamRendering]
 
-@inject NavigationManager NavigationManager
 @inject IToastService ToastService
 @inject ISkillServiceClient SkillServiceClient
 
-@if (Skill == null)
-{
-	<h1>Loading..</h1>
-}
-else
-{
-	<div class="form-group">
-		<table class="table">
-			<tbody>
-				<tr>
-					<td>Skill Name</td>
-					<td>@Skill.Name</td>
-				</tr>
-			</tbody>
-		</table>
-	</div>
-	<div class="form-group">
-		<button @onclick="Remove" class="btn btn-danger">Delete</button>
-		<button @onclick="Cancel" class="btn btn-warning">Cancel</button>
-	</div>
-}
-
+<MudDialog>
+	<DialogContent>
+		@if (Skill == null)
+		{
+			<h1>Loading..</h1>
+		}
+		else
+		{
+			<div class="form-group">
+				<table class="table">
+					<tbody>
+						<tr>
+							<td>Skill Name</td>
+							<td>@Skill.Name</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="form-group">
+				<button @onclick="Remove" class="btn btn-danger">Delete</button>
+				<button @onclick="Cancel" class="btn btn-warning">Cancel</button>
+			</div>
+		}
+	</DialogContent>
+</MudDialog>
 
 @code {
 	[Parameter]
 	public Guid Id { get; set; }
 
-	[CascadingParameter]
-	BlazoredModalInstance BlazoredModal { get; set; } = default!;
+	[CascadingParameter] 
+	private MudDialogInstance? MudDialog { get; set; }
 
 	private SkillModel? Skill { get; set; }
 
@@ -45,7 +46,10 @@ else
 		{
 			Skill = response.Content;
 		}
-		//Show error message
+		else
+		{
+			ToastService.ShowError($"Could not load skill data. Service returned {response.StatusCode}");
+		}
 	}
 
 	protected async Task Remove()
@@ -53,17 +57,15 @@ else
 		var response = await SkillServiceClient.DeleteEmployeeAsync(Id);
 		if (response.StatusCode == HttpStatusCode.NoContent)
 		{
-			await BlazoredModal.CloseAsync(ModalResult.Ok());
-		}
-		else
-		{
-			ToastService.ShowError($"Service returned : {response.StatusCode}");
+			MudDialog?.Close();
+			return;
 		}
 
+		ToastService.ShowError($"Service returned : {response.StatusCode}");
 	}
 
-	protected async Task Cancel()
+	protected void Cancel()
 	{
-		await BlazoredModal.CloseAsync(ModalResult.Cancel());
+		MudDialog?.Close(DialogResult.Cancel());
 	}
 }

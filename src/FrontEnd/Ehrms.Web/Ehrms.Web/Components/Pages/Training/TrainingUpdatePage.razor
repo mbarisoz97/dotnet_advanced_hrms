@@ -1,21 +1,28 @@
 ﻿@inject IToastService ToastService
 @inject ITrainingServiceClient TrainingServiceClient
 
-<TrainingForm IsEditMode="true" Id="Id" OnValidSubmit="UpdateTraining"></TrainingForm>
+<MudDialog>
+    <DialogContent>
+        <TrainingForm IsEditMode="true" Id="Id" OnValidSubmit="UpdateTraining"></TrainingForm>
+    </DialogContent>
+</MudDialog>
 
 @code {
-	[Parameter]
-	public Guid Id { get; set; }
+    [Parameter]
+    public Guid Id { get; set; }
 
-	private async Task UpdateTraining(TrainingModel training)
-	{
-		var response = await TrainingServiceClient.UpdateTrainingAsync(training);
-		if (response.StatusCode == HttpStatusCode.OK)
-		{
-			ToastService.ShowSuccess($"Training updated successfully");
-			return;
-		}
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog {get; set;}
 
-		ToastService.ShowError($"Could not update training. Service returned : {response.StatusCode}");
-	}
+    private async Task UpdateTraining(TrainingModel training)
+    {
+        var response = await TrainingServiceClient.UpdateTrainingAsync(training);
+        if (response.StatusCode == HttpStatusCode.OK)
+        {
+            ToastService.ShowSuccess($"Training updated successfully");
+            return;
+        }
+
+        ToastService.ShowError($"Could not update training. Service returned : {response.StatusCode}");
+    }
 }

@@ -3,20 +3,30 @@
 @inject IToastService ToastService
 @inject IEmployeeTitleClient EmployeeTitleClient
 
-<TitleForm IsEditMode="false" OnValidSubmit="CreateTitle"></TitleForm>
+<MudDialog>
+    <DialogContent>
+        <TitleForm IsEditMode="false" OnValidSubmit="CreateTitle"></TitleForm>
+    </DialogContent>
+</MudDialog>
 
 @code {
+    [CascadingParameter]
+    private MudDialogInstance? MudDialog {get;set;}
+
     private async Task CreateTitle(EmployeeTitleModel title)
     {
         var response = await EmployeeTitleClient.CreateTitle(title);
         if (response.StatusCode == HttpStatusCode.OK)
         {
             ToastService.ShowSuccess($"New title created successfully");
+            MudDialog?.Close();
+            return;
         }
 
         if (response.StatusCode == HttpStatusCode.Conflict)
         {
             ToastService.ShowError($"A record with this name has already been created");
+            return;
         }
     }
 }

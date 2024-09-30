@@ -2,16 +2,24 @@
 @inject IProjectServiceClient ProjectServiceClient
 @inject NavigationManager NavigationManager
 
-<ProjectForm IsEditMode="false" OnValidSubmit="CreateProject" />
+<MudDialog>
+	<DialogContent>
+		<ProjectForm IsEditMode="false" OnValidSubmit="CreateProject" />
+	</DialogContent>
+</MudDialog>
 
 @code {
+	[CascadingParameter]
+	private MudDialogInstance? MudDialog { get; set; }
+
 	private async Task CreateProject(ProjectModel project)
 	{
 		var response = await ProjectServiceClient.CreateProjectAsync(project);
-		
+
 		if (response.StatusCode == HttpStatusCode.OK)
 		{
 			ToastService.ShowSuccess($"New project created successfully");
+			MudDialog?.Close();
 			return;
 		}
 		
