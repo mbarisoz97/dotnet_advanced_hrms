@@ -32,7 +32,7 @@
                 <MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.ModeEdit" @onclick="@(()=>ShowUpdateProjectDialog(context))" />
             </MudTooltip>
             <MudTooltip Text="Delete">
-                <MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.Delete" @onclick="@(()=>ShowDeleteConfirmationDialog(context))" />
+                <MudIconButton Size="Size.Small" Color="Color.Error" Icon="@Icons.Material.Filled.Delete" @onclick="@(()=>ShowDeleteConfirmationDialog(context))" />
             </MudTooltip>
             <MudTooltip Text="Read More">
                 <MudIconButton Size="Size.Small" Icon="@Icons.Material.Filled.ReadMore" Href=@($"{ProjectRouting.Details}/{context.Id}") />
@@ -79,6 +79,16 @@
         HideLoadingBar();
     }
 
+    private async Task ShowCreateProjectDialog()
+    {
+        var dialog = DialogService.Show<ProjectCreatePage>("Create a new project");
+        var result = await dialog.Result;
+
+        if (result != null && !result.Canceled)
+        {
+            await UpdateProjects();
+        }
+    }
     private async Task ShowUpdateProjectDialog(ProjectModel project)
     {
         var dialogParameters = new DialogParameters
@@ -86,21 +96,14 @@
             {nameof(ProjectUpdatePage.Id), project.Id}
         };
 
-        var modalReference = DialogService.Show<ProjectUpdatePage>("Update project", dialogParameters);
-        var result = await modalReference.Result;
+        var dialog = DialogService.Show<ProjectUpdatePage>("Update project", dialogParameters);
+        var result = await dialog.Result;
 
         if (result != null && !result.Canceled)
         {
             await UpdateProjects();
         }
     }
-
-    private async Task ShowCreateProjectDialog()
-    {
-        var modalReference = DialogService.Show<ProjectCreatePage>("Create a new project");
-        await UpdateProjects();
-    }
-
     private async Task ShowDeleteConfirmationDialog(ProjectModel project)
     {
         var dialogParameters = new DialogParameters
