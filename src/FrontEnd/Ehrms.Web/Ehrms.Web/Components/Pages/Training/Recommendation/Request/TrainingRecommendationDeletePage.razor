@@ -1,48 +1,54 @@
 @attribute [Authorize]
 @attribute [StreamRendering]
 
-@inject NavigationManager NavigationManager
 @inject IToastService ToastService
 @inject ITrainingRecommendationServiceClient TrainingRecommendationServiceClient
 
-@if (TrainingRecommendationRequest == null)
-{
-    <Loading></Loading>
-}
-else
-{
-    <div class="form-group">
-        <table class="table">
-            <tbody>
-            <tr>
-                <td>Training Recommendation Request</td>
-                <td>@TrainingRecommendationRequest.Title</td>
-            </tr>
-            <tr>
-                <td>Created At</td>
-                <td>@TrainingRecommendationRequest.CreatedAt</td>
-            </tr>
-            <tr>
-                <td>Updated At</td>
-                <td>@TrainingRecommendationRequest.UpdatedAt</td>
-            </tr>
-            <tr>
-                <td>Request Status</td>
-                <td>@TrainingRecommendationRequest.RequestStatus</td>
-            </tr>
-            </tbody>
-        </table>
-    </div>
-    <div class="form-group">
-        <button @onclick="Remove" class="btn btn-danger">Delete</button>
-        <button @onclick="Cancel" class="btn btn-warning">Cancel</button>
-    </div>
-}
+<MudDialog>
+    <DialogContent>
+        @if (TrainingRecommendationRequest == null)
+        {
+            <Loading></Loading>
+        }
+        else
+        {
+            <div class="form-group">
+                <table class="table">
+                    <tbody>
+                        <tr>
+                            <td>Training Recommendation Request</td>
+                            <td>@TrainingRecommendationRequest.Title</td>
+                        </tr>
+                        <tr>
+                            <td>Created At</td>
+                            <td>@TrainingRecommendationRequest.CreatedAt</td>
+                        </tr>
+                        <tr>
+                            <td>Updated At</td>
+                            <td>@TrainingRecommendationRequest.UpdatedAt</td>
+                        </tr>
+                        <tr>
+                            <td>Request Status</td>
+                            <td>@TrainingRecommendationRequest.RequestStatus</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="form-group">
+                <button @onclick="Remove" class="btn btn-danger">Delete</button>
+                <button @onclick="Cancel" class="btn btn-warning">Cancel</button>
+            </div>
+        }
+    </DialogContent>
+</MudDialog>
+
 
 @code {
-    [Parameter] public Guid Id { get; set; }
+    [Parameter] 
+    public Guid Id { get; set; }
 
-    [CascadingParameter] BlazoredModalInstance BlazoredModal { get; set; } = default!;
+    [CascadingParameter] 
+    private MudDialogInstance? MudDialogInstance { get; set; }
 
     private ReadTrainingRecommendationRequestModel? TrainingRecommendationRequest { get; set; }
 
@@ -60,7 +66,7 @@ else
         var response = await TrainingRecommendationServiceClient.DeleteTrainingRecommendationRequest(Id);
         if (response.StatusCode == HttpStatusCode.OK)
         {
-            await BlazoredModal.CloseAsync(ModalResult.Ok());
+            MudDialogInstance?.Close();
             ToastService.ShowSuccess("Training recommendation request deleted successfully.");
         }
         else
@@ -69,9 +75,8 @@ else
         }
     }
 
-    private async Task Cancel()
+    private void Cancel()
     {
-        await BlazoredModal.CloseAsync(ModalResult.Cancel());
+        MudDialogInstance?.Close(DialogResult.Cancel);       
     }
-
 }

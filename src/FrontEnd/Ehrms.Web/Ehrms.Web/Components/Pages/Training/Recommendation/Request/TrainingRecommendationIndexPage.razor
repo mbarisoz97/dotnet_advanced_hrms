@@ -2,8 +2,8 @@
 @attribute [Authorize]
 @attribute [StreamRendering]
 
-@inject IModalService ModalService
 @inject IToastService ToastService
+@inject IDialogService DialogService
 @inject ITrainingRecommendationServiceClient TrainingRecommendationServiceClient
 
 <MudTable Dense="true" Hover="true" Bordered="true" Striped="true"
@@ -12,10 +12,10 @@
           Filter="new Func<ReadTrainingRecommendationRequestModel, bool>(SearchFilter)">
     <ToolBarContent>
         <MudText Typo="Typo.h6">Training Recommendation Requests</MudText>
-        <MudSpacer/>
+        <MudSpacer />
         <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0"></MudTextField>
         <MudTooltip Text="Add Training Recommendation">
-            <MudIconButton Size="Size.Medium" Color="Color.Success" Icon="@Icons.Material.Filled.AddBox" @onclick="@(ShowTrainingRecommendationDialog)"/>
+            <MudIconButton Size="Size.Medium" Color="Color.Success" Icon="@Icons.Material.Filled.AddBox" @onclick="@(ShowTrainingRecommendationDialog)" />
         </MudTooltip>
     </ToolBarContent>
     <HeaderContent>
@@ -30,15 +30,15 @@
             <MudTooltip Text="@context.RequestStatus.ToString()">
                 @if (context.RequestStatus == RequestStatus.Pending)
                 {
-                    <MudIconButton Icon="@Icons.Material.Filled.Pending" Color="Color.Warning"/>
+                    <MudIconButton Icon="@Icons.Material.Filled.Pending" Color="Color.Warning" />
                 }
                 else if (context.RequestStatus == RequestStatus.Accepted)
                 {
-                    <MudIconButton Icon="@Icons.Material.Filled.Circle" Color="Color.Info"/>
+                    <MudIconButton Icon="@Icons.Material.Filled.Circle" Color="Color.Info" />
                 }
                 else if (context.RequestStatus == RequestStatus.Completed)
                 {
-                    <MudIconButton Icon="@Icons.Material.Filled.DoneAll" Color="Color.Success"/>
+                    <MudIconButton Icon="@Icons.Material.Filled.DoneAll" Color="Color.Success" />
                 }
             </MudTooltip>
         </MudTd>
@@ -47,24 +47,24 @@
         <MudTd DataLabel="Last Update">@context.UpdatedAt</MudTd>
         <MudTd>
             <MudTooltip Text="Delete">
-                <MudIconButton @onclick="@(() => ShowDeleteConfirmationPage(context.Id))" Size="Size.Small" Color="Color.Error" Icon="@Icons.Material.Filled.Delete"/>
+                <MudIconButton @onclick="@(() => ShowDeleteConfirmationPage(context.Id))" Size="Size.Small" Color="Color.Error" Icon="@Icons.Material.Filled.Delete" />
             </MudTooltip>
             @if (context.RequestStatus == RequestStatus.Completed)
             {
                 <MudTooltip Text="Read More">
-                    <MudIconButton @onclick="@(() => ShowTrainingRecommendationResults(context.Id))" Size="Size.Small" Icon="@Icons.Material.Filled.ReadMore"/>
+                    <MudIconButton @onclick="@(() => ShowTrainingRecommendationResults(context.Id))" Size="Size.Small" Icon="@Icons.Material.Filled.ReadMore" />
                 </MudTooltip>
             }
         </MudTd>
     </RowTemplate>
     <PagerContent>
-        <MudTablePager/>
+        <MudTablePager />
     </PagerContent>
 </MudTable>
 
 @code {
     private IEnumerable<ReadTrainingRecommendationRequestModel>? _trainingRecommendationRequests;
-    
+
     private bool _isLoading = true;
     private string _searchString = "";
 
@@ -95,38 +95,45 @@
 
     private async Task ShowTrainingRecommendationResults(Guid requestId)
     {
-        var parameters = new ModalParameters()
-            .Add(nameof(TrainingRecommendationResultPage.Id), requestId);
+        var parameters = new DialogParameters()
+        {
+            { nameof(TrainingRecommendationResultPage.Id), requestId  }
+        };
 
-        var modalReference = ModalService.Show<TrainingRecommendationResultPage>("Training Recommendations", parameters);
-        await modalReference.Result;
+        var dialog = DialogService.Show<TrainingRecommendationResultPage>("Training Recommendations", parameters);
+        var result = await dialog.Result;
+
+        await EvaluateDialogResult(result);
     }
-
     private async Task ShowDeleteConfirmationPage(Guid id)
     {
-        var parameters = new ModalParameters()
-            .Add(nameof(TrainingRecommendationDeletePage.Id), id);
-
-        var modalReference = ModalService.Show<TrainingRecommendationDeletePage>("Confirm", parameters);
-        var modalResult = await modalReference.Result;
-
-        if (modalResult.Confirmed)
+        var parameters = new DialogParameters
         {
-            await LoadTrainingRecommendationRequests();
-        }
+            { nameof(TrainingRecommendationDeletePage.Id), id }
+        };
+
+        var dialog = DialogService.Show<TrainingRecommendationDeletePage>("Confirm", parameters);
+        var result = await dialog.Result;
+
+        await EvaluateDialogResult(result);
     }
-    
     private async Task ShowTrainingRecommendationDialog()
     {
-        var modalReference = ModalService.Show<TrainingRecommendationCreatePage>("Recommend Training");
-        var modalResult = await modalReference.Result;
+        var dialog = DialogService.Show<TrainingRecommendationCreatePage>("Recommend Training");
+        var result = await dialog.Result;
 
-        if (modalResult.Confirmed)
+        await EvaluateDialogResult(result);
+    }
+
+    private async Task EvaluateDialogResult(DialogResult? result)
+    {
+        bool isReloadRequired = result != null && !result.Canceled;
+        if (isReloadRequired)
         {
             await LoadTrainingRecommendationRequests();
         }
     }
-    
+
     private bool SearchFilter(ReadTrainingRecommendationRequestModel element) => Search(element, _searchString);
     private static bool Search(ReadTrainingRecommendationRequestModel element, string searchString)
     {
