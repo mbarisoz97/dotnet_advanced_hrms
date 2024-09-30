@@ -35,7 +35,7 @@ builder.Services.AddRazorComponents()
 
 builder.AddBlazorCookies();
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddHttpClient("ApiGateway", client =>
+builder.Services.AddHttpClient(HttpClients.BackendApiGateway, client =>
 {
 	client.BaseAddress = new Uri(builder.Configuration["ApiGatewayUri"]!);
 });

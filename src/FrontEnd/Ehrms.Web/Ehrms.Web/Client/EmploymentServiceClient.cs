@@ -16,7 +16,7 @@ internal class EmploymentServiceClient : IEmploymentServiceClient
 
 	public async Task<Response<IEnumerable<WorkerEmploymentModel>>> GetEmploymenHistoryByEmployeeId(Guid employeeId)
 	{
-		var client = await _httpClientFactory.CreateClient("ApiGateway");
+		var client = await _httpClientFactory.CreateClient(HttpClients.BackendApiGateway);
 		var response = await client.GetAsync($"{_endpointProvider.EmploymentApiEndpoint}/Employee/{employeeId}");
 
 		return new()

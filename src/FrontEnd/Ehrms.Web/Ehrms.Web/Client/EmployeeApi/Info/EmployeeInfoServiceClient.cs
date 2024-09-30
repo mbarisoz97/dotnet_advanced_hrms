@@ -16,7 +16,7 @@ internal sealed class EmployeeInfoServiceClient : IEmployeeServiceClient
 
     public async Task<Response<EmployeeModel>> CreateEmployeeAsync(EmployeeModel employee)
     {
-        var client = await _factoryWrapper.CreateClient("ApiGateway");
+        var client = await _factoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.PutAsJsonAsync(_endpointProvider.EmployeeInfoServiceEndpoint, employee);
 
         return new()
@@ -28,7 +28,7 @@ internal sealed class EmployeeInfoServiceClient : IEmployeeServiceClient
 
     public async Task<Response<Guid>> DeleteEmployeeAsync(Guid id)
     {
-        var client = await _factoryWrapper.CreateClient("ApiGateway");
+        var client = await _factoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.DeleteAsync($"{_endpointProvider.EmployeeInfoServiceEndpoint}/{id}");
 
         return new()
@@ -40,7 +40,7 @@ internal sealed class EmployeeInfoServiceClient : IEmployeeServiceClient
 
     public async Task<Response<EmployeeModel>> GetEmployeeAsync(Guid id)
     {
-        var client = await _factoryWrapper.CreateClient("ApiGateway");
+        var client = await _factoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.GetAsync($"{_endpointProvider.EmployeeInfoServiceEndpoint}/{id}");
 
         return new()
@@ -52,7 +52,7 @@ internal sealed class EmployeeInfoServiceClient : IEmployeeServiceClient
 
     public async Task<Response<EmployeeModel>> UpdateEmployeeAsync(EmployeeModel employee)
     {
-        var client = await _factoryWrapper.CreateClient("ApiGateway");
+        var client = await _factoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.PostAsJsonAsync(_endpointProvider.EmployeeInfoServiceEndpoint, employee);
 
         return new()
@@ -64,7 +64,7 @@ internal sealed class EmployeeInfoServiceClient : IEmployeeServiceClient
 
     public async Task<Response<IEnumerable<EmployeeModel>>> GetEmployeesAsync()
     {
-        var client = await _factoryWrapper.CreateClient("ApiGateway");
+        var client = await _factoryWrapper.CreateClient(HttpClients.BackendApiGateway);
         var response = await client.GetAsync(_endpointProvider.EmployeeInfoServiceEndpoint);
 
         return new()
